@@ -4,6 +4,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:precious/presenters/setting_presenter.dart';
 import 'package:precious/resources/utils/firebase_options.dart';
+import 'package:precious/views/home_page.dart';
 import 'package:precious/views/start_page.dart';
 
 void main() async {
@@ -20,17 +21,13 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      localizationsDelegates: const [
-        AppLocalizations.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      supportedLocales: const [
-        Locale('en'),
-      ],
-      home: _isFirstRun ? StartPage() : StartPage(),
-    );
+    return const MaterialApp(localizationsDelegates: [
+      AppLocalizations.delegate,
+      GlobalMaterialLocalizations.delegate,
+      GlobalWidgetsLocalizations.delegate,
+      GlobalCupertinoLocalizations.delegate,
+    ], supportedLocales: [
+      Locale('en'),
+    ], home: HomePage());
   }
 }
