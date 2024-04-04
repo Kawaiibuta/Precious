@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "241842302669",
+    "project_id": "jewelry-store-uit",
+    "storage_bucket": "jewelry-store-uit.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:241842302669:android:bf119a970e8a5dc6cd8384",
+        "android_client_info": {
+          "package_name": "com.example.precious"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA3IKu-0BQpXXVtHocC6QaIWmi_qD2p-Fg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
