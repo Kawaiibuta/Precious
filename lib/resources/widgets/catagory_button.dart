@@ -1,54 +1,37 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
-class CatagoryButton extends StatefulWidget {
-  const CatagoryButton(
-      {super.key,
-      required this.icon,
-      required this.title,
-      required this.quantity});
-  final IconData icon;
+class CategoryButton extends StatefulWidget {
+  const CategoryButton(
+      {super.key, required this.title, required this.selected});
   final String title;
-  final int quantity;
+  final bool selected;
   @override
-  _CatagoryButtonState createState() => _CatagoryButtonState();
+  _CategoryButtonState createState() => _CategoryButtonState();
 }
 
-class _CatagoryButtonState extends State<CatagoryButton> {
+class _CategoryButtonState extends State<CategoryButton> {
   @override
   Widget build(BuildContext context) {
     return Container(
-        height: 70,
-        padding: const EdgeInsets.all(15.0),
+        clipBehavior: Clip.antiAlias,
         decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(40), color: Colors.black),
-        child: Row(
-          children: [
-            Icon(
-              widget.icon,
-              color: Colors.white,
-              size: 30,
+            borderRadius: BorderRadius.circular(20),
+            color: widget.selected ? Colors.black : Colors.white,
+            border: Border.all(
+                color: widget.selected ? Colors.black : Colors.grey)),
+        child: InkWell(
+          onTap: () {},
+          child: Padding(
+            padding: const EdgeInsets.only(
+                left: 8.0, right: 8.0, top: 5.0, bottom: 5.0),
+            child: Text(
+              widget.title,
+              style: GoogleFonts.openSans(
+                  fontWeight: FontWeight.bold,
+                  color: widget.selected ? Colors.white : Colors.black),
             ),
-            Flexible(
-                child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    widget.title,
-                    style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 20),
-                  ),
-                  Text(
-                    "${widget.quantity} products",
-                    style: const TextStyle(color: Colors.white),
-                  )
-                ],
-              ),
-            ))
-          ],
+          ),
         ));
   }
 }
