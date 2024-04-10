@@ -1,4 +1,34 @@
 {
     "startup_title_demo":"20% Discount New Arrival Product",
-    "startup_subtitle_demo":"Publish up your selfie and make yourself more beautiful with this app"
+    "startup_subtitle_demo":"Publish up your selfie and make yourself more beautiful with this app",
+    "login":"Login",
+    "login_title":"Welcome!",
+    "login_body":"Please login or sign up to continue",
+    "email_title":"Email",
+    "password_title":"Password",
+    "sign_up":"Sign Up",
+    "or":"or",
+    "login_with_google_button_title":"Continue with Google",
+    "sign_up_title":"Sign Up",
+    "sign_up_body":"Create a new account",
+    "username_title":"Username",
+    "confirm_password_title":"Confirm password",
+    "term_and_condition_agree_msg":"By signing in to our app, you agree with our Terms and Conditions.",
+    "sign_up_success_title":"Success!",
+    "sign_up_success_body":"You have successfully registered an account.",
+    "start_shopping":"Start Shopping",
+    "username_empty_msg":"Username must not be empty",
+    "email_empty_msg":"Email must not be empty",
+    "email_incorrect_format":"Incorrect email format",
+    "email_already_in_use_err_msg":"The email is already in used",
+    "password_length_msg":"The password must be at least 6 characters long",
+    "confirm_password_unmatched":"The password and confirm password is unmatched",
+    "email_or_password_incorrect_msg":"Email or password was incorrect",
+    "unexpected_error_msg":"Unexpected error occured. Error code: {code}",
+    "@unexpected_error_msg":{
+        "placeholder":{
+            "code":{}
+        }
+    },
+    "network_issue_msg":"There is no Internnet connection. Please try again later"
 }

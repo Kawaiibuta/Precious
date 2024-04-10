@@ -1,22 +1,24 @@
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:precious/resources/widgets/start_image_clip_path.dart';
 
 class StartPage extends StatefulWidget {
+  static const name = "/start";
+
   const StartPage({super.key});
 
   @override
   State<StartPage> createState() => _StartPageState();
 }
 
-class _StartPageState extends State<StartPage> with SingleTickerProviderStateMixin {
+class _StartPageState extends State<StartPage>
+    with SingleTickerProviderStateMixin {
   final _pageController = PageController();
 
-  late AnimationController _controller;
-  late List<double> _widthList;
-  late List<Color> _colorList;
+  final CarouselController _controller = CarouselController();
 
-  final pageAnimDuration = const Duration(milliseconds: 500);
+  final pageAnimDuration = const Duration(milliseconds: 200);
 
   final pageCount = 3;
 
@@ -24,47 +26,9 @@ class _StartPageState extends State<StartPage> with SingleTickerProviderStateMix
 
   int currentPageIndex = 0;
 
-  late CurvedAnimation _curvedAnimation, _reverseCurvedAnimation;
-
-  late ColorTween _colorTween;
-  late Tween<double> _widthTween;
-
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(vsync: this, duration: pageAnimDuration)
-      ..addListener(() => setState(() {
-            _colorList[currentPageIndex] =
-                _colorTween.evaluate(_curvedAnimation)!;
-            _widthList[currentPageIndex] =
-                _widthTween.evaluate(_curvedAnimation);
-
-            for (var i = 0; i < pageCount; i++) {
-              if (i != currentPageIndex && _widthList[i] > 8) {
-                _colorList[i] =
-                    _colorTween.evaluate(_reverseCurvedAnimation)!;
-                _widthList[i] =
-                    _widthTween.evaluate(_reverseCurvedAnimation);
-              }
-            }
-          }));
-
-    _colorList = List.filled(pageCount, Colors.grey);
-    _colorList[0] = Colors.black;
-    _widthList = List.filled(pageCount, 8.0);
-    _widthList[0] = 32.0;
-    _colorTween = ColorTween(begin: Colors.grey, end: Colors.black);
-    _widthTween = Tween(begin: 8, end: 32);
-    _curvedAnimation =
-        CurvedAnimation(parent: _controller, curve: Curves.linear);
-    _reverseCurvedAnimation =
-        CurvedAnimation(parent: _controller, curve: Curves.linear.flipped);
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
   }
 
   @override
@@ -96,16 +60,24 @@ class _StartPageState extends State<StartPage> with SingleTickerProviderStateMix
                 children: [
                   SizedBox(
                     width: 72,
-                    child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
+                    child: CarouselSlider(
+                        carouselController: _controller,
+                        options: CarouselOptions(
+                          height: 8,
+                          initialPage: (pageCount / 2).floor(),
+                          viewportFraction: 1 / pageCount,
+                          autoPlay: false,
+                          scrollPhysics: const NeverScrollableScrollPhysics(),
+                        ),
+                        items: [
                           for (int i = 0; i < pageCount; i++)
                             Container(
-                              width: _widthList[i],
+                              width: i == 0 ? 32 : 8,
                               height: 8,
+                              padding: const EdgeInsets.all(4),
                               decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(4.0),
-                                  color: _colorList[i]),
+                                  color: i == 0 ? Colors.black : Colors.grey),
                             )
                         ]),
                   ),
@@ -115,13 +87,17 @@ class _StartPageState extends State<StartPage> with SingleTickerProviderStateMix
                         if (currentPageIndex == pageCount - 1) {
                           return;
                         }
-                        hasRun = true;
-                        currentPageIndex += 1;
-                        _pageController.animateToPage(currentPageIndex,
-                            duration: pageAnimDuration, curve: Curves.linear);
-                        _controller.forward();
+                        currentPageIndex++;
+                        _pageController
+                            .nextPage(
+                                duration: pageAnimDuration,
+                                curve: Curves.linear)
+                            .then((_) => setState(() {}));
+                        _controller.previousPage(
+                            duration: pageAnimDuration,
+                            curve: Curves.decelerate);
                       },
-                      icon: Icon(currentPageIndex == pageCount - 1
+                      icon: Icon(currentPageIndex >= pageCount - 1
                           ? Icons.check_circle
                           : Icons.arrow_circle_right_rounded))
                 ],
@@ -156,7 +132,7 @@ class _StartPageState extends State<StartPage> with SingleTickerProviderStateMix
             child: Text(subtitle,
                 style: Theme.of(context)
                     .textTheme
-                    .labelLarge!
+                    .bodyLarge!
                     .copyWith(color: Colors.black54))),
       ],
     );
