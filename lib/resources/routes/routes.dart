@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:precious/presenters/setting_presenter.dart';
+import 'package:precious/views/home_page.dart';
+import 'package:precious/views/landing_page.dart';
 import 'package:precious/views/login_or_sign_up_page.dart';
 import 'package:precious/views/login_page.dart';
 import 'package:precious/views/setting_page.dart';
@@ -19,5 +21,7 @@ class MyRoutes {
         SignUpPage.name: (_) => const SignUpPage(),
         LoginOrSignUpPage.name: (_) => const LoginOrSignUpPage(),
         SignUpSuccessPage.name: (_) => const SignUpSuccessPage(),
+        LandingPage.name: (_) => const LandingPage(),
+        HomePage.name: (_) => const HomePage()
       };
 }

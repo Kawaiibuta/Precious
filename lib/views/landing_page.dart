@@ -1,12 +1,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:precious/resources/widgets/catagory_button.dart';
+import 'package:precious/resources/widgets/custom_search_bar.dart';
 import 'package:precious/resources/widgets/product_card.dart';
 import 'package:precious/resources/widgets/sale_banner.dart';
 
 class LandingPage extends StatefulWidget {
   const LandingPage({super.key});
+  static const name = '/landingPage';
 
   @override
   _LandingPageState createState() => _LandingPageState();
@@ -80,153 +83,148 @@ const categoryList = [
 ];
 
 class _LandingPageState extends State<LandingPage> {
-  bool categoriesSelected = false;
+  int categoriesSelected = 0;
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
+    return SingleChildScrollView(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const SizedBox(
+            height: 10,
+          ),
+          Row(
             children: [
-              //Utility row
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  IconButton(
-                      onPressed: () {
-                        setState(() {
-                          categoriesSelected = true;
-                        });
-                      },
-                      style: ButtonStyle(
-                          backgroundColor:
-                              MaterialStateProperty.all(Colors.black)),
-                      icon: const Icon(Icons.list, color: Colors.white)),
-                  IconButton(
-                      onPressed: () {},
-                      style: ButtonStyle(
-                          backgroundColor:
-                              MaterialStateProperty.all(Colors.black)),
-                      icon: const Icon(Icons.person, color: Colors.white)),
-                ],
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              // Sale banner row
-              const Row(
-                children: [
-                  SaleBanner(
+              Text(
+                'Welcome,',
+                style: GoogleFonts.openSans(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 40,
+                ),
+              )
+            ],
+          ),
+          Row(
+            children: [
+              Text(
+                "Enjoy your shopping",
+                style: GoogleFonts.openSans(fontSize: 15, color: Colors.grey),
+              )
+            ],
+          ),
+          const SizedBox(
+            height: 10,
+          ),
+          const CustomSearchBar(),
+          const SizedBox(
+            height: 10.0,
+          ),
+          // Sale banner row
+          const SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(right: 10.0),
+                  child: SaleBanner(
                     title: "50% Sale",
                     color: Colors.white,
                     image: AssetImage('assets/images/sale.png'),
-                  )
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    "New Arrivals",
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
                   ),
-                  TextButton(
-                      onPressed: () {},
-                      child: const Text(
-                        "View all",
-                        style: TextStyle(fontSize: 10.0),
-                      ))
-                ],
-              ),
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                    children: newArriveProductList
-                        .map((e) => Padding(
-                              padding: const EdgeInsets.only(right: 8.0),
-                              child: ProductCard(
-                                  name: e['name'] as String,
-                                  type: e['type'] as String,
-                                  price: e['price'] as double,
-                                  url: e['url'] as String),
-                            ))
-                        .toList()),
-              ),
-
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    "Popular",
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
-                  ),
-                  TextButton(
-                      onPressed: () {},
-                      child: const Text(
-                        "View all",
-                        style: TextStyle(fontSize: 10.0),
-                      ))
-                ],
-              ),
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                    children: newArriveProductList
-                        .map((e) => Padding(
-                              padding: const EdgeInsets.only(right: 8.0),
-                              child: ProductCard(
-                                  name: e['name'] as String,
-                                  type: e['type'] as String,
-                                  price: e['price'] as double,
-                                  url: e['url'] as String),
-                            ))
-                        .toList()),
-              ),
-            ],
-          ),
-        ),
-        AnimatedPositioned(
-          duration: Duration(milliseconds: 1000),
-          right: categoriesSelected ? -10 : MediaQuery.of(context).size.width,
-          child: Container(
-            width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height,
-            decoration: const BoxDecoration(color: Colors.white),
-            child: Padding(
-              padding: const EdgeInsets.all(15.0),
-              child: SingleChildScrollView(
-                  child: Column(children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text(
-                      "Categories",
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
-                    ),
-                    IconButton(
-                      onPressed: () {
-                        setState(() {
-                          categoriesSelected = false;
-                        });
-                      },
-                      icon: const Icon(Icons.cancel_outlined),
-                    )
-                  ],
                 ),
-                ...categoryList.map((e) => Padding(
-                      padding: const EdgeInsets.only(bottom: 10.0),
-                      child: CatagoryButton(
-                          icon: e['icon'] as IconData,
-                          title: e['title'] as String,
-                          quantity: e['quantity'] as int),
-                    )),
-              ])),
+                Padding(
+                  padding: EdgeInsets.only(right: 10.0),
+                  child: SaleBanner(
+                    title: "50% Sale",
+                    color: Colors.white,
+                    image: AssetImage('assets/images/sale.png'),
+                  ),
+                )
+              ],
             ),
           ),
-        ),
-      ],
+          Padding(
+            padding: const EdgeInsets.only(top: 8.0),
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                  children: categoryList
+                      .asMap()
+                      .map((i, e) => MapEntry(
+                            i,
+                            Padding(
+                              padding: const EdgeInsets.only(right: 8.0),
+                              child: CategoryButton(
+                                title: e['title'] as String,
+                                selected: (i == categoriesSelected),
+                              ),
+                            ),
+                          ))
+                      .values
+                      .toList()),
+            ),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                "New Arrivals",
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
+              ),
+              TextButton(
+                  onPressed: () {},
+                  child: const Text(
+                    "View all",
+                    style: TextStyle(fontSize: 10.0),
+                  ))
+            ],
+          ),
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+                children: newArriveProductList
+                    .map((e) => Padding(
+                          padding: const EdgeInsets.only(right: 8.0),
+                          child: ProductCard(
+                              name: e['name'] as String,
+                              type: e['type'] as String,
+                              price: e['price'] as double,
+                              url: e['url'] as String),
+                        ))
+                    .toList()),
+          ),
+
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                "Popular",
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
+              ),
+              TextButton(
+                  onPressed: () {},
+                  child: const Text(
+                    "View all",
+                    style: TextStyle(fontSize: 10.0),
+                  ))
+            ],
+          ),
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+                children: newArriveProductList
+                    .map((e) => Padding(
+                          padding: const EdgeInsets.only(right: 8.0),
+                          child: ProductCard(
+                              name: e['name'] as String,
+                              type: e['type'] as String,
+                              price: e['price'] as double,
+                              url: e['url'] as String),
+                        ))
+                    .toList()),
+          ),
+        ],
+      ),
     );
   }
 }

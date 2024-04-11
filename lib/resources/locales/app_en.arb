@@ -17,6 +17,8 @@
     "sign_up_success_title":"Success!",
     "sign_up_success_body":"You have successfully registered an account.",
     "start_shopping":"Start Shopping",
+    "my_cart":"My Cart",
+    "limit_buy":"The purchase number has reached limit.",
     "username_empty_msg":"Username must not be empty",
     "email_empty_msg":"Email must not be empty",
     "email_incorrect_format":"Incorrect email format",
