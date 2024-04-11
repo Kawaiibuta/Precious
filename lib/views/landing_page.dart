@@ -9,6 +9,7 @@ import 'package:precious/resources/widgets/sale_banner.dart';
 
 class LandingPage extends StatefulWidget {
   const LandingPage({super.key});
+  static const name = '/landingPage';
 
   @override
   _LandingPageState createState() => _LandingPageState();
@@ -97,7 +98,9 @@ class _LandingPageState extends State<LandingPage> {
               Text(
                 'Welcome,',
                 style: GoogleFonts.openSans(
-                    fontWeight: FontWeight.bold, fontSize: 40),
+                  fontWeight: FontWeight.bold,
+                  fontSize: 40,
+                ),
               )
             ],
           ),

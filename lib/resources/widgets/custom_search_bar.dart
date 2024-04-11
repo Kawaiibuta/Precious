@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class CustomSearchBar extends StatefulWidget {
-  const CustomSearchBar({super.key});
-
+  const CustomSearchBar({super.key, this.onFocus});
+  final Function? onFocus;
   @override
   _CustomSearchBarState createState() => _CustomSearchBarState();
 }

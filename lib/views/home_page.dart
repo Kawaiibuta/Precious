@@ -15,6 +15,7 @@ const routes = [
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
+  static const name = '/homePage';
 
   @override
   _HomePageState createState() => _HomePageState();

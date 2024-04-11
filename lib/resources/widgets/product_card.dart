@@ -42,7 +42,9 @@ class _ProductCardState extends State<ProductCard> {
                 Text(
                   widget.name,
                   style: const TextStyle(
-                      fontWeight: FontWeight.bold, fontSize: 15),
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15,
+                      color: Colors.black),
                 ),
                 Text(
                   widget.type,
@@ -52,7 +54,9 @@ class _ProductCardState extends State<ProductCard> {
                 Text(
                   noSimbolInUSFormat.format(widget.price),
                   style: const TextStyle(
-                      fontWeight: FontWeight.bold, fontSize: 10),
+                      fontWeight: FontWeight.bold,
+                      fontSize: 10,
+                      color: Colors.black),
                 ),
               ],
             ),
