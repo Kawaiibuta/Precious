@@ -12,22 +12,28 @@ class CustomSearchBar extends StatefulWidget {
 class _CustomSearchBarState extends State<CustomSearchBar> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 50,
-      padding: const EdgeInsets.only(left: 10.0, right: 10.0),
-      // width: 300,
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
-          color: const Color(0xfff3f4f6)),
-      child: const Row(
-        children: [
-          Icon(Icons.search),
-          Expanded(
-              child: TextField(
-            decoration:
-                InputDecoration.collapsed(hintText: "Search anything here"),
-          ))
-        ],
+    return GestureDetector(
+      onTap: () {
+        debugPrint(widget.onFocus.toString());
+        if (widget.onFocus != null) widget.onFocus!();
+      },
+      child: Container(
+        height: 50,
+        padding: const EdgeInsets.only(left: 10.0, right: 10.0),
+        // width: 300,
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            color: const Color(0xfff3f4f6)),
+        child: const Row(
+          children: [
+            Icon(Icons.search),
+            Expanded(
+                child: TextField(
+              decoration:
+                  InputDecoration.collapsed(hintText: "Search anything here"),
+            ))
+          ],
+        ),
       ),
     );
   }

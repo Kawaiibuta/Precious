@@ -8,9 +8,9 @@ import 'package:precious/resources/widgets/product_card.dart';
 import 'package:precious/resources/widgets/sale_banner.dart';
 
 class LandingPage extends StatefulWidget {
-  const LandingPage({super.key});
+  const LandingPage({super.key, this.changePage});
   static const name = '/landingPage';
-
+  final Function? changePage;
   @override
   _LandingPageState createState() => _LandingPageState();
 }
@@ -115,7 +115,12 @@ class _LandingPageState extends State<LandingPage> {
           const SizedBox(
             height: 10,
           ),
-          const CustomSearchBar(),
+          CustomSearchBar(
+            onFocus: () {
+              debugPrint(widget.changePage.toString());
+              if (widget.changePage != null) widget.changePage!(1);
+            },
+          ),
           const SizedBox(
             height: 10.0,
           ),
@@ -223,6 +228,28 @@ class _LandingPageState extends State<LandingPage> {
                         ))
                     .toList()),
           ),
+          Text("New and Popular",
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17)),
+          GridView.count(
+            primary: false,
+            physics: NeverScrollableScrollPhysics(),
+            crossAxisSpacing: 5,
+            mainAxisSpacing: 100,
+            shrinkWrap: true,
+            crossAxisCount: 2,
+            children: <Widget>[
+              ...newArriveProductList
+                  .map((e) => Padding(
+                        padding: const EdgeInsets.only(right: 8.0),
+                        child: ProductCard(
+                            name: e['name'] as String,
+                            type: e['type'] as String,
+                            price: e['price'] as double,
+                            url: e['url'] as String),
+                      ))
+                  .toList()
+            ],
+          )
         ],
       ),
     );

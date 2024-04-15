@@ -6,13 +6,6 @@ import 'package:precious/views/landing_page.dart';
 import 'package:precious/views/profile_page.dart';
 import 'package:precious/views/search_page.dart';
 
-const routes = [
-  {"title": "Home", "icon": Icons.home, "route": LandingPage()},
-  {"title": "Search", "icon": Icons.search, "route": SearchPage()},
-  {"title": "Cart", "icon": Icons.shopping_cart, "route": CartPage()},
-  {"title": "Profile", "icon": Icons.person, "route": ProfilePage()},
-];
-
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
   static const name = '/homePage';
@@ -23,6 +16,24 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   var selected = 0;
+  late List<dynamic> routes;
+  @override
+  void initState() {
+    super.initState();
+    routes = [
+      {
+        "title": "Home",
+        "icon": Icons.home,
+        "route": LandingPage(
+          changePage: _handleChangePage,
+        )
+      },
+      {"title": "Search", "icon": Icons.search, "route": SearchPage()},
+      {"title": "Cart", "icon": Icons.shopping_cart, "route": CartPage()},
+      {"title": "Profile", "icon": Icons.person, "route": ProfilePage()},
+    ];
+  }
+
   @override
   Widget build(BuildContext context) {
     var bottomRoute = routes
@@ -44,6 +55,12 @@ class _HomePageState extends State<HomePage> {
   _handleIndexChange(int value) {
     setState(() {
       selected = value;
+    });
+  }
+
+  void _handleChangePage(int i) {
+    setState(() {
+      selected = i;
     });
   }
 }
