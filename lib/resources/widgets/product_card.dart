@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:precious/views/item_detail_page.dart';
 
 var noSimbolInUSFormat = NumberFormat.currency(locale: "en_US");
 
@@ -14,6 +15,7 @@ class ProductCard extends StatefulWidget {
   final String type;
   final double price;
   final String url;
+
   @override
   _ProductCardState createState() => _ProductCardState();
 }
@@ -24,6 +26,9 @@ class _ProductCardState extends State<ProductCard> {
     return Stack(
       children: [
         InkWell(
+          onTap: () {
+            Navigator.of(context).pushNamed(ItemDetailPage.name);
+          },
           child: Container(
             width: 165,
             child: Column(

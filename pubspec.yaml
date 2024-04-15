@@ -11,7 +11,9 @@ environment:
 
 dependencies:
   carousel_slider: ^4.2.1
+  cart_stepper: ^4.3.0
   customizable_counter: ^1.0.4
+  easy_image_viewer: ^1.4.1
   firebase_auth: ^4.19.0
   firebase_core: ^2.27.2
   flutter:
@@ -23,6 +25,7 @@ dependencies:
   google_fonts: ^6.2.1
   google_sign_in: ^6.2.1
   intl: any
+  modal_bottom_sheet: ^3.0.0
   shared_preferences: ^2.2.2
 
 dev_dependencies:
