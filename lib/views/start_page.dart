@@ -2,6 +2,8 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:precious/resources/widgets/start_image_clip_path.dart';
+import 'package:precious/views/login_or_sign_up_page.dart';
+import 'package:precious/views/login_page.dart';
 
 class StartPage extends StatefulWidget {
   static const name = "/start";
@@ -85,7 +87,8 @@ class _StartPageState extends State<StartPage>
                       iconSize: 60.0,
                       onPressed: () {
                         if (currentPageIndex == pageCount - 1) {
-                          return;
+                          Navigator.of(context)
+                              .pushReplacementNamed(LoginOrSignUpPage.name);
                         }
                         currentPageIndex++;
                         _pageController

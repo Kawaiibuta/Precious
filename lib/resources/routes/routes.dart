@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:precious/presenters/setting_presenter.dart';
+import 'package:precious/views/admin/admin_home_page.dart';
 import 'package:precious/views/home_page.dart';
 import 'package:precious/views/item_detail_page.dart';
 import 'package:precious/views/landing_page.dart';
@@ -24,6 +25,7 @@ class MyRoutes {
         SignUpSuccessPage.name: (_) => const SignUpSuccessPage(),
         LandingPage.name: (_) => const LandingPage(),
         HomePage.name: (_) => const HomePage(),
-        ItemDetailPage.name: (_) => const ItemDetailPage(id: "1")
+        ItemDetailPage.name: (_) => const ItemDetailPage(id: "1"),
+        AdminHomePage.name: (_) => const AdminHomePage()
       };
 }
