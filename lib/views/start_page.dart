@@ -22,6 +22,12 @@ class _StartPageState extends State<StartPage>
 
   final pageCount = 3;
 
+  final imagePathList = [
+    'assets/images/necklace.jpg',
+    '',
+    '',
+  ];
+
   bool hasRun = false;
 
   int currentPageIndex = 0;
