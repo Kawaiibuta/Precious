@@ -10,6 +10,7 @@ environment:
   sdk: '>=3.3.1 <4.0.0'
 
 dependencies:
+  cached_network_image: ^3.3.1
   carousel_slider: ^4.2.1
   cart_stepper: ^4.3.0
   customizable_counter: ^1.0.4
@@ -27,6 +28,7 @@ dependencies:
   intl: any
   modal_bottom_sheet: ^3.0.0
   shared_preferences: ^2.2.2
+  sidebarx: ^0.17.1
 
 dev_dependencies:
   flutter_test:

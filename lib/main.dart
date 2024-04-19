@@ -6,6 +6,8 @@ import 'package:precious/presenters/setting_presenter.dart';
 import 'package:precious/resources/routes/routes.dart';
 import 'package:precious/resources/themes/app_theme.dart';
 import 'package:precious/resources/utils/firebase_options.dart';
+import 'package:precious/views/admin/home_page_admin.dart';
+import 'package:precious/views/login_or_sign_up_page.dart';
 import 'package:precious/views/sign_up_success_page.dart';
 import 'package:precious/views/start_page.dart';
 
@@ -36,7 +38,7 @@ class MyApp extends StatelessWidget {
         Locale('en'),
       ],
       initialRoute:
-          _settingPresenter.firstRun ? SignUpSuccessPage.name : StartPage.name,
+          _settingPresenter.firstRun ? HomePageAdmin.name : HomePageAdmin.name,
       routes: MyRoutes(_settingPresenter).routes,
     );
   }
