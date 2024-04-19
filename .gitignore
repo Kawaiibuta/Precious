@@ -15,6 +15,9 @@ doc/api/
 # dotenv environment variables file
 .env*
 
+# vscode config folder
+.vscode/
+
 # Avoid committing generated Javascript files:
 *.dart.js
 *.info.json      # Produced by the --dump-info flag.
