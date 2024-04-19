@@ -25,7 +25,6 @@ class MyRoutes {
         SignUpSuccessPage.name: (_) => const SignUpSuccessPage(),
         LandingPage.name: (_) => const LandingPage(),
         HomePage.name: (_) => const HomePage(),
-        ItemDetailPage.name: (_) => const ItemDetailPage(id: "1"),
         AdminHomePage.name: (_) => const AdminHomePage()
       };
 }

@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:precious/data_sources/product/product.dart';
+import 'package:precious/data_sources/type/type.dart';
 import 'package:precious/data_sources/product_category/product_category.dart';
 import 'package:precious/presenters/category_presenter.dart';
 import 'package:precious/presenters/product_presenter.dart';
+import 'package:precious/presenters/type_presenter.dart';
 import 'package:precious/resources/widgets/catagory_button.dart';
 import 'package:precious/resources/widgets/custom_search_bar.dart';
 import 'package:precious/resources/widgets/product_card.dart';
@@ -61,15 +63,30 @@ const newArriveProductList = [
 class _LandingPageState extends State<LandingPage> {
   int categoriesSelected = 0;
   late Future<List<Product>> productListFuture;
+  late Future<List<Type>> typeListFuture;
   late Future<List<ProductCategory>> categoryListFuture;
+
   ProductPresenter productPresenter = ProductPresenter();
+  TypePresenter typePresenter = TypePresenter();
   ProductCategoryPresenter categoryPresenter = ProductCategoryPresenter();
+
+  final _controller = ScrollController();
   @override
   void initState() {
     super.initState();
-    setState(() {
-      productListFuture = productPresenter.getAll();
-      categoryListFuture = categoryPresenter.getAll();
+    productListFuture = productPresenter.getAll();
+    categoryListFuture = categoryPresenter.getAll();
+    typeListFuture = typePresenter.getAll();
+    WidgetsBinding.instance.addPostFrameCallback((duration) {
+      // Setup the listener.
+      _controller.addListener(() {
+        if (_controller.position.atEdge) {
+          bool isTop = _controller.position.pixels == 0;
+          if (!isTop) {
+            productListFuture = productPresenter.getAll(more: true);
+          }
+        }
+      });
     });
   }
 
@@ -87,6 +104,7 @@ class _LandingPageState extends State<LandingPage> {
           }
           final productList = snapshot.data!;
           return SingleChildScrollView(
+            controller: _controller,
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -184,70 +202,77 @@ class _LandingPageState extends State<LandingPage> {
                         ),
                       );
                     }),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text(
-                      "New Arrivals",
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
-                    ),
-                    TextButton(
-                        onPressed: () {},
-                        child: const Text(
-                          "View all",
-                          style: TextStyle(fontSize: 10.0),
-                        ))
-                  ],
-                ),
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                      children: newArriveProductList
-                          .map((e) => Padding(
-                                padding: const EdgeInsets.only(right: 8.0),
-                                child: ProductCard(
-                                    name: e['name'] as String,
-                                    type: e['type'] as String,
-                                    price: e['price'] as double,
-                                    url: e['url'] as String),
-                              ))
-                          .toList()),
+                FutureBuilder(
+                  future: typeListFuture,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting ||
+                        !snapshot.hasData) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                    if (snapshot.data == null) return const Text("Error");
+                    final typeList = snapshot.data!;
+                    debugPrint(typeList.toString());
+                    List<Widget> widgetList = [];
+                    typeList.map((type) {
+                      return [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              type.name,
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 17),
+                            ),
+                            TextButton(
+                                onPressed: () {},
+                                child: const Text(
+                                  "View all",
+                                  style: TextStyle(fontSize: 10.0),
+                                ))
+                          ],
+                        ),
+                        FutureBuilder(
+                          future: typePresenter.getProductByType(type.id!),
+                          builder: (context, typeSnapshot) {
+                            if (typeSnapshot.connectionState ==
+                                    ConnectionState.waiting ||
+                                !typeSnapshot.hasData) {
+                              return const Center(
+                                child: CircularProgressIndicator(),
+                              );
+                            }
+                            final productTypeList = typeSnapshot.data!;
+                            debugPrint(productTypeList.toString());
+                            return Column(
+                              children: [
+                                SingleChildScrollView(
+                                  scrollDirection: Axis.horizontal,
+                                  child: Row(
+                                      children: productTypeList
+                                          .map((e) => Padding(
+                                                padding: const EdgeInsets.only(
+                                                    right: 8.0),
+                                                child: ProductCard(
+                                                  product: e,
+                                                ),
+                                              ))
+                                          .toList()),
+                                ),
+                              ],
+                            );
+                          },
+                        )
+                      ];
+                    });
+                    return Row(
+                      children: [Column(children: widgetList)],
+                    );
+                  },
                 ),
 
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text(
-                      "Popular",
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
-                    ),
-                    TextButton(
-                        onPressed: () {},
-                        child: const Text(
-                          "View all",
-                          style: TextStyle(fontSize: 10.0),
-                        ))
-                  ],
-                ),
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                      children: newArriveProductList
-                          .map((e) => Padding(
-                                padding: const EdgeInsets.only(right: 8.0),
-                                child: ProductCard(
-                                    name: e['name'] as String,
-                                    type: e['type'] as String,
-                                    price: e['price'] as double,
-                                    url: e['url'] as String),
-                              ))
-                          .toList()),
-                ),
                 const Text("Discovery",
                     style:
-                        TextStyle(fontWeight: FontWeight.bold, fontSize: 17)),
+                        TextStyle(fontWeight: FontWeight.bold, fontSize: 23)),
                 GridView.count(
                   primary: false,
                   physics: const NeverScrollableScrollPhysics(),
@@ -260,13 +285,14 @@ class _LandingPageState extends State<LandingPage> {
                         .map((e) => Padding(
                               padding: const EdgeInsets.only(right: 8.0),
                               child: ProductCard(
-                                  name: e.name,
-                                  type: e.short_description,
-                                  price: e.price,
-                                  url: e.img_paths_url[0]),
+                                product: e,
+                              ),
                             ))
                         .toList()
                   ],
+                ),
+                const SizedBox(
+                  height: 100,
                 )
               ],
             ),

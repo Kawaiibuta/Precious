@@ -1,20 +1,14 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:precious/data_sources/product/product.dart';
 import 'package:precious/views/item_detail_page.dart';
 
 var noSimbolInUSFormat = NumberFormat.currency(locale: "en_US");
 
 class ProductCard extends StatefulWidget {
-  const ProductCard(
-      {super.key,
-      required this.name,
-      required this.type,
-      required this.price,
-      required this.url});
-  final String name;
-  final String type;
-  final double price;
-  final String url;
+  const ProductCard({super.key, required this.product});
+  final Product product;
 
   @override
   _ProductCardState createState() => _ProductCardState();
@@ -27,7 +21,9 @@ class _ProductCardState extends State<ProductCard> {
       children: [
         InkWell(
           onTap: () {
-            Navigator.of(context).pushNamed(ItemDetailPage.name);
+            Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => ItemDetailPage(id: widget.product.id!),
+            ));
           },
           child: Container(
             width: 165,
@@ -39,25 +35,28 @@ class _ProductCardState extends State<ProductCard> {
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
                       image: DecorationImage(
-                          image: (Uri.parse(widget.url).isAbsolute
-                              ? NetworkImage(widget.url)
-                              : AssetImage(widget.url)) as ImageProvider,
-                          fit: BoxFit.cover)),
+                          image: (Uri.parse(widget.product.img_paths_url[0])
+                                      .isAbsolute
+                                  ? CachedNetworkImageProvider(
+                                      widget.product.img_paths_url[0])
+                                  : AssetImage(widget.product.img_paths_url[0]))
+                              as ImageProvider,
+                          fit: BoxFit.fitHeight)),
                 ),
                 Text(
-                  widget.name,
+                  widget.product.name,
                   style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 15,
                       color: Colors.black),
                 ),
                 Text(
-                  widget.type,
+                  widget.product.short_description,
                   style: const TextStyle(
                       fontWeight: FontWeight.normal, fontSize: 10),
                 ),
                 Text(
-                  noSimbolInUSFormat.format(widget.price),
+                  noSimbolInUSFormat.format(widget.product.price),
                   style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 10,

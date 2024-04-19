@@ -7,16 +7,21 @@ import 'package:precious/resources/endpoints.dart';
 import 'package:precious/resources/utils/dio_utils.dart';
 
 class ProductRepository {
-  static Future<List<Product>> getAll() async {
+  static Future<List<Product>> getAll(
+      {int start = 1,
+      int quantity = 9223372036854775807,
+      int type = -1}) async {
+    debugPrint(EndPoint.productWithParam(
+        start: start, quantity: quantity, type: type));
     final result = await dio
         .request(
-          EndPoint.product,
-          options: Options(
-            method: 'GET',
-            headers: headers as Map<String, dynamic>,
-          ),
-        )
-        .then((value) => value.data.map((e) {
+            EndPoint.productWithParam(
+                start: start, quantity: quantity, type: type),
+            options: Options(
+              method: 'GET',
+              headers: headers as Map<String, dynamic>,
+            ))
+        .then((value) => (value.data as List).map((e) {
               return Product.fromJson(e as Map<String, dynamic>);
             }).toList())
         .catchError((e) {
@@ -41,6 +46,7 @@ class ProductRepository {
       debugPrint(e.toString());
       return null;
     });
+    debugPrint(result.toString());
     return result;
   }
 
