@@ -24,9 +24,9 @@ class LandingPage extends StatefulWidget {
 class _LandingPageState extends State<LandingPage> {
   int categoriesSelected = 0;
   late Future<List<Product>> productListFuture;
-  late Future<List<Type>> typeListFuture;
+  List<Type> typeList = [];
   late Future<List<ProductCategory>> categoryListFuture;
-
+  Map<int, Future<List<Product>>> productByType = {};
   ProductPresenter productPresenter = ProductPresenter();
   TypePresenter typePresenter = TypePresenter();
   ProductCategoryPresenter categoryPresenter = ProductCategoryPresenter();
@@ -37,9 +37,9 @@ class _LandingPageState extends State<LandingPage> {
     super.initState();
     productListFuture = productPresenter.getAll();
     categoryListFuture = categoryPresenter.getAll();
-    typeListFuture = typePresenter
-        .getAll()
-        .then((value) => typePresenter.getProductByType(value));
+    typePresenter.getAll().then((value) {
+      typeList = value;
+    });
     WidgetsBinding.instance.addPostFrameCallback((duration) {
       // Setup the listener.
       _controller.addListener(() {
@@ -50,6 +50,11 @@ class _LandingPageState extends State<LandingPage> {
           }
         }
       });
+      for (var element in typeList) {
+        productByType.addEntries(<int, Future<List<Product>>>{
+          element.id!: typePresenter.getProductByType(element.id!)
+        }.entries);
+      }
     });
   }
 
@@ -165,73 +170,55 @@ class _LandingPageState extends State<LandingPage> {
                         ),
                       );
                     }),
-                FutureBuilder(
-                  future: typeListFuture,
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting ||
-                        !snapshot.hasData) {
-                      return const Center(child: CircularProgressIndicator());
-                    }
-                    if (snapshot.data == null) return const Text("Error");
-                    final typeList = snapshot.data!;
-                    debugPrint(typeList.toString());
-                    List<Widget> widgetList = [];
-                    typeList.map((type) {
-                      return [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              type.name,
-                              style: const TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 17),
-                            ),
-                            TextButton(
-                                onPressed: () {},
-                                child: const Text(
-                                  "View all",
-                                  style: TextStyle(fontSize: 10.0),
-                                ))
-                          ],
-                        ),
-                        FutureBuilder(
-                          future: typePresenter.getProductByType(type.id!),
-                          builder: (context, typeSnapshot) {
-                            if (typeSnapshot.connectionState ==
-                                    ConnectionState.waiting ||
-                                !typeSnapshot.hasData) {
-                              return const Center(
-                                child: CircularProgressIndicator(),
-                              );
-                            }
-                            final productTypeList = typeSnapshot.data!;
-                            debugPrint(productTypeList.toString());
-                            return Column(
-                              children: [
-                                SingleChildScrollView(
-                                  scrollDirection: Axis.horizontal,
-                                  child: Row(
-                                      children: productTypeList
-                                          .map((e) => Padding(
-                                                padding: const EdgeInsets.only(
-                                                    right: 8.0),
-                                                child: ProductCard(
-                                                  product: e,
-                                                ),
-                                              ))
-                                          .toList()),
-                                ),
-                              ],
-                            );
-                          },
-                        )
-                      ];
-                    });
-                    return Row(
-                      children: [Column(children: widgetList)],
-                    );
-                  },
-                ),
+                // ...typeList.map((type) {
+                //   return Column(children: [
+                //     Row(
+                //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //       children: [
+                //         Text(
+                //           type.name,
+                //           style: const TextStyle(
+                //               fontWeight: FontWeight.bold, fontSize: 17),
+                //         ),
+                //         TextButton(
+                //             onPressed: () {},
+                //             child: const Text(
+                //               "View all",
+                //               style: TextStyle(fontSize: 10.0),
+                //             ))
+                //       ],
+                //     ),
+
+                //     FutureBuilder(
+                //         future: productByType[type.id],
+                //         builder: (context, snapshot) {
+                //           if (snapshot.hasError)
+                //             return Text(snapshot.error.toString());
+                //           if (!snapshot.hasData) {
+                //             return const CircularProgressIndicator.adaptive();
+                //           }
+                //           final products = snapshot.data!;
+                //           return Column(
+                //             children: [
+                //               SingleChildScrollView(
+                //                 scrollDirection: Axis.horizontal,
+                //                 child: Row(
+                //                     children: products
+                //                         .map((e) => Padding(
+                //                               padding: const EdgeInsets.only(
+                //                                   right: 8.0),
+                //                               child: ProductCard(
+                //                                 product: e,
+                //                               ),
+                //                             ))
+                //                         .toList()),
+                //               ),
+                //             ],
+                //           );
+                //         })
+                //     // : const SizedBox.shrink(),
+                //   ]);
+                // }),
 
                 const Text("Discovery",
                     style:

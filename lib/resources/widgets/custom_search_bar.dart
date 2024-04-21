@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class CustomSearchBar extends StatefulWidget {
-  const CustomSearchBar({super.key, this.onFocus});
+  const CustomSearchBar({super.key, this.onFocus, this.onChange});
   final Function? onFocus;
+  final void Function(String)? onChange;
   @override
   _CustomSearchBarState createState() => _CustomSearchBarState();
 }
@@ -24,13 +25,14 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20),
             color: const Color(0xfff3f4f6)),
-        child: const Row(
+        child: Row(
           children: [
-            Icon(Icons.search),
+            const Icon(Icons.search),
             Expanded(
                 child: TextField(
-              decoration:
-                  InputDecoration.collapsed(hintText: "Search anything here"),
+              onChanged: widget.onChange,
+              decoration: const InputDecoration.collapsed(
+                  hintText: "Search anything here"),
             ))
           ],
         ),
