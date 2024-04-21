@@ -74,7 +74,6 @@ class _LoginPageState extends State<LoginPage> implements LoginPageContract {
                       controller: _emailController,
                       focusNode: _emailFocusNode,
                       decoration: const InputDecoration(
-                        border: InputBorder.none,
                         fillColor: Colors.transparent,
                         suffixIcon: Icon(Icons.check_circle_rounded),
                         suffixIconColor: Colors.black,
@@ -96,7 +95,6 @@ class _LoginPageState extends State<LoginPage> implements LoginPageContract {
                       focusNode: _passwordFocusNode,
                       obscureText: _isObscured,
                       decoration: InputDecoration(
-                        border: InputBorder.none,
                         fillColor: Colors.transparent,
                         suffix: InkWell(
                           onTap: () =>

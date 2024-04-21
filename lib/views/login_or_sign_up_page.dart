@@ -36,7 +36,7 @@ class LoginOrSignUpPage extends StatelessWidget {
               Positioned(
                 left: 0,
                 right: 0,
-                bottom: 0.v,
+                bottom: 10,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
@@ -44,8 +44,7 @@ class LoginOrSignUpPage extends StatelessWidget {
                         text: AppLocalizations.of(context)!.login,
                         margin: EdgeInsets.symmetric(vertical: 8.v),
                         buttonStyle: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white
-                        ),
+                            backgroundColor: Colors.white),
                         buttonTextStyle: const TextStyle(color: Colors.black),
                         onPressed: () {
                           Navigator.of(context).pushNamed(LoginPage.name);

@@ -26,6 +26,5 @@ class MyRoutes {
         LandingPage.name: (_) => const LandingPage(),
         HomePage.name: (_) => const HomePage(),
         HomePageAdmin.name: (_) => const HomePageAdmin(),
-        ItemDetailPage.name: (_) => const ItemDetailPage(id: "1")
       };
 }

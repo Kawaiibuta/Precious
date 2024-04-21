@@ -90,11 +90,7 @@ class CartPage extends StatefulWidget {
 }
 
 class _CartPageState extends State<CartPage> {
-  var selected = List<List<bool>>.generate(
-      cartList.length,
-      (index) => List.generate(
-          (cartList[index]['items'] as List).length, (index) => false));
-  var selectedQuantity = 0;
+  var selectedQuantity = 1;
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -121,14 +117,7 @@ class _CartPageState extends State<CartPage> {
                   ),
                   IconButton(
                       onPressed: () {
-                        setState(() {
-                          selected = List<List<bool>>.generate(
-                              cartList.length,
-                              (index) => List.generate(
-                                  (cartList[index]['items'] as List).length,
-                                  (index) => false));
-                          selectedQuantity = 0;
-                        });
+                        setState(() {});
                       },
                       icon: Icon(Icons.deselect))
                 ],
@@ -144,16 +133,9 @@ class _CartPageState extends State<CartPage> {
                             children: [
                               Text(value["date"].toString()),
                               TextButton(
-                                  onPressed: () {
-                                    setState(() {
-                                      selectedQuantity += selected[key0].length;
-                                      selected[key0] = List<bool>.generate(
-                                          selected[key0].length,
-                                          (index) => true);
-                                    });
-                                  },
+                                  onPressed: () {},
                                   child: const Text(
-                                    "select all",
+                                    "Delete all",
                                     style: TextStyle(fontSize: 10),
                                   ))
                             ],
@@ -171,18 +153,7 @@ class _CartPageState extends State<CartPage> {
                                             AssetImage(item['image']),
                                         name: item['name'],
                                         quantity: item['quantity'] as double,
-                                        selected: selected[key0][key1],
-                                        onTap: () {
-                                          setState(() {
-                                            if (selected[key0][key1]) {
-                                              selectedQuantity -= 1;
-                                            } else {
-                                              selectedQuantity += 1;
-                                            }
-                                            selected[key0][key1] =
-                                                !selected[key0][key1];
-                                          });
-                                        },
+                                        onTap: () {},
                                         maxQuantity: 10.0,
                                       ),
                                     )),
