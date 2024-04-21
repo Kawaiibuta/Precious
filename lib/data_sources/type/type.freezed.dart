@@ -22,7 +22,7 @@ Type _$TypeFromJson(Map<String, dynamic> json) {
 mixin _$Type {
   int? get id => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   List<Product> get products => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -36,7 +36,10 @@ abstract class $TypeCopyWith<$Res> {
       _$TypeCopyWithImpl<$Res, Type>;
   @useResult
   $Res call(
-      {int? id, String name, @JsonKey(ignore: true) List<Product> products});
+      {int? id,
+      String name,
+      @JsonKey(includeFromJson: false, includeToJson: false)
+      List<Product> products});
 }
 
 /// @nodoc
@@ -81,7 +84,10 @@ abstract class _$$TypeImplCopyWith<$Res> implements $TypeCopyWith<$Res> {
   @override
   @useResult
   $Res call(
-      {int? id, String name, @JsonKey(ignore: true) List<Product> products});
+      {int? id,
+      String name,
+      @JsonKey(includeFromJson: false, includeToJson: false)
+      List<Product> products});
 }
 
 /// @nodoc
@@ -121,7 +127,8 @@ class _$TypeImpl with DiagnosticableTreeMixin implements _Type {
   _$TypeImpl(
       {this.id = null,
       this.name = "",
-      @JsonKey(ignore: true) final List<Product> products = const []})
+      @JsonKey(includeFromJson: false, includeToJson: false)
+      final List<Product> products = const []})
       : _products = products;
 
   factory _$TypeImpl.fromJson(Map<String, dynamic> json) =>
@@ -135,7 +142,7 @@ class _$TypeImpl with DiagnosticableTreeMixin implements _Type {
   final String name;
   final List<Product> _products;
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   List<Product> get products {
     if (_products is EqualUnmodifiableListView) return _products;
     // ignore: implicit_dynamic_type
@@ -190,7 +197,8 @@ abstract class _Type implements Type {
   factory _Type(
       {final int? id,
       final String name,
-      @JsonKey(ignore: true) final List<Product> products}) = _$TypeImpl;
+      @JsonKey(includeFromJson: false, includeToJson: false)
+      final List<Product> products}) = _$TypeImpl;
 
   factory _Type.fromJson(Map<String, dynamic> json) = _$TypeImpl.fromJson;
 
@@ -199,7 +207,7 @@ abstract class _Type implements Type {
   @override
   String get name;
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   List<Product> get products;
   @override
   @JsonKey(ignore: true)

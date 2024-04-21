@@ -23,7 +23,7 @@ class TypeRepository {
     return result;
   }
 
-  static Future<bool> addType(Type type) async {
+  static Future<bool> add(Type type) async {
     var data = FormData.fromMap(type.toJson());
     final result = await dio
         .request(

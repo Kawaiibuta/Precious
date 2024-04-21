@@ -21,45 +21,6 @@ class LandingPage extends StatefulWidget {
   _LandingPageState createState() => _LandingPageState();
 }
 
-const newArriveProductList = [
-  {
-    "name": "the Marc Jacob",
-    "type": "Traveler tots",
-    "price": 128.00,
-    'url': 'assets/images/sale.jpg'
-  },
-  {
-    "name": "Axel Arigato",
-    "type": "Clean 90 Triple Sneakers",
-    "price": 245.00,
-    'url': 'assets/images/sale.jpg'
-  },
-  {
-    "name": "the Marc Jacob",
-    "type": "Traveler tots",
-    "price": 128.00,
-    'url': 'assets/images/sale.jpg'
-  },
-  {
-    "name": "Axel Arigato",
-    "type": "Clean 90 Triple Sneakers",
-    "price": 245.00,
-    'url': 'assets/images/sale.jpg'
-  },
-  {
-    "name": "the Marc Jacob",
-    "type": "Traveler tots",
-    "price": 128.00,
-    'url': 'assets/images/sale.jpg'
-  },
-  {
-    "name": "Axel Arigato",
-    "type": "Clean 90 Triple Sneakers",
-    "price": 245.00,
-    'url': 'assets/images/sale.jpg'
-  },
-];
-
 class _LandingPageState extends State<LandingPage> {
   int categoriesSelected = 0;
   late Future<List<Product>> productListFuture;
@@ -76,7 +37,9 @@ class _LandingPageState extends State<LandingPage> {
     super.initState();
     productListFuture = productPresenter.getAll();
     categoryListFuture = categoryPresenter.getAll();
-    typeListFuture = typePresenter.getAll();
+    typeListFuture = typePresenter
+        .getAll()
+        .then((value) => typePresenter.getProductByType(value));
     WidgetsBinding.instance.addPostFrameCallback((duration) {
       // Setup the listener.
       _controller.addListener(() {

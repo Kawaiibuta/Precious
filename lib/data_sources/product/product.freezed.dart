@@ -26,6 +26,7 @@ mixin _$Product {
   String get short_description => throw _privateConstructorUsedError;
   String get description => throw _privateConstructorUsedError;
   List<String> get img_paths_url => throw _privateConstructorUsedError;
+  List<Variant>? get variants => throw _privateConstructorUsedError;
   double get rating => throw _privateConstructorUsedError;
   double get price => throw _privateConstructorUsedError;
 
@@ -46,6 +47,7 @@ abstract class $ProductCopyWith<$Res> {
       String short_description,
       String description,
       List<String> img_paths_url,
+      List<Variant>? variants,
       double rating,
       double price});
 }
@@ -69,6 +71,7 @@ class _$ProductCopyWithImpl<$Res, $Val extends Product>
     Object? short_description = null,
     Object? description = null,
     Object? img_paths_url = null,
+    Object? variants = freezed,
     Object? rating = null,
     Object? price = null,
   }) {
@@ -97,6 +100,10 @@ class _$ProductCopyWithImpl<$Res, $Val extends Product>
           ? _value.img_paths_url
           : img_paths_url // ignore: cast_nullable_to_non_nullable
               as List<String>,
+      variants: freezed == variants
+          ? _value.variants
+          : variants // ignore: cast_nullable_to_non_nullable
+              as List<Variant>?,
       rating: null == rating
           ? _value.rating
           : rating // ignore: cast_nullable_to_non_nullable
@@ -123,6 +130,7 @@ abstract class _$$ProductImplCopyWith<$Res> implements $ProductCopyWith<$Res> {
       String short_description,
       String description,
       List<String> img_paths_url,
+      List<Variant>? variants,
       double rating,
       double price});
 }
@@ -144,6 +152,7 @@ class __$$ProductImplCopyWithImpl<$Res>
     Object? short_description = null,
     Object? description = null,
     Object? img_paths_url = null,
+    Object? variants = freezed,
     Object? rating = null,
     Object? price = null,
   }) {
@@ -172,6 +181,10 @@ class __$$ProductImplCopyWithImpl<$Res>
           ? _value._img_paths_url
           : img_paths_url // ignore: cast_nullable_to_non_nullable
               as List<String>,
+      variants: freezed == variants
+          ? _value._variants
+          : variants // ignore: cast_nullable_to_non_nullable
+              as List<Variant>?,
       rating: null == rating
           ? _value.rating
           : rating // ignore: cast_nullable_to_non_nullable
@@ -194,9 +207,11 @@ class _$ProductImpl with DiagnosticableTreeMixin implements _Product {
       this.short_description = "",
       this.description = "",
       final List<String> img_paths_url = const <String>[],
+      final List<Variant>? variants = null,
       this.rating = 0.0,
       this.price = 0.0})
-      : _img_paths_url = img_paths_url;
+      : _img_paths_url = img_paths_url,
+        _variants = variants;
 
   factory _$ProductImpl.fromJson(Map<String, dynamic> json) =>
       _$$ProductImplFromJson(json);
@@ -225,6 +240,17 @@ class _$ProductImpl with DiagnosticableTreeMixin implements _Product {
     return EqualUnmodifiableListView(_img_paths_url);
   }
 
+  final List<Variant>? _variants;
+  @override
+  @JsonKey()
+  List<Variant>? get variants {
+    final value = _variants;
+    if (value == null) return null;
+    if (_variants is EqualUnmodifiableListView) return _variants;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
   @override
   @JsonKey()
   final double rating;
@@ -234,7 +260,7 @@ class _$ProductImpl with DiagnosticableTreeMixin implements _Product {
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'Product(id: $id, name: $name, category_id: $category_id, short_description: $short_description, description: $description, img_paths_url: $img_paths_url, rating: $rating, price: $price)';
+    return 'Product(id: $id, name: $name, category_id: $category_id, short_description: $short_description, description: $description, img_paths_url: $img_paths_url, variants: $variants, rating: $rating, price: $price)';
   }
 
   @override
@@ -248,6 +274,7 @@ class _$ProductImpl with DiagnosticableTreeMixin implements _Product {
       ..add(DiagnosticsProperty('short_description', short_description))
       ..add(DiagnosticsProperty('description', description))
       ..add(DiagnosticsProperty('img_paths_url', img_paths_url))
+      ..add(DiagnosticsProperty('variants', variants))
       ..add(DiagnosticsProperty('rating', rating))
       ..add(DiagnosticsProperty('price', price));
   }
@@ -267,6 +294,7 @@ class _$ProductImpl with DiagnosticableTreeMixin implements _Product {
                 other.description == description) &&
             const DeepCollectionEquality()
                 .equals(other._img_paths_url, _img_paths_url) &&
+            const DeepCollectionEquality().equals(other._variants, _variants) &&
             (identical(other.rating, rating) || other.rating == rating) &&
             (identical(other.price, price) || other.price == price));
   }
@@ -281,6 +309,7 @@ class _$ProductImpl with DiagnosticableTreeMixin implements _Product {
       short_description,
       description,
       const DeepCollectionEquality().hash(_img_paths_url),
+      const DeepCollectionEquality().hash(_variants),
       rating,
       price);
 
@@ -306,6 +335,7 @@ abstract class _Product implements Product {
       final String short_description,
       final String description,
       final List<String> img_paths_url,
+      final List<Variant>? variants,
       final double rating,
       final double price}) = _$ProductImpl;
 
@@ -323,6 +353,8 @@ abstract class _Product implements Product {
   String get description;
   @override
   List<String> get img_paths_url;
+  @override
+  List<Variant>? get variants;
   @override
   double get rating;
   @override

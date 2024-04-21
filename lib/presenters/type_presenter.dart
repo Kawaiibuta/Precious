@@ -3,12 +3,14 @@ import 'package:precious/data_sources/product/product.dart';
 import 'package:precious/data_sources/product_repository.dart';
 import 'package:precious/data_sources/type/type.dart';
 import 'package:precious/data_sources/type_repository.dart';
+import 'package:precious/presenters/base_presenter.dart';
 
-class TypePresenter {
+class TypePresenter implements BasePresenter {
   static Map<int, Type> typeList = {};
   static const quantityForEach = 5;
 
-  Future<List<Type>> getAll({bool more = false}) async {
+  @override
+  Future<List<Type>> getAll({int type = -1, bool more = false}) async {
     if (typeList.values.isNotEmpty && more == false) {
       return typeList.values.toList();
     }
@@ -26,6 +28,12 @@ class TypePresenter {
     return result;
   }
 
+  @override
+  Future<Type?> getOne(int type) async {
+    if (typeList.containsKey(type)) return typeList[type];
+    return null;
+  }
+
   Future<List<Product>> getProductByType(int type, {bool more = false}) async {
     if (typeList.keys.isEmpty) getAll();
     if (typeList.containsKey(type)) {
@@ -38,5 +46,24 @@ class TypePresenter {
       return typeList[type]!.products;
     }
     return <Product>[];
+  }
+
+  @override
+  Future<bool> add({item}) async {
+    if (item is Type) {
+      return await TypeRepository.add(item)
+          .then((value) => true)
+          .catchError((e) {
+        debugPrint(e.toString());
+        return false;
+      });
+    }
+    return false;
+  }
+
+  @override
+  Future<bool> delete(List<int> items) {
+    // TODO: implement delete
+    throw UnimplementedError();
   }
 }

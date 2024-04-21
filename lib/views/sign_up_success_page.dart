@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:precious/resources/app_export.dart';
 import 'package:precious/resources/widgets/custom_elevated_button.dart';
+import 'package:precious/views/admin/home_page_admin.dart';
 import 'package:precious/views/home_page.dart';
 
 class SignUpSuccessPage extends StatefulWidget {
@@ -51,6 +52,6 @@ class _SignUpSuccessPageState extends State<SignUpSuccessPage> {
   }
 
   void _goToMainPage() {
-    Navigator.of(context).pushReplacementNamed(HomePage.name);
+    Navigator.of(context).pushReplacementNamed(HomePageAdmin.name);
   }
 }

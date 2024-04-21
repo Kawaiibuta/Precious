@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:precious/data_sources/variant/variant.dart';
 
 part 'product.g.dart';
 part 'product.freezed.dart';
@@ -13,6 +14,7 @@ class Product with _$Product {
     @Default("") String short_description,
     @Default("") String description,
     @Default(<String>[]) List<String> img_paths_url,
+    @Default(null) List<Variant>? variants,
     @Default(0.0) double rating,
     @Default(0.0) double price,
   }) = _Product;

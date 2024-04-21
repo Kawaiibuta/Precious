@@ -1,6 +1,6 @@
 class EndPoint {
   static const baseUrl = "https://api-precious-com.onrender.com/";
-  static const product = "${baseUrl}api/product";
+  static const product = "${baseUrl}api/product/";
   static String productWithParam(
           {int start = 1, int quantity = -1, int type = -1}) =>
       "${baseUrl}api/product?start=$start&quantity=$quantity${type != -1 ? "&type=$type" : ""}";

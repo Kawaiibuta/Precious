@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:precious/data_sources/product/product.dart';
@@ -34,23 +32,22 @@ class ProductRepository {
   static Future<Product?> getOne(int id) async {
     final result = await dio
         .request(
-          EndPoint.productDetail(id),
-          options: Options(
-            method: 'GET',
-            headers: headers,
-          ),
-        )
-        .then((value) =>
-            Product.fromJson(JsonDecoder(value.data) as Map<String, dynamic>))
-        .catchError((e) {
-      debugPrint(e.toString());
+      EndPoint.productDetail(id),
+      options: Options(
+        method: 'GET',
+        headers: headers,
+      ),
+    )
+        .then((value) {
+      return Product.fromJson(value.data as Map<String, dynamic>);
+    }).catchError((e) {
+      debugPrint("Error from getOne $e");
       return null;
     });
-    debugPrint(result.toString());
     return result;
   }
 
-  static Future<bool> addProduct(Product product) async {
+  static Future<bool> add(Product product) async {
     var data = FormData.fromMap(product.toJson());
     final result = await dio
         .request(
@@ -69,7 +66,7 @@ class ProductRepository {
     return result;
   }
 
-  static Future<bool> updateProduct(Product product) async {
+  static Future<bool> update(Product product) async {
     if (product.id == null) {
       debugPrint("Product's not existed");
       return false;
@@ -92,7 +89,7 @@ class ProductRepository {
     return result;
   }
 
-  static Future<bool> deleteProduct(int id) async {
+  static Future<bool> delete(int id) async {
     var headers = {'accept': 'application/json'};
     final result = await dio
         .request(

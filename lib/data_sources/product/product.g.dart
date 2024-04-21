@@ -17,6 +17,10 @@ _$ProductImpl _$$ProductImplFromJson(Map<String, dynamic> json) =>
               ?.map((e) => e as String)
               .toList() ??
           const <String>[],
+      variants: (json['variants'] as List<dynamic>?)
+              ?.map((e) => Variant.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          null,
       rating: (json['rating'] as num?)?.toDouble() ?? 0.0,
       price: (json['price'] as num?)?.toDouble() ?? 0.0,
     );
@@ -29,6 +33,7 @@ Map<String, dynamic> _$$ProductImplToJson(_$ProductImpl instance) =>
       'short_description': instance.short_description,
       'description': instance.description,
       'img_paths_url': instance.img_paths_url,
+      'variants': instance.variants,
       'rating': instance.rating,
       'price': instance.price,
     };
