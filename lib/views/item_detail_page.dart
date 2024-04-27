@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:customizable_counter/customizable_counter.dart';
 import 'package:easy_image_viewer/easy_image_viewer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -11,6 +12,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:precious/data_sources/product/product.dart';
+import 'package:precious/data_sources/variant/variant.dart';
 import 'package:precious/presenters/product_presenter.dart';
 import 'package:precious/resources/utils/string_utils.dart';
 import 'package:precious/resources/widgets/custom_search_bar.dart';
@@ -37,14 +39,15 @@ class ItemDetailPage extends StatefulWidget {
 class _ItemDetailPageState extends State<ItemDetailPage> {
   var selectedSize = -1;
   var favoriteed = false;
-  var quantity = 0;
+  var quantity = 1.0;
+  var variantSelected = 0;
   late Future<Product?> productFuture;
   final productPresenter = ProductPresenter();
   var open = false;
   @override
   void initState() {
     super.initState();
-    productFuture = productPresenter.getOne(widget.id).then((e) {
+    productFuture = productPresenter.getOne(widget.id, detail: true).then((e) {
       __handleUp(e);
       return e;
     });
@@ -371,6 +374,9 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
                                     Expanded(
                                         flex: 2,
                                         child: InkWell(
+                                          onTap: () {
+                                            _showAddToCartModel();
+                                          },
                                           child: Container(
                                             height: double.infinity,
                                             decoration: BoxDecoration(
@@ -395,5 +401,199 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
                 );
               },
             ));
+  }
+
+  void _showAddToCartModel() async {
+    final product = await productFuture;
+    debugPrint(product.toString());
+    showCupertinoModalPopup(
+      context: context,
+      builder: (context) => StatefulBuilder(builder: (context, setState) {
+        return AlertDialog(
+            backgroundColor: Colors.white,
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 300,
+                  height: 300,
+                  clipBehavior: Clip.antiAlias,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: CarouselSlider(
+                    items: [
+                      ...(product!.variants!.isNotEmpty
+                              ? product.variants![variantSelected].img_paths_url
+                              : product.img_paths_url)
+                          .map((e) => CachedNetworkImage(
+                                imageUrl: e,
+                                fit: BoxFit.cover,
+                              ))
+                    ],
+                    options:
+                        CarouselOptions(viewportFraction: 1, aspectRatio: 1),
+                  ),
+                ),
+                Container(
+                  width: double.infinity,
+                  clipBehavior: Clip.antiAlias,
+                  decoration: const BoxDecoration(),
+                  child: SingleChildScrollView(
+                    child: Row(
+                      children: [
+                        ...(product.variants ?? <Variant>[])
+                            .asMap()
+                            .map((key, value) => MapEntry(
+                                key,
+                                InkWell(
+                                  onTap: () {
+                                    _handleChangeVariant(key);
+                                  },
+                                  child: Container(
+                                    height: 40,
+                                    width: 40,
+                                    margin: const EdgeInsets.only(right: 3.0),
+                                    decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        border: Border.all(
+                                            width: 2,
+                                            color:
+                                                Colors.black.withOpacity(0.4)),
+                                        color: variantSelected == key
+                                            ? Colors.black
+                                            : Colors.white70),
+                                    child: Center(
+                                        child: Text(
+                                      key.toString(),
+                                      style: TextStyle(
+                                          color: (variantSelected == key
+                                              ? Colors.white
+                                              : null),
+                                          fontWeight: FontWeight.w700),
+                                    )),
+                                  ),
+                                )))
+                            .values
+                      ],
+                    ),
+                  ),
+                ),
+                Container(
+                    height: 50,
+                    margin: const EdgeInsets.only(
+                        left: 10.0, right: 10.0, top: 5.0),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: Colors.white),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Expanded(
+                          flex: 2,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Text("Total price"),
+                              Text(
+                                ((product.variants!.isNotEmpty
+                                                ? product
+                                                    .variants![variantSelected]
+                                                    .price
+                                                : product.price) *
+                                            quantity) >
+                                        10 ^ 6
+                                    ? "${(((product.variants!.isNotEmpty ? product.variants![variantSelected].price : product.price) * quantity) ~/ pow(10, 6))}Tr"
+                                    : "${(((product.variants!.isNotEmpty ? product.variants![variantSelected].price : product.price) * quantity) ~/ pow(10, 3))}K",
+                                style: GoogleFonts.openSans(
+                                    fontSize: 18,
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Expanded(
+                            flex: 2,
+                            child: InkWell(
+                              onTap: () {},
+                              child: Container(
+                                height: double.infinity,
+                                width: 100,
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(100),
+                                    color: Colors.black),
+                                child: Center(
+                                  child: CustomizableCounter(
+                                    borderWidth: 0,
+                                    borderRadius: 100,
+                                    backgroundColor: Colors.black,
+                                    textColor: Colors.white,
+                                    textSize: 20,
+                                    count: quantity,
+                                    step: 1,
+                                    minCount: 0,
+                                    maxCount: 10,
+                                    incrementIcon: const Icon(
+                                      Icons.add,
+                                      color: Colors.white,
+                                    ),
+                                    decrementIcon: const Icon(
+                                      Icons.remove,
+                                      color: Colors.white,
+                                    ),
+                                    onCountChange: (count) {
+                                      // _handleCountChange(count);
+                                      setState(() {
+                                        quantity = count;
+                                      });
+                                    },
+                                    onIncrement: (count) {},
+                                    onDecrement: (count) {},
+                                  ),
+                                ),
+                              ),
+                            ))
+                      ],
+                    )),
+                Center(
+                  child: Container(
+                      margin:
+                          const EdgeInsets.only(left: 20.0, right: 20, top: 10),
+                      decoration: BoxDecoration(
+                          color: Colors.black,
+                          borderRadius: BorderRadius.circular(10)),
+                      child: TextButton(
+                          onPressed: () => _handleAddToCart(
+                              product, variantSelected, quantity),
+                          child: Text(
+                            "Add to cart",
+                            style: GoogleFonts.openSans(
+                                fontSize: 20,
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold),
+                          ))),
+                )
+              ],
+            ));
+      }),
+    );
+  }
+
+  void _handleChangeVariant(int key) {
+    setState(() {
+      variantSelected = key;
+    });
+  }
+
+  void _handleCountChange(double count) {
+    setState(() {
+      quantity = count;
+    });
+  }
+
+  _handleAddToCart(Product product, int variantSelected, double quantity) {
+    //TODO: Implement add to cart
   }
 }

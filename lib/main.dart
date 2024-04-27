@@ -40,8 +40,9 @@ class MyApp extends StatelessWidget {
       supportedLocales: const [
         Locale('en'),
       ],
-      initialRoute:
-          _settingPresenter.firstRun ? HomePage.name : LoginOrSignUpPage.name,
+      initialRoute: _settingPresenter.firstRun
+          ? LoginOrSignUpPage.name
+          : LoginOrSignUpPage.name,
       routes: MyRoutes(_settingPresenter).routes,
     );
   }
