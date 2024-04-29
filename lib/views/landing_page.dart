@@ -37,9 +37,8 @@ class _LandingPageState extends State<LandingPage> {
     super.initState();
     productListFuture = productPresenter.getAll();
     categoryListFuture = categoryPresenter.getAll();
-    typeListFuture = typePresenter
-        .getAll()
-        .then((value) => typePresenter.getProductByType(value));
+    typeListFuture = typePresenter.getAll();
+    // .then((value) => typePresenter.getProductByType(value));
     WidgetsBinding.instance.addPostFrameCallback((duration) {
       // Setup the listener.
       _controller.addListener(() {
@@ -66,198 +65,203 @@ class _LandingPageState extends State<LandingPage> {
             );
           }
           final productList = snapshot.data!;
-          return SingleChildScrollView(
-            controller: _controller,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const SizedBox(
-                  height: 10,
-                ),
-                Row(
-                  children: [
-                    Text(
-                      'Welcome,',
-                      style: GoogleFonts.openSans(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 40,
-                      ),
-                    )
-                  ],
-                ),
-                Row(
-                  children: [
-                    Text(
-                      "Enjoy your shopping",
-                      style: GoogleFonts.openSans(
-                          fontSize: 15, color: Colors.grey),
-                    )
-                  ],
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                CustomSearchBar(
-                  onFocus: () {
-                    debugPrint(widget.changePage.toString());
-                    if (widget.changePage != null) widget.changePage!(1);
-                  },
-                ),
-                const SizedBox(
-                  height: 10.0,
-                ),
-                // Sale banner row
-                const SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
+          return Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: SingleChildScrollView(
+              controller: _controller,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Row(
                     children: [
-                      Padding(
-                        padding: EdgeInsets.only(right: 10.0),
-                        child: SaleBanner(
-                          title: "50% Sale",
-                          color: Colors.white,
-                          image: AssetImage('assets/images/sale.png'),
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(right: 10.0),
-                        child: SaleBanner(
-                          title: "50% Sale",
-                          color: Colors.white,
-                          image: AssetImage('assets/images/sale.png'),
+                      Text(
+                        'Welcome,',
+                        style: GoogleFonts.openSans(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 40,
                         ),
                       )
                     ],
                   ),
-                ),
-                FutureBuilder(
-                    future: categoryListFuture,
-                    builder: (context, snapshot) {
-                      if (!snapshot.hasData || snapshot.data == null) {
-                        debugPrint(snapshot.hasError.toString());
-                        return const SizedBox.shrink();
-                      }
-                      var categoryList = snapshot.data!;
-                      return Padding(
-                        padding: const EdgeInsets.only(top: 8.0),
-                        child: SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: categoryList
-                                  .asMap()
-                                  .map((i, e) => MapEntry(
-                                        i,
-                                        Padding(
-                                          padding:
-                                              const EdgeInsets.only(right: 8.0),
-                                          child: CategoryButton(
-                                            title: e.name,
-                                            selected: (i == categoriesSelected),
-                                            onClick: () => setState(() {
-                                              categoriesSelected = i;
-                                            }),
-                                          ),
-                                        ),
-                                      ))
-                                  .values
-                                  .toList()),
+                  Row(
+                    children: [
+                      Text(
+                        "Enjoy your shopping",
+                        style: GoogleFonts.openSans(
+                            fontSize: 15, color: Colors.grey),
+                      )
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  CustomSearchBar(
+                    onFocus: () {
+                      debugPrint(widget.changePage.toString());
+                      if (widget.changePage != null) widget.changePage!(1);
+                    },
+                  ),
+                  const SizedBox(
+                    height: 10.0,
+                  ),
+                  // Sale banner row
+                  const SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.only(right: 10.0),
+                          child: SaleBanner(
+                            title: "50% Sale",
+                            color: Colors.white,
+                            image: AssetImage('assets/images/sale.png'),
+                          ),
                         ),
-                      );
-                    }),
-                FutureBuilder(
-                  future: typeListFuture,
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting ||
-                        !snapshot.hasData) {
-                      return const Center(child: CircularProgressIndicator());
-                    }
-                    if (snapshot.data == null) return const Text("Error");
-                    final typeList = snapshot.data!;
-                    debugPrint(typeList.toString());
-                    List<Widget> widgetList = [];
-                    typeList.map((type) {
-                      return [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              type.name,
-                              style: const TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 17),
-                            ),
-                            TextButton(
-                                onPressed: () {},
-                                child: const Text(
-                                  "View all",
-                                  style: TextStyle(fontSize: 10.0),
-                                ))
-                          ],
-                        ),
-                        FutureBuilder(
-                          future: typePresenter.getProductByType(type.id!),
-                          builder: (context, typeSnapshot) {
-                            if (typeSnapshot.connectionState ==
-                                    ConnectionState.waiting ||
-                                !typeSnapshot.hasData) {
-                              return const Center(
-                                child: CircularProgressIndicator(),
-                              );
-                            }
-                            final productTypeList = typeSnapshot.data!;
-                            debugPrint(productTypeList.toString());
-                            return Column(
-                              children: [
-                                SingleChildScrollView(
-                                  scrollDirection: Axis.horizontal,
-                                  child: Row(
-                                      children: productTypeList
-                                          .map((e) => Padding(
-                                                padding: const EdgeInsets.only(
-                                                    right: 8.0),
-                                                child: ProductCard(
-                                                  product: e,
-                                                ),
-                                              ))
-                                          .toList()),
-                                ),
-                              ],
-                            );
-                          },
+                        Padding(
+                          padding: EdgeInsets.only(right: 10.0),
+                          child: SaleBanner(
+                            title: "50% Sale",
+                            color: Colors.white,
+                            image: AssetImage('assets/images/sale.png'),
+                          ),
                         )
-                      ];
-                    });
-                    return Row(
-                      children: [Column(children: widgetList)],
-                    );
-                  },
-                ),
-
-                const Text("Discovery",
-                    style:
-                        TextStyle(fontWeight: FontWeight.bold, fontSize: 23)),
-                GridView.count(
-                  primary: false,
-                  physics: const NeverScrollableScrollPhysics(),
-                  crossAxisSpacing: 5,
-                  mainAxisSpacing: 100,
-                  shrinkWrap: true,
-                  crossAxisCount: 2,
-                  children: <Widget>[
-                    ...productList
-                        .map((e) => Padding(
-                              padding: const EdgeInsets.only(right: 8.0),
-                              child: ProductCard(
-                                product: e,
+                      ],
+                    ),
+                  ),
+                  FutureBuilder(
+                      future: categoryListFuture,
+                      builder: (context, snapshot) {
+                        if (!snapshot.hasData || snapshot.data == null) {
+                          debugPrint(snapshot.hasError.toString());
+                          return const SizedBox.shrink();
+                        }
+                        var categoryList = snapshot.data!;
+                        return Padding(
+                          padding: const EdgeInsets.only(top: 8.0),
+                          child: SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: categoryList
+                                    .asMap()
+                                    .map((i, e) => MapEntry(
+                                          i,
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                                right: 8.0),
+                                            child: CategoryButton(
+                                              title: e.name,
+                                              selected:
+                                                  (i == categoriesSelected),
+                                              onClick: () => setState(() {
+                                                categoriesSelected = i;
+                                              }),
+                                            ),
+                                          ),
+                                        ))
+                                    .values
+                                    .toList()),
+                          ),
+                        );
+                      }),
+                  FutureBuilder(
+                    future: typeListFuture,
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting ||
+                          !snapshot.hasData) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
+                      if (snapshot.data == null) return const Text("Error");
+                      final typeList = snapshot.data!;
+                      debugPrint(typeList.toString());
+                      List<Widget> widgetList = [];
+                      typeList.map((type) {
+                        return [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                type.name,
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 17),
                               ),
-                            ))
-                        .toList()
-                  ],
-                ),
-                const SizedBox(
-                  height: 100,
-                )
-              ],
+                              TextButton(
+                                  onPressed: () {},
+                                  child: const Text(
+                                    "View all",
+                                    style: TextStyle(fontSize: 10.0),
+                                  ))
+                            ],
+                          ),
+                          FutureBuilder(
+                            future: typePresenter.getProductByType(type.id!),
+                            builder: (context, typeSnapshot) {
+                              if (typeSnapshot.connectionState ==
+                                      ConnectionState.waiting ||
+                                  !typeSnapshot.hasData) {
+                                return const Center(
+                                  child: CircularProgressIndicator(),
+                                );
+                              }
+                              final productTypeList = typeSnapshot.data!;
+                              debugPrint(productTypeList.toString());
+                              return Column(
+                                children: [
+                                  SingleChildScrollView(
+                                    scrollDirection: Axis.horizontal,
+                                    child: Row(
+                                        children: productTypeList
+                                            .map((e) => Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          right: 8.0),
+                                                  child: ProductCard(
+                                                    product: e,
+                                                  ),
+                                                ))
+                                            .toList()),
+                                  ),
+                                ],
+                              );
+                            },
+                          )
+                        ];
+                      });
+                      return Row(
+                        children: [Column(children: widgetList)],
+                      );
+                    },
+                  ),
+
+                  const Text("Discovery",
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 23)),
+                  GridView.count(
+                    primary: false,
+                    physics: const NeverScrollableScrollPhysics(),
+                    crossAxisSpacing: 5,
+                    mainAxisSpacing: 100,
+                    shrinkWrap: true,
+                    crossAxisCount: 2,
+                    children: <Widget>[
+                      ...productList
+                          .map((e) => Padding(
+                                padding: const EdgeInsets.only(right: 8.0),
+                                child: ProductCard(
+                                  product: e,
+                                ),
+                              ))
+                          .toList()
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 100,
+                  )
+                ],
+              ),
             ),
           );
         });

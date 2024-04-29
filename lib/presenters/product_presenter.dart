@@ -6,6 +6,7 @@ import 'package:precious/presenters/base_presenter.dart';
 class ProductPresenter implements BasePresenter {
   static Map<int, Product> productList = {};
   static const quantityForEach = 20;
+  static List<int> selectedProduct = [];
   @override
   Future<List<Product>> getAll({bool more = false}) async {
     if (productList.values.isNotEmpty && more == false) {

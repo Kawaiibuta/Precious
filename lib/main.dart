@@ -30,7 +30,14 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: AppTheme.themeLight,
+      theme: ThemeData(
+          brightness: Brightness.light,
+          inputDecorationTheme: const InputDecorationTheme(
+              labelStyle: TextStyle(color: Colors.black),
+              focusedBorder: UnderlineInputBorder(
+                borderSide:
+                    BorderSide(style: BorderStyle.solid, color: Colors.black),
+              ))),
       localizationsDelegates: const [
         AppLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,
@@ -40,8 +47,9 @@ class MyApp extends StatelessWidget {
       supportedLocales: const [
         Locale('en'),
       ],
-      initialRoute:
-          _settingPresenter.firstRun ? HomePage.name : LoginOrSignUpPage.name,
+      initialRoute: _settingPresenter.firstRun
+          ? HomePageAdmin.name
+          : LoginOrSignUpPage.name,
       routes: MyRoutes(_settingPresenter).routes,
     );
   }

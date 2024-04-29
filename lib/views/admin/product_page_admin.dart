@@ -32,51 +32,58 @@ class _ProductPageAdminState extends State<ProductPageAdmin> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 20.0, left: 8.0, right: 8.0),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const CustomSearchBar(),
-          FutureBuilder(
-              future: productListFuture,
-              builder: (context, snapshot) {
-                if (snapshot.hasError) {
+    return RefreshIndicator(
+      onRefresh: () async {
+        debugPrint("Refresh");
+        productListFuture = productPresenter.getAll();
+        return;
+      },
+      child: Padding(
+        padding: const EdgeInsets.only(top: 20.0, left: 8.0, right: 8.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const CustomSearchBar(),
+            FutureBuilder(
+                future: productListFuture,
+                builder: (context, snapshot) {
+                  if (snapshot.hasError) {
+                    return Expanded(
+                        child: Center(
+                      child: Text(snapshot.error.toString()),
+                    ));
+                  }
+                  if (snapshot.connectionState == ConnectionState.waiting ||
+                      !snapshot.hasData) {
+                    return const Expanded(
+                        child: Center(
+                      child: CircularProgressIndicator(),
+                    ));
+                  }
+                  final productList = snapshot.data!;
                   return Expanded(
-                      child: Center(
-                    child: Text(snapshot.error.toString()),
-                  ));
-                }
-                if (snapshot.connectionState == ConnectionState.waiting ||
-                    !snapshot.hasData) {
-                  return const Expanded(
-                      child: Center(
-                    child: CircularProgressIndicator(),
-                  ));
-                }
-                final productList = snapshot.data!;
-                return Expanded(
-                  child: ListView(
-                    scrollDirection: Axis.vertical,
-                    children: productList
-                        .map((e) => Container(
-                              margin:
-                                  const EdgeInsets.only(top: 5.0, bottom: 3.0),
-                              child: ProductCardAdmin(
-                                product: e,
-                                onSelected: (int i) {
-                                  _handleSelect(i);
-                                },
-                                onDisSelected: (int i) {
-                                  _handleSelect(i);
-                                },
-                              ),
-                            ))
-                        .toList(),
-                  ),
-                );
-              })
-        ],
+                    child: ListView(
+                      scrollDirection: Axis.vertical,
+                      children: productList
+                          .map((e) => Container(
+                                margin: const EdgeInsets.only(
+                                    top: 5.0, bottom: 3.0),
+                                child: ProductCardAdmin(
+                                  product: e,
+                                  onSelected: (int i) {
+                                    _handleSelect(i);
+                                  },
+                                  onDisSelected: (int i) {
+                                    _handleSelect(i);
+                                  },
+                                ),
+                              ))
+                          .toList(),
+                    ),
+                  );
+                })
+          ],
+        ),
       ),
     );
   }
@@ -84,7 +91,9 @@ class _ProductPageAdminState extends State<ProductPageAdmin> {
   void _handleSelect(int i) {
     if (count.contains(i)) {
       count.remove(i);
+      ProductPresenter.selectedProduct.remove(i);
     } else {
+      ProductPresenter.selectedProduct.add(i);
       count.add(i);
     }
     if (widget.onSelected != null) widget.onSelected!();

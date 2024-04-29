@@ -72,7 +72,7 @@ class _ProductCardAdminState extends State<ProductCardAdmin> {
         });
       },
       child: AnimatedContainer(
-        height: detailSelected ? 500 : 100,
+        height: detailSelected ? 520 : 100,
         curve: Curves.easeOut,
         padding: EdgeInsets.all(detailSelected ? 10.0 : 5.0),
         duration: const Duration(milliseconds: 1000),
@@ -125,10 +125,12 @@ class _ProductCardAdminState extends State<ProductCardAdmin> {
                                     ),
                                     Row(
                                       children: [
-                                        Text(
-                                          product!.short_description,
-                                          style: DefaultTextStyle.of(context)
-                                              .style,
+                                        Center(
+                                          child: Text(
+                                            product!.short_description,
+                                            style: DefaultTextStyle.of(context)
+                                                .style,
+                                          ),
                                         ),
                                       ],
                                     ),
@@ -202,51 +204,47 @@ class _ProductCardAdminState extends State<ProductCardAdmin> {
                                     )
                                   ],
                                 ),
-                                SingleChildScrollView(
-                                  child: Row(
-                                    children: [
-                                      ...(product!.variants ?? <Variant>[])
-                                          .asMap()
-                                          .map((key, value) => MapEntry(
-                                              key,
-                                              InkWell(
-                                                onTap: () {
-                                                  _handleChangeVariant(key);
-                                                },
-                                                child: Container(
-                                                  height: 40,
-                                                  width: 40,
-                                                  margin: const EdgeInsets.only(
-                                                      right: 3.0),
-                                                  decoration: BoxDecoration(
-                                                      shape: BoxShape.circle,
-                                                      border: Border.all(
-                                                          width: 2,
-                                                          color: Colors.black
-                                                              .withOpacity(
-                                                                  0.4)),
-                                                      color:
-                                                          variantSelected == key
-                                                              ? Colors.black
-                                                              : Colors.white70),
-                                                  child: Center(
-                                                      child: Text(
-                                                    key.toString(),
-                                                    style: TextStyle(
-                                                        color:
-                                                            (variantSelected ==
-                                                                    key
-                                                                ? Colors.white
-                                                                : null),
-                                                        fontWeight:
-                                                            FontWeight.w700),
-                                                  )),
-                                                ),
-                                              )))
-                                          .values
-                                    ],
-                                  ),
-                                )
+                                Wrap(
+                                  children: [
+                                    ...(product!.variants ?? <Variant>[])
+                                        .asMap()
+                                        .map((key, value) => MapEntry(
+                                            key,
+                                            InkWell(
+                                              onTap: () {
+                                                _handleChangeVariant(key);
+                                              },
+                                              child: Container(
+                                                height: 40,
+                                                width: 40,
+                                                margin: const EdgeInsets.only(
+                                                    right: 3.0, bottom: 3.0),
+                                                decoration: BoxDecoration(
+                                                    shape: BoxShape.circle,
+                                                    border: Border.all(
+                                                        width: 2,
+                                                        color: Colors.black
+                                                            .withOpacity(0.4)),
+                                                    color:
+                                                        variantSelected == key
+                                                            ? Colors.black
+                                                            : Colors.white70),
+                                                child: Center(
+                                                    child: Text(
+                                                  key.toString(),
+                                                  style: TextStyle(
+                                                      color: (variantSelected ==
+                                                              key
+                                                          ? Colors.white
+                                                          : null),
+                                                      fontWeight:
+                                                          FontWeight.w700),
+                                                )),
+                                              ),
+                                            )))
+                                        .values
+                                  ],
+                                ),
                               ],
                             )
                           : const SizedBox.shrink()

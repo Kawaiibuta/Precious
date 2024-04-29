@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:precious/data_sources/product/product.dart';
 import 'package:precious/resources/endpoints.dart';
 import 'package:precious/resources/utils/dio_utils.dart';
@@ -47,8 +48,20 @@ class ProductRepository {
     return result;
   }
 
-  static Future<bool> add(Product product) async {
-    var data = FormData.fromMap(product.toJson());
+  static Future<bool> add(Product product, {List<XFile>? imageList}) async {
+    var map = product.toJson();
+    map.remove("id");
+    map.remove("img_paths_url");
+    map.remove("rating");
+    map.remove("variants");
+    debugPrint(map.toString());
+    var data = FormData.fromMap(map);
+    if (imageList != null) {
+      imageList.forEach((element) async {
+        final byte = MultipartFile.fromBytes(await element.readAsBytes());
+        data.files.addAll({"img": byte}.entries);
+      });
+    }
     final result = await dio
         .request(
           EndPoint.product,

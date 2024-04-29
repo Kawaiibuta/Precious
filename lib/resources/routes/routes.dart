@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:precious/presenters/setting_presenter.dart';
 import 'package:precious/views/admin/home_page_admin.dart';
+import 'package:precious/views/admin/inventory_form.dart';
 import 'package:precious/views/home_page.dart';
 import 'package:precious/views/item_detail_page.dart';
 import 'package:precious/views/landing_page.dart';
@@ -25,6 +26,7 @@ class MyRoutes {
         SignUpSuccessPage.name: (_) => const SignUpSuccessPage(),
         LandingPage.name: (_) => const LandingPage(),
         HomePage.name: (_) => const HomePage(),
+        InventoryForm.name: (_) => const InventoryForm(),
         HomePageAdmin.name: (_) => const HomePageAdmin(),
       };
 }
