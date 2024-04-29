@@ -175,6 +175,8 @@ class _HomePageAdminState extends State<HomePageAdmin> {
       showDialog(
           context: context,
           builder: (context) => AlertDialog(
+                backgroundColor: Colors.white,
+                surfaceTintColor: Colors.white,
                 content: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [

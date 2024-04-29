@@ -48,7 +48,7 @@ class ProductRepository {
     return result;
   }
 
-  static Future<bool> add(Product product, {List<XFile>? imageList}) async {
+  static Future<Product?> add(Product product, {List<XFile>? imageList}) async {
     var map = product.toJson();
     map.remove("id");
     map.remove("img_paths_url");
@@ -71,10 +71,10 @@ class ProductRepository {
           ),
           data: data,
         )
-        .then((value) => true)
+        .then((value) => Product.fromJson(value.data))
         .catchError((e) {
       debugPrint(e.toString());
-      return false;
+      return null;
     });
     return result;
   }

@@ -25,7 +25,7 @@ class _ProductCardState extends State<ProductCard> {
               builder: (context) => ItemDetailPage(id: widget.product.id!),
             ));
           },
-          child: Container(
+          child: SizedBox(
             width: 165,
             child: Column(
               children: [
@@ -41,7 +41,7 @@ class _ProductCardState extends State<ProductCard> {
                                       widget.product.img_paths_url[0])
                                   : AssetImage(widget.product.img_paths_url[0]))
                               as ImageProvider,
-                          fit: BoxFit.fitHeight)),
+                          fit: BoxFit.cover)),
                 ),
                 Text(
                   widget.product.name,

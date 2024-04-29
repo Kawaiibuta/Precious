@@ -5,7 +5,7 @@ import 'package:precious/data_sources/type/type.dart';
 import 'package:precious/data_sources/type_repository.dart';
 import 'package:precious/presenters/base_presenter.dart';
 
-class TypePresenter implements BasePresenter {
+class TypePresenter {
   static Map<int, Type> typeList = {};
   static const quantityForEach = 5;
 
@@ -36,12 +36,16 @@ class TypePresenter implements BasePresenter {
 
   Future<List<Product>> getProductByType(int type, {bool more = false}) async {
     if (typeList.keys.isEmpty) getAll();
+    debugPrint(typeList.toString());
+    debugPrint(typeList.containsKey(type).toString());
     if (typeList.containsKey(type)) {
       if (typeList[type]!.products.isEmpty || more) {
-        typeList[type]!.products.addAll(await ProductRepository.getAll(
-            start: typeList[type]!.products.length,
+        final product = await ProductRepository.getAll(
+            start: typeList[type]!.products.length + 1,
             quantity: quantityForEach,
-            type: type));
+            type: type);
+        typeList[type]!.products.addAll(product);
+        return product;
       }
       return typeList[type]!.products;
     }

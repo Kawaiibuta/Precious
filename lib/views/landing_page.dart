@@ -24,11 +24,12 @@ class LandingPage extends StatefulWidget {
 class _LandingPageState extends State<LandingPage> {
   int categoriesSelected = 0;
   late Future<List<Product>> productListFuture;
-  late Future<List<Type>> typeListFuture;
+  List<Type> typeList = [];
   late Future<List<ProductCategory>> categoryListFuture;
-
+  Map<int, Future<List<Product>>> productByType = {};
   ProductPresenter productPresenter = ProductPresenter();
   TypePresenter typePresenter = TypePresenter();
+  late Future<List<Type>> typeListFuture;
   ProductCategoryPresenter categoryPresenter = ProductCategoryPresenter();
 
   final _controller = ScrollController();
@@ -49,6 +50,11 @@ class _LandingPageState extends State<LandingPage> {
           }
         }
       });
+      for (var element in typeList) {
+        productByType.addEntries(<int, Future<List<Product>>>{
+          element.id!: typePresenter.getProductByType(element.id!)
+        }.entries);
+      }
     });
   }
 
