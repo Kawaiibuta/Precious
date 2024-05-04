@@ -46,7 +46,7 @@ List<Product> filterProductList(List<Product> productList, String searchString,
 
 class SearchPage extends StatefulWidget {
   const SearchPage({Key? key});
-
+  static const name = "search_page";
   @override
   _SearchPageState createState() => _SearchPageState();
 }
@@ -93,12 +93,15 @@ class _SearchPageState extends State<SearchPage> {
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
-        title: CustomSearchBar(
-          onChange: (value) {
-            setState(() {
-              searchString = value;
-            });
-          },
+        title: Hero(
+          tag: "search_bar",
+          child: CustomSearchBar(
+            onChange: (value) {
+              setState(() {
+                searchString = value;
+              });
+            },
+          ),
         ),
       ),
       endDrawer: Drawer(

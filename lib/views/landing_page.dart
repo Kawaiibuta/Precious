@@ -12,6 +12,7 @@ import 'package:precious/resources/widgets/catagory_button.dart';
 import 'package:precious/resources/widgets/custom_search_bar.dart';
 import 'package:precious/resources/widgets/product_card.dart';
 import 'package:precious/resources/widgets/sale_banner.dart';
+import 'package:precious/views/search_page.dart';
 
 class LandingPage extends StatefulWidget {
   const LandingPage({super.key, this.changePage});
@@ -30,7 +31,6 @@ class _LandingPageState extends State<LandingPage> {
   ProductPresenter productPresenter = ProductPresenter();
   TypePresenter typePresenter = TypePresenter();
   ProductCategoryPresenter categoryPresenter = ProductCategoryPresenter();
-
   final _controller = ScrollController();
   @override
   void initState() {
@@ -102,11 +102,13 @@ class _LandingPageState extends State<LandingPage> {
                 const SizedBox(
                   height: 10,
                 ),
-                CustomSearchBar(
-                  onFocus: () {
-                    debugPrint(widget.changePage.toString());
-                    if (widget.changePage != null) widget.changePage!(1);
-                  },
+                Hero(
+                  tag: "search_bar",
+                  child: CustomSearchBar(
+                    onFocus: () {
+                      Navigator.of(context).pushNamed(SearchPage.name);
+                    },
+                  ),
                 ),
                 const SizedBox(
                   height: 10.0,
