@@ -7,6 +7,7 @@ import 'package:precious/views/item_detail_page.dart';
 import 'package:precious/views/landing_page.dart';
 import 'package:precious/views/login_or_sign_up_page.dart';
 import 'package:precious/views/login_page.dart';
+import 'package:precious/views/search_page.dart';
 import 'package:precious/views/setting_page.dart';
 import 'package:precious/views/sign_up_page.dart';
 import 'package:precious/views/sign_up_success_page.dart';
@@ -24,6 +25,7 @@ class MyRoutes {
         SignUpPage.name: (_) => const SignUpPage(),
         LoginOrSignUpPage.name: (_) => const LoginOrSignUpPage(),
         SignUpSuccessPage.name: (_) => const SignUpSuccessPage(),
+        SearchPage.name: (_) => const SearchPage(),
         LandingPage.name: (_) => const LandingPage(),
         HomePage.name: (_) => const HomePage(),
         InventoryForm.name: (_) => const InventoryForm(),
