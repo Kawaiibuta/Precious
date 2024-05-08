@@ -1,6 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:precious/data_sources/product_repository.dart';
 import 'package:precious/presenters/product_presenter.dart';
 import 'package:precious/views/admin/product_page_admin.dart';
 import 'package:sidebarx/sidebarx.dart';
@@ -15,13 +18,37 @@ class HomePageAdmin extends StatefulWidget {
 final divider = Divider(color: Colors.white.withOpacity(0.3), height: 1);
 final _controller = SidebarXController(selectedIndex: 0, extended: true);
 
-final floatingButtonList = [Icons.add, Icons.delete, Icons.edit];
+final floatingButtonList = [
+  {"icon": Icons.add, "name": "add"},
+  {"icon": Icons.delete, "name": "delete"},
+  {"icon": Icons.edit, "name": "edit"}
+];
+
+final drawerItemList = [
+  {
+    "icon": Icons.home,
+    "name": "Home",
+  },
+  {"icon": Icons.inventory, "name": "Inventory"},
+  {
+    "icon": Icons.person,
+    "name": "User",
+  },
+  {
+    "icon": Icons.receipt,
+    "name": "order",
+  },
+  {"icon": Icons.monitor, "name": "Statistic"}
+];
 
 class _HomePageAdminState extends State<HomePageAdmin> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
-  var openList = <IconData>[Icons.add];
+  var openList = [
+    {"icon": Icons.add, "name": "add"}
+  ];
   List<int> itemList = [];
   final productPresenter = ProductPresenter();
+  var controller = SidebarXController(selectedIndex: 1);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -90,31 +117,12 @@ class _HomePageAdminState extends State<HomePageAdmin> {
               ),
             );
           },
-          items: [
-            SidebarXItem(
-              icon: Icons.home,
-              label: 'Home',
-              onTap: () {
-                debugPrint('Hello');
-              },
-            ),
-            const SidebarXItem(
-              icon: Icons.search,
-              label: 'Product',
-            ),
-            const SidebarXItem(
-              icon: Icons.people,
-              label: 'User',
-            ),
-            const SidebarXItem(
-              icon: Icons.favorite,
-              label: 'Order',
-            ),
-            const SidebarXItem(
-              icon: Icons.favorite,
-              label: 'Statistics',
-            ),
-          ],
+          items: drawerItemList
+              .map((e) => SidebarXItem(
+                    icon: e["icon"] as IconData,
+                    label: e['name'] as String,
+                  ))
+              .toList(),
         ),
         floatingActionButton: Stack(
           children: [
@@ -133,9 +141,22 @@ class _HomePageAdminState extends State<HomePageAdmin> {
                         height: 60,
                         child: FloatingActionButton(
                           backgroundColor: Colors.black,
-                          onPressed: () {},
+                          onPressed: () {
+                            switch (value['name']) {
+                              case "add":
+                                Navigator.of(context).pushNamed(
+                                    "${(drawerItemList[controller.selectedIndex]['name'] as String).toLowerCase()}_form");
+                                break;
+                              case "delete":
+                                _handleDeleteItem(
+                                    (drawerItemList[controller.selectedIndex]
+                                            ['name'] as String)
+                                        .toLowerCase());
+                              default:
+                            }
+                          },
                           child: Icon(
-                            value,
+                            value["icon"] as IconData,
                             color: Colors.white,
                           ),
                         ),
@@ -144,5 +165,88 @@ class _HomePageAdminState extends State<HomePageAdmin> {
                 .values
           ],
         ));
+  }
+
+  void _handleDeleteItem(String lowerCase) async {
+    if (lowerCase == 'inventory') {
+      final futureItemList = ProductPresenter.selectedProduct
+          .map((e) => ProductRepository.getOne(e));
+      final itemList = await Future.wait(futureItemList);
+      showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+                backgroundColor: Colors.white,
+                surfaceTintColor: Colors.white,
+                content: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text("Delete items"),
+                    Text("Do you want to delete ${itemList.length} items?"),
+                    DataTable(
+                        columns: const [
+                          DataColumn(
+                            label: Expanded(
+                              child: Text(
+                                'Id',
+                                style: TextStyle(fontStyle: FontStyle.italic),
+                              ),
+                            ),
+                          ),
+                          DataColumn(
+                            label: Expanded(
+                              child: Text(
+                                'name',
+                                style: TextStyle(fontStyle: FontStyle.italic),
+                              ),
+                            ),
+                          ),
+                        ],
+                        rows: itemList
+                            .map((e) => DataRow(
+                                  cells: <DataCell>[
+                                    DataCell(Text(e!.id!.toString())),
+                                    DataCell(Text(e.name)),
+                                  ],
+                                ))
+                            .toList()),
+                    Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          OutlinedButton(
+                              style: ButtonStyle(
+                                  backgroundColor:
+                                      MaterialStateProperty.all(Colors.white)),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: Text(
+                                "Cancel",
+                                style:
+                                    GoogleFonts.openSans(color: Colors.black),
+                              )),
+                          OutlinedButton(
+                              onPressed: () async {
+                                final futureResult = ProductPresenter
+                                    .selectedProduct
+                                    .map((e) => ProductRepository.delete(e))
+                                    .toList();
+                                final result = await Future.wait(futureResult);
+                                Fluttertoast.showToast(
+                                    msg:
+                                        "${result.where((element) => element == true).length} have been removed successfully");
+
+                                Navigator.of(context).pop();
+                              },
+                              style: ButtonStyle(
+                                  backgroundColor:
+                                      MaterialStateProperty.all(Colors.black)),
+                              child: Text("OK",
+                                  style: GoogleFonts.openSans(
+                                      color: Colors.white))),
+                        ])
+                  ],
+                ),
+              )).then((value) => Navigator.of(context).setState(() {}));
+    }
   }
 }

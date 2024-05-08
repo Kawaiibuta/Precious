@@ -1,7 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:precious/models/product/product.dart';
+import 'package:precious/data_sources/product/product.dart';
 import 'package:precious/resources/app_export.dart';
 import 'package:precious/views/item_detail_page.dart';
 
@@ -32,7 +32,7 @@ class _ProductCardState extends State<ProductCard> {
             ));
           },
           child: SizedBox(
-            width: 165.h,
+            width: 165,
             child: Column(
               children: [
                 // Container(
@@ -50,14 +50,14 @@ class _ProductCardState extends State<ProductCard> {
                 //           fit: BoxFit.cover)),
                 // ),
                 Image(
-                  height: 110.v,
-                  image: (Uri.parse(widget.product.img_paths_url[0])
-                                      .isAbsolute
-                                  ? CachedNetworkImageProvider(
-                                      widget.product.img_paths_url[0])
-                                  : AssetImage(widget.product.img_paths_url[0]))
-                              as ImageProvider,
-                  fit: BoxFit.cover),
+                    height: 110.v,
+                    image:
+                        (Uri.parse(widget.product.img_paths_url[0]).isAbsolute
+                                ? CachedNetworkImageProvider(
+                                    widget.product.img_paths_url[0])
+                                : AssetImage(widget.product.img_paths_url[0]))
+                            as ImageProvider,
+                    fit: BoxFit.cover),
                 Text(
                   widget.product.name,
                   style: const TextStyle(

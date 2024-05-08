@@ -1,11 +1,10 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:flutter/foundation.dart';
-import 'package:precious/models/cart/cart.dart';
+import 'package:precious/data_sources/cart/cart.dart';
 
 part 'user.freezed.dart';
 
 part 'user.g.dart';
-
 
 @Freezed()
 class User with _$User {

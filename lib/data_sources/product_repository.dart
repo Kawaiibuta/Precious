@@ -1,14 +1,13 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-import 'package:precious/models/product/product.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:precious/data_sources/product/product.dart';
 import 'package:precious/resources/endpoints.dart';
 import 'package:precious/resources/utils/dio_utils.dart';
 
 class ProductRepository {
   static Future<List<Product>> getAll(
-      {int start = 1,
-      int quantity = 9223372036854775807,
-      int type = -1}) async {
+      {int start = 1, int quantity = 30, int type = -1}) async {
     debugPrint(EndPoint.productWithParam(
         start: start, quantity: quantity, type: type));
     final result = await dio
@@ -47,8 +46,21 @@ class ProductRepository {
     return result;
   }
 
-  static Future<bool> add(Product product) async {
-    var data = FormData.fromMap(product.toJson());
+  static Future<Product?> add(Product product, {List<XFile>? imageList}) async {
+    var map = product.toJson();
+    map.remove("id");
+    map.remove("img_paths_url");
+    map.remove("rating");
+    map.remove("variants");
+    var data = FormData.fromMap(map);
+    if (imageList != null) {
+      imageList.forEach((element) async {
+        data.files.addAll([
+          MapEntry("img", MultipartFile.fromBytes(await element.readAsBytes()))
+        ]);
+      });
+    }
+    debugPrint(data.fields.toString());
     final result = await dio
         .request(
           EndPoint.product,
@@ -58,10 +70,11 @@ class ProductRepository {
           ),
           data: data,
         )
-        .then((value) => true)
+        .then((value) => Product.fromJson(value.data))
         .catchError((e) {
       debugPrint(e.toString());
-      return false;
+
+      return null;
     });
     return result;
   }

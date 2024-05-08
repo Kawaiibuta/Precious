@@ -1,6 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:precious/data_sources/login_repository.dart';
-import 'package:precious/models/user/user.dart';
+import 'package:precious/data_sources/user/user.dart';
 
 abstract class LoginPageContract {
   void onLoginSuccess(User currentUser);

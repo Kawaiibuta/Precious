@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:precious/resources/endpoints.dart';
 import 'package:precious/resources/utils/dio_utils.dart';
-import 'package:precious/models/user/user.dart' as model;
+import 'package:precious/data_sources/user/user.dart' as model;
 
 class LoginRepository {
   static String idToken = '';

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:precious/models/product/product.dart';
+import 'package:precious/data_sources/product/product.dart';
 import 'package:precious/data_sources/product_repository.dart';
-import 'package:precious/models/type/type.dart';
+import 'package:precious/data_sources/type/type.dart';
 import 'package:precious/data_sources/type_repository.dart';
 import 'package:precious/presenters/base_presenter.dart';
 
-class TypePresenter implements BasePresenter {
+class TypePresenter {
   static Map<int, Type> typeList = {};
   static const quantityForEach = 5;
 

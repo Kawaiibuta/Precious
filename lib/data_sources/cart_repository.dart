@@ -2,11 +2,9 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:precious/data_sources/cart/cart.dart';
+import 'package:precious/data_sources/cart_item/cart_item.dart';
 import 'package:precious/data_sources/login_repository.dart';
-import 'package:precious/models/cart/cart.dart';
-import 'package:precious/models/cart_item/cart_item.dart';
-import 'package:precious/models/product/product.dart';
-import 'package:precious/models/variant/variant.dart';
 import 'package:precious/resources/endpoints.dart';
 import 'package:precious/resources/utils/dio_utils.dart';
 

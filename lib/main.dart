@@ -47,10 +47,14 @@ class _MyAppState extends State<MyApp> implements AppContract {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: AppTheme.themeLight,
-      darkTheme: AppTheme.themeDark,
-      themeMode: _themeMode,
-      locale: _locale,
+      theme: ThemeData(
+          brightness: Brightness.light,
+          inputDecorationTheme: const InputDecorationTheme(
+              labelStyle: TextStyle(color: Colors.black),
+              focusedBorder: UnderlineInputBorder(
+                borderSide:
+                    BorderSide(style: BorderStyle.solid, color: Colors.black),
+              ))),
       localizationsDelegates: const [
         AppLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,

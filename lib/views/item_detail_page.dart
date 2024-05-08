@@ -3,12 +3,14 @@ import 'dart:math';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:easy_image_viewer/easy_image_viewer.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
-import 'package:precious/models/product/product.dart';
+import 'package:precious/data_sources/product/product.dart';
 import 'package:precious/presenters/product_presenter.dart';
 import 'package:precious/resources/utils/string_utils.dart';
 import 'package:precious/resources/widgets/custom_search_bar.dart';

@@ -1,5 +1,5 @@
-import 'package:precious/data_sources/category_repository.dart';
-import 'package:precious/models/product_category/product_category.dart';
+import 'package:precious/data_sources/category_reppsitory.dart';
+import 'package:precious/data_sources/product_category/product_category.dart';
 
 class ProductCategoryPresenter {
   static Map<int, ProductCategory> categoryList = {};

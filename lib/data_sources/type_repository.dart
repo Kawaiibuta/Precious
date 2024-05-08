@@ -2,7 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:precious/resources/endpoints.dart';
 import 'package:precious/resources/utils/dio_utils.dart';
-import 'package:precious/models/type/type.dart';
+import 'package:precious/data_sources/type/type.dart';
 
 class TypeRepository {
   static Future<List<Type>> getAll() async {

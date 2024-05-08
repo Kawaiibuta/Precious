@@ -2,9 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:precious/models/product/product.dart';
-import 'package:precious/models/type/type.dart';
-import 'package:precious/models/product_category/product_category.dart';
+import 'package:precious/data_sources/product/product.dart';
+import 'package:precious/data_sources/type/type.dart';
+import 'package:precious/data_sources/product_category/product_category.dart';
 import 'package:precious/presenters/category_presenter.dart';
 import 'package:precious/presenters/product_presenter.dart';
 import 'package:precious/presenters/type_presenter.dart';
@@ -12,6 +12,7 @@ import 'package:precious/resources/widgets/catagory_button.dart';
 import 'package:precious/resources/widgets/custom_search_bar.dart';
 import 'package:precious/resources/widgets/product_card.dart';
 import 'package:precious/resources/widgets/sale_banner.dart';
+import 'package:precious/views/search_page.dart';
 
 class LandingPage extends StatefulWidget {
   const LandingPage({super.key, this.changePage});
@@ -29,17 +30,16 @@ class _LandingPageState extends State<LandingPage> {
   Map<int, Future<List<Product>>> productByType = {};
   ProductPresenter productPresenter = ProductPresenter();
   TypePresenter typePresenter = TypePresenter();
+  late Future<List<Type>> typeListFuture;
   ProductCategoryPresenter categoryPresenter = ProductCategoryPresenter();
-
   final _controller = ScrollController();
   @override
   void initState() {
     super.initState();
     productListFuture = productPresenter.getAll();
     categoryListFuture = categoryPresenter.getAll();
-    typePresenter.getAll().then((value) {
-      typeList = value;
-    });
+    typeListFuture = typePresenter.getAll();
+    // .then((value) => typePresenter.getProductByType(value));
     WidgetsBinding.instance.addPostFrameCallback((duration) {
       // Setup the listener.
       _controller.addListener(() {
@@ -102,11 +102,13 @@ class _LandingPageState extends State<LandingPage> {
                 const SizedBox(
                   height: 10,
                 ),
-                CustomSearchBar(
-                  onFocus: () {
-                    debugPrint(widget.changePage.toString());
-                    if (widget.changePage != null) widget.changePage!(1);
-                  },
+                Hero(
+                  tag: "search_bar",
+                  child: CustomSearchBar(
+                    onFocus: () {
+                      Navigator.of(context).pushNamed(SearchPage.name);
+                    },
+                  ),
                 ),
                 const SizedBox(
                   height: 10.0,
@@ -238,6 +240,7 @@ class _LandingPageState extends State<LandingPage> {
                                 product: e,
                               ),
                             ))
+                        .toList()
                   ],
                 ),
                 const SizedBox(

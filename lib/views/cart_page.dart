@@ -1,13 +1,12 @@
 import 'dart:io';
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:precious/models/cart/cart.dart';
+import 'package:precious/data_sources/cart/cart.dart';
 import 'package:precious/presenters/cart_presenter.dart';
 import 'package:precious/resources/app_export.dart';
 import 'package:precious/resources/widgets/cart_item.dart';
-import 'package:precious/models/cart_item/cart_item.dart' as model;
+import 'package:precious/data_sources/cart_item/cart_item.dart' as model;
 import 'package:precious/views/item_detail_page.dart';
 
 class CartPage extends StatefulWidget {
@@ -73,8 +72,7 @@ class _CartPageState extends State<CartPage> implements CartPageContract {
             ),
             cartList == null || cartList!.isEmpty
                 ? Padding(
-                    padding:
-                        EdgeInsets.only(top: 340.v),
+                    padding: EdgeInsets.only(top: 340.v),
                     child: Text(
                       AppLocalizations.of(context)!.empty_cart_msg,
                       textAlign: TextAlign.center,
