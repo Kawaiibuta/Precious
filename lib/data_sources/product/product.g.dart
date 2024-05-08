@@ -23,6 +23,7 @@ _$ProductImpl _$$ProductImplFromJson(Map<String, dynamic> json) =>
           null,
       rating: (json['rating'] as num?)?.toDouble() ?? 0.0,
       price: (json['price'] as num?)?.toDouble() ?? 0.0,
+      quantity: json['quantity'] as int? ?? 1,
     );
 
 Map<String, dynamic> _$$ProductImplToJson(_$ProductImpl instance) =>
@@ -36,4 +37,5 @@ Map<String, dynamic> _$$ProductImplToJson(_$ProductImpl instance) =>
       'variants': instance.variants,
       'rating': instance.rating,
       'price': instance.price,
+      'quantity': instance.quantity,
     };

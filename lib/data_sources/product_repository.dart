@@ -7,9 +7,7 @@ import 'package:precious/resources/utils/dio_utils.dart';
 
 class ProductRepository {
   static Future<List<Product>> getAll(
-      {int start = 1,
-      int quantity = 9223372036854775807,
-      int type = -1}) async {
+      {int start = 1, int quantity = 30, int type = -1}) async {
     debugPrint(EndPoint.productWithParam(
         start: start, quantity: quantity, type: type));
     final result = await dio
@@ -54,14 +52,15 @@ class ProductRepository {
     map.remove("img_paths_url");
     map.remove("rating");
     map.remove("variants");
-    debugPrint(map.toString());
     var data = FormData.fromMap(map);
     if (imageList != null) {
       imageList.forEach((element) async {
-        final byte = MultipartFile.fromBytes(await element.readAsBytes());
-        data.files.addAll({"img": byte}.entries);
+        data.files.addAll([
+          MapEntry("img", MultipartFile.fromBytes(await element.readAsBytes()))
+        ]);
       });
     }
+    debugPrint(data.fields.toString());
     final result = await dio
         .request(
           EndPoint.product,
@@ -74,6 +73,7 @@ class ProductRepository {
         .then((value) => Product.fromJson(value.data))
         .catchError((e) {
       debugPrint(e.toString());
+
       return null;
     });
     return result;

@@ -29,11 +29,13 @@ class _InventoryFormState extends State<InventoryForm> {
   final shortDesController = TextEditingController();
   final desController = TextEditingController();
   final priceController = TextEditingController();
+  final quantityController = TextEditingController();
   var addable = false;
   @override
   void initState() {
     super.initState();
     futureCategoryList = categoryPresenter.getAll();
+    quantityController.value = TextEditingValue(text: "1");
   }
 
   @override
@@ -61,22 +63,54 @@ class _InventoryFormState extends State<InventoryForm> {
                 ),
                 Padding(
                   padding: const EdgeInsets.only(top: 5.0, bottom: 5.0),
-                  child: TextFormField(
-                    controller: nameController,
-                    style: const TextStyle(color: Colors.black),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return "Name cannot be empty";
-                      } else {
-                        return null;
-                      }
-                    },
-                    decoration: const InputDecoration(
-                      label: Text("Name"),
-                      border: OutlineInputBorder(),
-                      focusedBorder: OutlineInputBorder(),
-                      hintText: 'Your product name here',
-                    ),
+                  child: Row(
+                    children: [
+                      Flexible(
+                        flex: 3,
+                        child: TextFormField(
+                          controller: nameController,
+                          style: const TextStyle(color: Colors.black),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return "Name cannot be empty";
+                            } else {
+                              return null;
+                            }
+                          },
+                          decoration: const InputDecoration(
+                            label: Text("Name"),
+                            border: OutlineInputBorder(),
+                            focusedBorder: OutlineInputBorder(),
+                            hintText: 'Your product name here',
+                          ),
+                        ),
+                      ),
+                      Flexible(
+                        flex: 1,
+                        child: TextFormField(
+                          controller: quantityController,
+                          style: const TextStyle(
+                            color: Colors.black,
+                          ),
+                          textAlign: TextAlign.center,
+                          keyboardType: TextInputType.number,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return "Quantity cannot be empty";
+                            }
+                            if (int.parse(value) <= 0) {
+                              return "Quantity cannot be less than 1";
+                            }
+                            return null;
+                          },
+                          decoration: const InputDecoration(
+                            label: Text("Quantity"),
+                            border: OutlineInputBorder(),
+                            focusedBorder: OutlineInputBorder(),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 Padding(
@@ -274,6 +308,7 @@ class _InventoryFormState extends State<InventoryForm> {
         category_id: selectedCategory!.id!,
         short_description: shortDesController.text,
         description: desController.text,
+        quantity: int.parse(quantityController.text),
         price: double.parse(priceController.text));
     return ProductRepository.add(temp, imageList: imageList).then((value) {
       Fluttertoast.showToast(msg: "Your product have been created");
