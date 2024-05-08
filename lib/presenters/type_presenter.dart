@@ -5,7 +5,7 @@ import 'package:precious/data_sources/type/type.dart';
 import 'package:precious/data_sources/type_repository.dart';
 import 'package:precious/presenters/base_presenter.dart';
 
-class TypePresenter implements BasePresenter {
+class TypePresenter {
   static Map<int, Type> typeList = {};
   static const quantityForEach = 5;
 

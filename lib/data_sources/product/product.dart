@@ -17,6 +17,7 @@ class Product with _$Product {
     @Default(null) List<Variant>? variants,
     @Default(0.0) double rating,
     @Default(0.0) double price,
+    @Default(1) int quantity,
   }) = _Product;
   factory Product.fromJson(Map<String, dynamic> json) =>
       _$ProductFromJson(json);

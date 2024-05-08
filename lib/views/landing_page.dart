@@ -30,6 +30,7 @@ class _LandingPageState extends State<LandingPage> {
   Map<int, Future<List<Product>>> productByType = {};
   ProductPresenter productPresenter = ProductPresenter();
   TypePresenter typePresenter = TypePresenter();
+  late Future<List<Type>> typeListFuture;
   ProductCategoryPresenter categoryPresenter = ProductCategoryPresenter();
   final _controller = ScrollController();
   @override
@@ -37,9 +38,8 @@ class _LandingPageState extends State<LandingPage> {
     super.initState();
     productListFuture = productPresenter.getAll();
     categoryListFuture = categoryPresenter.getAll();
-    typePresenter.getAll().then((value) {
-      typeList = value;
-    });
+    typeListFuture = typePresenter.getAll();
+    // .then((value) => typePresenter.getProductByType(value));
     WidgetsBinding.instance.addPostFrameCallback((duration) {
       // Setup the listener.
       _controller.addListener(() {

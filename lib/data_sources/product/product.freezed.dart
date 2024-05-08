@@ -29,6 +29,7 @@ mixin _$Product {
   List<Variant>? get variants => throw _privateConstructorUsedError;
   double get rating => throw _privateConstructorUsedError;
   double get price => throw _privateConstructorUsedError;
+  int get quantity => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -49,7 +50,8 @@ abstract class $ProductCopyWith<$Res> {
       List<String> img_paths_url,
       List<Variant>? variants,
       double rating,
-      double price});
+      double price,
+      int quantity});
 }
 
 /// @nodoc
@@ -74,6 +76,7 @@ class _$ProductCopyWithImpl<$Res, $Val extends Product>
     Object? variants = freezed,
     Object? rating = null,
     Object? price = null,
+    Object? quantity = null,
   }) {
     return _then(_value.copyWith(
       id: freezed == id
@@ -112,6 +115,10 @@ class _$ProductCopyWithImpl<$Res, $Val extends Product>
           ? _value.price
           : price // ignore: cast_nullable_to_non_nullable
               as double,
+      quantity: null == quantity
+          ? _value.quantity
+          : quantity // ignore: cast_nullable_to_non_nullable
+              as int,
     ) as $Val);
   }
 }
@@ -132,7 +139,8 @@ abstract class _$$ProductImplCopyWith<$Res> implements $ProductCopyWith<$Res> {
       List<String> img_paths_url,
       List<Variant>? variants,
       double rating,
-      double price});
+      double price,
+      int quantity});
 }
 
 /// @nodoc
@@ -155,6 +163,7 @@ class __$$ProductImplCopyWithImpl<$Res>
     Object? variants = freezed,
     Object? rating = null,
     Object? price = null,
+    Object? quantity = null,
   }) {
     return _then(_$ProductImpl(
       id: freezed == id
@@ -193,6 +202,10 @@ class __$$ProductImplCopyWithImpl<$Res>
           ? _value.price
           : price // ignore: cast_nullable_to_non_nullable
               as double,
+      quantity: null == quantity
+          ? _value.quantity
+          : quantity // ignore: cast_nullable_to_non_nullable
+              as int,
     ));
   }
 }
@@ -209,7 +222,8 @@ class _$ProductImpl with DiagnosticableTreeMixin implements _Product {
       final List<String> img_paths_url = const <String>[],
       final List<Variant>? variants = null,
       this.rating = 0.0,
-      this.price = 0.0})
+      this.price = 0.0,
+      this.quantity = 1})
       : _img_paths_url = img_paths_url,
         _variants = variants;
 
@@ -257,10 +271,13 @@ class _$ProductImpl with DiagnosticableTreeMixin implements _Product {
   @override
   @JsonKey()
   final double price;
+  @override
+  @JsonKey()
+  final int quantity;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'Product(id: $id, name: $name, category_id: $category_id, short_description: $short_description, description: $description, img_paths_url: $img_paths_url, variants: $variants, rating: $rating, price: $price)';
+    return 'Product(id: $id, name: $name, category_id: $category_id, short_description: $short_description, description: $description, img_paths_url: $img_paths_url, variants: $variants, rating: $rating, price: $price, quantity: $quantity)';
   }
 
   @override
@@ -276,7 +293,8 @@ class _$ProductImpl with DiagnosticableTreeMixin implements _Product {
       ..add(DiagnosticsProperty('img_paths_url', img_paths_url))
       ..add(DiagnosticsProperty('variants', variants))
       ..add(DiagnosticsProperty('rating', rating))
-      ..add(DiagnosticsProperty('price', price));
+      ..add(DiagnosticsProperty('price', price))
+      ..add(DiagnosticsProperty('quantity', quantity));
   }
 
   @override
@@ -296,7 +314,9 @@ class _$ProductImpl with DiagnosticableTreeMixin implements _Product {
                 .equals(other._img_paths_url, _img_paths_url) &&
             const DeepCollectionEquality().equals(other._variants, _variants) &&
             (identical(other.rating, rating) || other.rating == rating) &&
-            (identical(other.price, price) || other.price == price));
+            (identical(other.price, price) || other.price == price) &&
+            (identical(other.quantity, quantity) ||
+                other.quantity == quantity));
   }
 
   @JsonKey(ignore: true)
@@ -311,7 +331,8 @@ class _$ProductImpl with DiagnosticableTreeMixin implements _Product {
       const DeepCollectionEquality().hash(_img_paths_url),
       const DeepCollectionEquality().hash(_variants),
       rating,
-      price);
+      price,
+      quantity);
 
   @JsonKey(ignore: true)
   @override
@@ -337,7 +358,8 @@ abstract class _Product implements Product {
       final List<String> img_paths_url,
       final List<Variant>? variants,
       final double rating,
-      final double price}) = _$ProductImpl;
+      final double price,
+      final int quantity}) = _$ProductImpl;
 
   factory _Product.fromJson(Map<String, dynamic> json) = _$ProductImpl.fromJson;
 
@@ -359,6 +381,8 @@ abstract class _Product implements Product {
   double get rating;
   @override
   double get price;
+  @override
+  int get quantity;
   @override
   @JsonKey(ignore: true)
   _$$ProductImplCopyWith<_$ProductImpl> get copyWith =>
