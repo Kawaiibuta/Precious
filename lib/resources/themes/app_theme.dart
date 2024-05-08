@@ -7,7 +7,25 @@ import 'package:precious/resources/app_export.dart';
 /// References: https://m3.material.io/
 class AppTheme {
   static final themeLight = ThemeData(
-      textTheme: textTheme, fontFamily: GoogleFonts.rubik().fontFamily);
+    textTheme: textTheme,
+    colorScheme: ColorScheme.fromSeed(
+        seedColor: Colors.white,
+        background: Colors.white,
+        primary: Colors.black,
+        onPrimary: Colors.white,
+        primaryContainer: Colors.grey.shade400,
+        onPrimaryContainer: Colors.black),
+  );
+
+  static final themeDark = ThemeData(
+      textTheme: textTheme,
+      colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.black,
+          background: Colors.black,
+          primary: Colors.white,
+          onPrimary: Colors.black,
+          primaryContainer: Colors.grey.shade800,
+          onPrimaryContainer: Colors.white));
 
   static final textTheme = TextTheme(
     headlineLarge: TextStyle(
@@ -22,6 +40,8 @@ class AppTheme {
         fontSize: 16.fSize, fontWeight: FontWeight.normal, color: Colors.grey),
     bodyMedium: TextStyle(
         fontSize: 14.fSize, fontWeight: FontWeight.normal, color: Colors.grey),
+    bodySmall: TextStyle(
+        fontSize: 12.fSize, fontWeight: FontWeight.normal, color: Colors.grey),
     labelLarge: TextStyle(fontSize: 14.fSize, color: Colors.white),
     labelMedium: TextStyle(
       fontSize: 12.fSize,

@@ -14,6 +14,7 @@ _$VariantImpl _$$VariantImplFromJson(Map<String, dynamic> json) =>
               ?.map((e) => e as String)
               .toList() ??
           const <String>[],
+      product: Product.fromJson(json['product'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$$VariantImplToJson(_$VariantImpl instance) =>
@@ -21,4 +22,5 @@ Map<String, dynamic> _$$VariantImplToJson(_$VariantImpl instance) =>
       'id': instance.id,
       'price': instance.price,
       'img_paths_url': instance.img_paths_url,
+      'product': instance.product,
     };

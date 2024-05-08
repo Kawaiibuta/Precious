@@ -5,6 +5,10 @@ import 'package:precious/views/admin/inventory_form.dart';
 import 'package:precious/views/home_page.dart';
 import 'package:precious/views/item_detail_page.dart';
 import 'package:precious/views/landing_page.dart';
+import 'package:precious/views/admin/home_page_admin.dart';
+import 'package:precious/views/home_page.dart';
+import 'package:precious/views/item_detail_page.dart';
+import 'package:precious/views/landing_page.dart';
 import 'package:precious/views/login_or_sign_up_page.dart';
 import 'package:precious/views/login_page.dart';
 import 'package:precious/views/search_page.dart';
@@ -25,10 +29,10 @@ class MyRoutes {
         SignUpPage.name: (_) => const SignUpPage(),
         LoginOrSignUpPage.name: (_) => const LoginOrSignUpPage(),
         SignUpSuccessPage.name: (_) => const SignUpSuccessPage(),
-        SearchPage.name: (_) => const SearchPage(),
         LandingPage.name: (_) => const LandingPage(),
         HomePage.name: (_) => const HomePage(),
-        InventoryForm.name: (_) => const InventoryForm(),
         HomePageAdmin.name: (_) => const HomePageAdmin(),
+        SearchPage.name: (_) => const SearchPage(),
+        InventoryForm.name: (_) => const InventoryForm(),
       };
 }

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:precious/data_sources/bottom_navigation_route.dart';
+import 'package:flutter/widgets.dart';
+import 'package:precious/resources/widgets/bottom_navigation_route.dart';
+import 'package:precious/resources/app_export.dart';
 import 'package:precious/resources/widgets/bottom_navigation_button.dart';
 
 class CustomBottomNavigation extends StatefulWidget {
@@ -17,23 +19,35 @@ class _CustomBottomNavigationState extends State<CustomBottomNavigation> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 60,
+      height: 60.v,
       child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: widget.routes
               .asMap()
               .map((index, e) => MapEntry(
                   index,
-                  BottomNavigationButton(
-                    icon: e.icon,
-                    title: e.title,
-                    selected: selectedIndex == index,
-                    showTitleSelected: true,
-                    selectedIconColor: Colors.white,
-                    selectedIconBackgroundColor: Colors.black,
-                    selectedTitleBackgroundColor: const Color(0xffeeeeee),
-                    onClick: () => _handleonClick(index),
+                  Padding(
+                    padding: selectedIndex == index
+                        ? EdgeInsets.only(left: 15.h)
+                        : EdgeInsets.symmetric(horizontal: 15.h),
+                    child: BottomNavigationButton(
+                      icon: e.icon,
+                      title: e.title,
+                      titleDecoration: Theme.of(context)
+                          .textTheme
+                          .labelLarge!
+                          .copyWith(
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onSecondaryContainer),
+                      selected: selectedIndex == index,
+                      showTitleSelected: true,
+                      selectedIconColor: Colors.white,
+                      selectedIconBackgroundColor: Colors.black,
+                      selectedTitleBackgroundColor: Colors.grey.shade400,
+                      onClick: () => _handleonClick(index),
+                    ),
                   )))
               .values
               .toList()),

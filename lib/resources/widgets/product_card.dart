@@ -2,9 +2,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:precious/data_sources/product/product.dart';
+import 'package:precious/resources/app_export.dart';
 import 'package:precious/views/item_detail_page.dart';
-
-var noSimbolInUSFormat = NumberFormat.currency(locale: "en_US");
 
 class ProductCard extends StatefulWidget {
   const ProductCard({super.key, required this.product});
@@ -15,6 +14,13 @@ class ProductCard extends StatefulWidget {
 }
 
 class _ProductCardState extends State<ProductCard> {
+  final noSimbolInUSFormat = NumberFormat.currency(locale: "en_US");
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -29,20 +35,29 @@ class _ProductCardState extends State<ProductCard> {
             width: 165,
             child: Column(
               children: [
-                Container(
-                  height: 195,
-                  clipBehavior: Clip.antiAlias,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      image: DecorationImage(
-                          image: (Uri.parse(widget.product.img_paths_url[0])
-                                      .isAbsolute
-                                  ? CachedNetworkImageProvider(
-                                      widget.product.img_paths_url[0])
-                                  : AssetImage(widget.product.img_paths_url[0]))
-                              as ImageProvider,
-                          fit: BoxFit.cover)),
-                ),
+                // Container(
+                //   height: 110.v,
+                //   clipBehavior: Clip.antiAlias,
+                //   decoration: BoxDecoration(
+                //       borderRadius: BorderRadius.circular(10),
+                //       image: DecorationImage(
+                //           image: (Uri.parse(widget.product.img_paths_url[0])
+                //                       .isAbsolute
+                //                   ? CachedNetworkImageProvider(
+                //                       widget.product.img_paths_url[0])
+                //                   : AssetImage(widget.product.img_paths_url[0]))
+                //               as ImageProvider,
+                //           fit: BoxFit.cover)),
+                // ),
+                Image(
+                    height: 110.v,
+                    image:
+                        (Uri.parse(widget.product.img_paths_url[0]).isAbsolute
+                                ? CachedNetworkImageProvider(
+                                    widget.product.img_paths_url[0])
+                                : AssetImage(widget.product.img_paths_url[0]))
+                            as ImageProvider,
+                    fit: BoxFit.cover),
                 Text(
                   widget.product.name,
                   style: const TextStyle(

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:precious/data_sources/bottom_navigation_route.dart';
+import 'package:flutter/services.dart';
+import 'package:precious/resources/widgets/bottom_navigation_route.dart';
+import 'package:precious/resources/app_export.dart';
 import 'package:precious/resources/widgets/custom_bottom_navigation.dart';
 import 'package:precious/views/cart_page.dart';
 import 'package:precious/views/landing_page.dart';
@@ -40,12 +42,17 @@ class _HomePageState extends State<HomePage> {
         .map((e) => BottomNavigationRoute(
             icon: e['icon'] as IconData, title: e['title'] as String))
         .toList();
-    return Scaffold(
-      bottomNavigationBar: CustomBottomNavigation(
-        routes: bottomRoute,
-        onIndexChange: (value) => _handleIndexChange(value),
+    return SafeArea(
+      child: Scaffold(
+        bottomNavigationBar: CustomBottomNavigation(
+          routes: bottomRoute,
+          onIndexChange: (value) => _handleIndexChange(value),
+        ),
+        body: Padding(
+          padding: const EdgeInsets.only(left: 10.0, right: 10.0),
+          child: Center(child: getRoute()),
+        ),
       ),
-      body: Center(child: routes[selected]['route'] as Widget),
     );
   }
 
@@ -60,4 +67,12 @@ class _HomePageState extends State<HomePage> {
       selected = i;
     });
   }
+
+  // Initialized selected page only
+  Widget getRoute() => switch (selected) {
+        0 => LandingPage(changePage: _handleChangePage),
+        1 => const SearchPage(),
+        2 => const CartPage(),
+        _ => const ProfilePage()
+      };
 }

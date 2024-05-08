@@ -1,86 +1,13 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:precious/data_sources/cart/cart.dart';
+import 'package:precious/presenters/cart_presenter.dart';
 import 'package:precious/resources/app_export.dart';
 import 'package:precious/resources/widgets/cart_item.dart';
-
-const cartList = [
-  {
-    "date": "11/03/2024",
-    "items": [
-      {
-        "image": "assets/images/necklace.jpg",
-        "quantity": 3.0,
-        "name": "Necklace"
-      },
-      {
-        "image": "assets/images/necklace.jpg",
-        "quantity": 3.0,
-        "name": "Necklace"
-      },
-      {
-        "image": "assets/images/necklace.jpg",
-        "quantity": 3.0,
-        "name": "Necklace"
-      },
-      {
-        "image": "assets/images/necklace.jpg",
-        "quantity": 3.0,
-        "name": "Necklace"
-      },
-    ]
-  },
-  {
-    "date": "11/03/2024",
-    "items": [
-      {
-        "image": "assets/images/necklace.jpg",
-        "quantity": 3.0,
-        "name": "Necklace"
-      },
-      {
-        "image": "assets/images/necklace.jpg",
-        "quantity": 3.0,
-        "name": "Necklace"
-      },
-      {
-        "image": "assets/images/necklace.jpg",
-        "quantity": 3.0,
-        "name": "Necklace"
-      },
-      {
-        "image": "assets/images/necklace.jpg",
-        "quantity": 3.0,
-        "name": "Necklace"
-      },
-    ]
-  },
-  {
-    "date": "11/03/2024",
-    "items": [
-      {
-        "image": "assets/images/necklace.jpg",
-        "quantity": 3.0,
-        "name": "Necklace"
-      },
-      {
-        "image": "assets/images/necklace.jpg",
-        "quantity": 3.0,
-        "name": "Necklace"
-      },
-      {
-        "image": "assets/images/necklace.jpg",
-        "quantity": 3.0,
-        "name": "Necklace"
-      },
-      {
-        "image": "assets/images/necklace.jpg",
-        "quantity": 3.0,
-        "name": "Necklace"
-      },
-    ]
-  }
-];
+import 'package:precious/data_sources/cart_item/cart_item.dart' as model;
+import 'package:precious/views/item_detail_page.dart';
 
 class CartPage extends StatefulWidget {
   const CartPage({super.key});
@@ -89,97 +16,137 @@ class CartPage extends StatefulWidget {
   _CartPageState createState() => _CartPageState();
 }
 
-class _CartPageState extends State<CartPage> {
+class _CartPageState extends State<CartPage> implements CartPageContract {
+  List<model.CartItem>? cartList;
+
+  late CartPagePresenter _presenter;
+
   var selectedQuantity = 1;
+
+  @override
+  void initState() {
+    super.initState();
+    _presenter = CartPagePresenter(this);
+    _presenter.getCart();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    children: [
-                      IconButton(
-                          onPressed: () {}, icon: Icon(Icons.arrow_back_ios)),
-                      Text(
-                        AppLocalizations.of(context)!.my_cart,
-                        style: GoogleFonts.openSans(
-                            fontSize: 20.0,
-                            fontWeight: FontWeight.w700,
-                            color: Colors.black),
+    if (cartList == null) {
+      return Center(
+          child: CircularProgressIndicator(
+        color: Theme.of(context).colorScheme.primary,
+      ));
+    }
+    return SizedBox(
+      width: double.maxFinite,
+      child: Stack(children: [
+        SizedBox(
+          height: double.maxFinite,
+          child: SingleChildScrollView(
+              child:
+                  Column(mainAxisAlignment: MainAxisAlignment.start, children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    IconButton(
+                        onPressed: Navigator.of(context).pop,
+                        icon: const Icon(Icons.arrow_back_ios)),
+                    Text(
+                      AppLocalizations.of(context)!.my_cart,
+                      style: GoogleFonts.openSans(
+                          fontSize: 20.0,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.black),
+                    ),
+                  ],
+                ),
+                IconButton(
+                    onPressed: () {
+                      setState(() {});
+                    },
+                    icon: const Icon(Icons.deselect))
+              ],
+            ),
+            cartList == null || cartList!.isEmpty
+                ? Padding(
+                    padding: EdgeInsets.only(top: 340.v),
+                    child: Text(
+                      AppLocalizations.of(context)!.empty_cart_msg,
+                      textAlign: TextAlign.center,
+                    ))
+                : Column(children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        TextButton(
+                            onPressed: () {},
+                            child: Text(
+                              AppLocalizations.of(context)!
+                                  .delete_all_text_button,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .labelSmall!
+                                  .copyWith(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onPrimaryContainer),
+                            ))
+                      ],
+                    ),
+                    for (var cartItem in cartList!)
+                      Padding(
+                        padding: EdgeInsets.only(bottom: 5.v),
+                        child: CartItem(
+                          backgroundImage:
+                              NetworkImage(cartItem.variant.img_paths_url[0]),
+                          name: cartItem.variant.product.name,
+                          quantity: cartItem.quantity.toDouble(),
+                          onTap: () => _goToItemDetailPage(cartItem.id),
+                          onQuantityChange: (quantity) =>
+                              _callQuantityChange(cartItem, quantity),
+                          maxQuantity: 10.0,
+                        ),
                       ),
-                    ],
-                  ),
-                  IconButton(
-                      onPressed: () {
-                        setState(() {});
-                      },
-                      icon: Icon(Icons.deselect))
-                ],
-              ),
-              ...cartList
-                  .asMap()
-                  .map((key0, value) => MapEntry(
-                      key0,
-                      Column(
+                    SizedBox(
+                      width: double.maxFinite,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(value["date"].toString()),
-                              TextButton(
-                                  onPressed: () {},
-                                  child: const Text(
-                                    "Delete all",
-                                    style: TextStyle(fontSize: 10),
-                                  ))
-                            ],
-                          ),
-                          ...(value['items'] as List<dynamic>)
-                              .asMap()
-                              .map(
-                                (key1, item) => MapEntry(
-                                    key1,
-                                    Padding(
-                                      padding:
-                                          const EdgeInsets.only(bottom: 5.0),
-                                      child: CartItem(
-                                        backgroundImage:
-                                            AssetImage(item['image']),
-                                        name: item['name'],
-                                        quantity: item['quantity'] as double,
-                                        onTap: () {},
-                                        maxQuantity: 10.0,
-                                      ),
-                                    )),
-                              )
-                              .values
-                              .toList()
+                          Text(
+                              AppLocalizations.of(context)!
+                                  .total_buy_item_text(cartList!.length),
+                              style: Theme.of(context).textTheme.bodyMedium),
+                          Text(
+                              AppLocalizations.of(context)!.currency_value(
+                                  cartList!.fold<double>(
+                                      0,
+                                      (previousValue, element) =>
+                                          previousValue +
+                                          element.variant.price *
+                                              element.quantity)),
+                              style: Theme.of(context).textTheme.headlineSmall)
                         ],
-                      )))
-                  .values
-                  .toList()
-            ],
-          ),
+                      ),
+                    )
+                  ])
+          ])),
         ),
-        Positioned(
-            child: Align(
-          alignment: Alignment.bottomCenter,
+        Align(
+          alignment: Alignment.bottomRight,
           child: AnimatedOpacity(
-            duration: Duration(milliseconds: 500),
+            duration: const Duration(milliseconds: 500),
             opacity: selectedQuantity > 0 ? 1.0 : 0.0,
             child: Container(
               height: 60,
-              width: double.infinity,
+              width: 60,
+              margin: EdgeInsets.only(right: 8.v, bottom: 8.h),
               child: FittedBox(
                 child: FloatingActionButton(
                     backgroundColor: Colors.black,
-                    onPressed: () {},
+                    onPressed: _checkOut,
                     child: const Icon(
                       Icons.shopping_cart_checkout,
                       color: Colors.white,
@@ -187,8 +154,46 @@ class _CartPageState extends State<CartPage> {
               ),
             ),
           ),
-        ))
-      ],
+        )
+      ]),
     );
+  }
+
+  @override
+  void onGetCartComplete(Cart cart) {
+    setState(() => cartList = cart.items);
+  }
+
+  @override
+  void onGetCartFailed(Exception e) {
+    if (e is HttpException) {
+      showSnackBar(
+          AppLocalizations.of(context)!.unexpected_error_msg(e.message));
+    }
+  }
+
+  void callLoadingScreen() {
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (_) => const Center(
+            child: CircularProgressIndicator(color: Colors.white)));
+  }
+
+  void showSnackBar(String text) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(text)));
+  }
+
+  void _checkOut() {
+    if (cartList != null && cartList!.isNotEmpty) {}
+  }
+
+  void _callQuantityChange(model.CartItem cartItem, double quantity) {
+    _presenter.updateQuantity(cartItem, quantity);
+  }
+
+  _goToItemDetailPage(int id) {
+    Navigator.of(context)
+        .push(MaterialPageRoute(builder: (_) => ItemDetailPage(id: id)));
   }
 }

@@ -8,4 +8,6 @@ class EndPoint {
   static String productDetail(int id) => product + id.toString();
   static String categoryDetail(int id) => category + id.toString();
   static const type = "${baseUrl}api/type";
+  static const cart = "${baseUrl}api/cart";
+  static const login = "${baseUrl}api/auth/login_firebase";
 }

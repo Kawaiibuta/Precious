@@ -16,16 +16,33 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   var settings = SettingPresenter();
-  await settings.getFirstRunStatus();
-  SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+  await settings.initialize();
+  await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
 
   runApp(MyApp(settings));
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   final SettingPresenter _settingPresenter;
 
   const MyApp(this._settingPresenter, {super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> implements AppContract {
+  late ThemeMode _themeMode;
+
+  late Locale _locale;
+
+  @override
+  void initState() {
+    super.initState();
+    _themeMode = widget._settingPresenter.themeMode;
+    _locale = widget._settingPresenter.locale;
+    widget._settingPresenter.appContract = this;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -47,10 +64,28 @@ class MyApp extends StatelessWidget {
       supportedLocales: const [
         Locale('en'),
       ],
-      initialRoute: _settingPresenter.firstRun
-          ? HomePageAdmin.name
-          : LoginOrSignUpPage.name,
-      routes: MyRoutes(_settingPresenter).routes,
+      initialRoute: _getInitialPage(),
+      routes: MyRoutes(widget._settingPresenter).routes,
     );
   }
+
+  _getInitialPage() {
+    if (widget._settingPresenter.firstRun) {
+      return StartPage.name;
+    }
+    if (!widget._settingPresenter.hasLogin) {
+      return LoginOrSignUpPage.name;
+    }
+    return HomePage.name;
+  }
+
+  @override
+  void onUpdateLocaleComplete(Locale newLocale) => setState(() {
+        _locale = newLocale;
+      });
+
+  @override
+  void onUpdateThemeComplete(ThemeMode newThemeMode) => setState(() {
+        _themeMode = newThemeMode;
+      });
 }
