@@ -4,8 +4,10 @@ class EndPoint {
   static String productWithParam(
           {int start = 1, int quantity = -1, int type = -1}) =>
       "${baseUrl}api/product?start=$start&quantity=$quantity${type != -1 ? "&type=$type" : ""}";
-  static const category = "${baseUrl}api/category";
+  static const category = "${baseUrl}api/category/";
   static String productDetail(int id) => product + id.toString();
   static String categoryDetail(int id) => category + id.toString();
-  static const type = "${baseUrl}api/type";
+  static const type = "${baseUrl}api/type/";
+  static const variant = "${baseUrl}api/variant/";
+  static String productVariant(int id) => variant + id.toString();
 }

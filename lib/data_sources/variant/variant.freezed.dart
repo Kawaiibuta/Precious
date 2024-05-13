@@ -22,6 +22,7 @@ Variant _$VariantFromJson(Map<String, dynamic> json) {
 mixin _$Variant {
   int? get id => throw _privateConstructorUsedError;
   double get price => throw _privateConstructorUsedError;
+  int get quantity => throw _privateConstructorUsedError;
   List<String> get img_paths_url => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -34,7 +35,7 @@ abstract class $VariantCopyWith<$Res> {
   factory $VariantCopyWith(Variant value, $Res Function(Variant) then) =
       _$VariantCopyWithImpl<$Res, Variant>;
   @useResult
-  $Res call({int? id, double price, List<String> img_paths_url});
+  $Res call({int? id, double price, int quantity, List<String> img_paths_url});
 }
 
 /// @nodoc
@@ -52,6 +53,7 @@ class _$VariantCopyWithImpl<$Res, $Val extends Variant>
   $Res call({
     Object? id = freezed,
     Object? price = null,
+    Object? quantity = null,
     Object? img_paths_url = null,
   }) {
     return _then(_value.copyWith(
@@ -63,6 +65,10 @@ class _$VariantCopyWithImpl<$Res, $Val extends Variant>
           ? _value.price
           : price // ignore: cast_nullable_to_non_nullable
               as double,
+      quantity: null == quantity
+          ? _value.quantity
+          : quantity // ignore: cast_nullable_to_non_nullable
+              as int,
       img_paths_url: null == img_paths_url
           ? _value.img_paths_url
           : img_paths_url // ignore: cast_nullable_to_non_nullable
@@ -78,7 +84,7 @@ abstract class _$$VariantImplCopyWith<$Res> implements $VariantCopyWith<$Res> {
       __$$VariantImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({int? id, double price, List<String> img_paths_url});
+  $Res call({int? id, double price, int quantity, List<String> img_paths_url});
 }
 
 /// @nodoc
@@ -94,6 +100,7 @@ class __$$VariantImplCopyWithImpl<$Res>
   $Res call({
     Object? id = freezed,
     Object? price = null,
+    Object? quantity = null,
     Object? img_paths_url = null,
   }) {
     return _then(_$VariantImpl(
@@ -105,6 +112,10 @@ class __$$VariantImplCopyWithImpl<$Res>
           ? _value.price
           : price // ignore: cast_nullable_to_non_nullable
               as double,
+      quantity: null == quantity
+          ? _value.quantity
+          : quantity // ignore: cast_nullable_to_non_nullable
+              as int,
       img_paths_url: null == img_paths_url
           ? _value._img_paths_url
           : img_paths_url // ignore: cast_nullable_to_non_nullable
@@ -119,6 +130,7 @@ class _$VariantImpl with DiagnosticableTreeMixin implements _Variant {
   _$VariantImpl(
       {this.id = null,
       this.price = 0.0,
+      this.quantity = 0,
       final List<String> img_paths_url = const <String>[]})
       : _img_paths_url = img_paths_url;
 
@@ -131,6 +143,9 @@ class _$VariantImpl with DiagnosticableTreeMixin implements _Variant {
   @override
   @JsonKey()
   final double price;
+  @override
+  @JsonKey()
+  final int quantity;
   final List<String> _img_paths_url;
   @override
   @JsonKey()
@@ -142,7 +157,7 @@ class _$VariantImpl with DiagnosticableTreeMixin implements _Variant {
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'Variant(id: $id, price: $price, img_paths_url: $img_paths_url)';
+    return 'Variant(id: $id, price: $price, quantity: $quantity, img_paths_url: $img_paths_url)';
   }
 
   @override
@@ -152,6 +167,7 @@ class _$VariantImpl with DiagnosticableTreeMixin implements _Variant {
       ..add(DiagnosticsProperty('type', 'Variant'))
       ..add(DiagnosticsProperty('id', id))
       ..add(DiagnosticsProperty('price', price))
+      ..add(DiagnosticsProperty('quantity', quantity))
       ..add(DiagnosticsProperty('img_paths_url', img_paths_url));
   }
 
@@ -162,13 +178,15 @@ class _$VariantImpl with DiagnosticableTreeMixin implements _Variant {
             other is _$VariantImpl &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.price, price) || other.price == price) &&
+            (identical(other.quantity, quantity) ||
+                other.quantity == quantity) &&
             const DeepCollectionEquality()
                 .equals(other._img_paths_url, _img_paths_url));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, id, price,
+  int get hashCode => Object.hash(runtimeType, id, price, quantity,
       const DeepCollectionEquality().hash(_img_paths_url));
 
   @JsonKey(ignore: true)
@@ -189,6 +207,7 @@ abstract class _Variant implements Variant {
   factory _Variant(
       {final int? id,
       final double price,
+      final int quantity,
       final List<String> img_paths_url}) = _$VariantImpl;
 
   factory _Variant.fromJson(Map<String, dynamic> json) = _$VariantImpl.fromJson;
@@ -197,6 +216,8 @@ abstract class _Variant implements Variant {
   int? get id;
   @override
   double get price;
+  @override
+  int get quantity;
   @override
   List<String> get img_paths_url;
   @override

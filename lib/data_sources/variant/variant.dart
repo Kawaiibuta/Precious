@@ -9,6 +9,7 @@ class Variant with _$Variant {
   factory Variant(
       {@Default(null) int? id,
       @Default(0.0) double price,
+      @Default(0) int quantity,
       @Default(<String>[]) List<String> img_paths_url}) = _Variant;
   factory Variant.fromJson(Map<String, dynamic> json) =>
       _$VariantFromJson(json);

@@ -8,8 +8,9 @@ part of 'variant.dart';
 
 _$VariantImpl _$$VariantImplFromJson(Map<String, dynamic> json) =>
     _$VariantImpl(
-      id: json['id'] as int? ?? null,
+      id: (json['id'] as num?)?.toInt() ?? null,
       price: (json['price'] as num?)?.toDouble() ?? 0.0,
+      quantity: (json['quantity'] as num?)?.toInt() ?? 0,
       img_paths_url: (json['img_paths_url'] as List<dynamic>?)
               ?.map((e) => e as String)
               .toList() ??
@@ -20,5 +21,6 @@ Map<String, dynamic> _$$VariantImplToJson(_$VariantImpl instance) =>
     <String, dynamic>{
       'id': instance.id,
       'price': instance.price,
+      'quantity': instance.quantity,
       'img_paths_url': instance.img_paths_url,
     };

@@ -1,14 +1,20 @@
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:easy_image_viewer/easy_image_viewer.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:precious/data_sources/product/product.dart';
 import 'package:precious/data_sources/product_category/product_category.dart';
 import 'package:precious/data_sources/product_repository.dart';
+import 'package:precious/data_sources/variant/variant.dart';
 import 'package:precious/presenters/category_presenter.dart';
 import 'package:precious/presenters/product_presenter.dart';
+import 'package:precious/views/item_detail_page.dart';
 
 class InventoryForm extends StatefulWidget {
   const InventoryForm({super.key});
@@ -23,7 +29,8 @@ class _InventoryFormState extends State<InventoryForm> {
   final categoryPresenter = ProductCategoryPresenter();
   final productPresenter = ProductPresenter();
   ProductCategory? selectedCategory;
-  var product = Product();
+  var product = Product(variants: []);
+  var variantList = <Variant>[];
   List<XFile> imageList = [];
   final nameController = TextEditingController();
   final shortDesController = TextEditingController();
@@ -35,7 +42,7 @@ class _InventoryFormState extends State<InventoryForm> {
   void initState() {
     super.initState();
     futureCategoryList = categoryPresenter.getAll();
-    quantityController.value = TextEditingValue(text: "1");
+    quantityController.value = const TextEditingValue(text: "1");
   }
 
   @override
@@ -63,54 +70,22 @@ class _InventoryFormState extends State<InventoryForm> {
                 ),
                 Padding(
                   padding: const EdgeInsets.only(top: 5.0, bottom: 5.0),
-                  child: Row(
-                    children: [
-                      Flexible(
-                        flex: 3,
-                        child: TextFormField(
-                          controller: nameController,
-                          style: const TextStyle(color: Colors.black),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return "Name cannot be empty";
-                            } else {
-                              return null;
-                            }
-                          },
-                          decoration: const InputDecoration(
-                            label: Text("Name"),
-                            border: OutlineInputBorder(),
-                            focusedBorder: OutlineInputBorder(),
-                            hintText: 'Your product name here',
-                          ),
-                        ),
-                      ),
-                      Flexible(
-                        flex: 1,
-                        child: TextFormField(
-                          controller: quantityController,
-                          style: const TextStyle(
-                            color: Colors.black,
-                          ),
-                          textAlign: TextAlign.center,
-                          keyboardType: TextInputType.number,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return "Quantity cannot be empty";
-                            }
-                            if (int.parse(value) <= 0) {
-                              return "Quantity cannot be less than 1";
-                            }
-                            return null;
-                          },
-                          decoration: const InputDecoration(
-                            label: Text("Quantity"),
-                            border: OutlineInputBorder(),
-                            focusedBorder: OutlineInputBorder(),
-                          ),
-                        ),
-                      ),
-                    ],
+                  child: TextFormField(
+                    controller: nameController,
+                    style: const TextStyle(color: Colors.black),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "Name cannot be empty";
+                      } else {
+                        return null;
+                      }
+                    },
+                    decoration: const InputDecoration(
+                      label: Text("Name"),
+                      border: OutlineInputBorder(),
+                      focusedBorder: OutlineInputBorder(),
+                      hintText: 'Your product name here',
+                    ),
                   ),
                 ),
                 Padding(
@@ -197,31 +172,6 @@ class _InventoryFormState extends State<InventoryForm> {
                     ),
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 5.0, bottom: 5.0),
-                  child: TextFormField(
-                    controller: priceController,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return "Price cannot be empty";
-                      }
-                      try {
-                        double.parse(value);
-                      } catch (e) {
-                        return "Price must be a number";
-                      }
-                      return null;
-                    },
-                    style: const TextStyle(color: Colors.black),
-                    keyboardType: TextInputType.number,
-                    decoration: const InputDecoration(
-                      label: Text("Price"),
-                      focusedBorder: OutlineInputBorder(),
-                      border: OutlineInputBorder(),
-                      hintText: 'The price',
-                    ),
-                  ),
-                ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -259,6 +209,25 @@ class _InventoryFormState extends State<InventoryForm> {
                       );
                     })
                   ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text("Variants:",
+                        style: GoogleFonts.openSans(
+                            color: Colors.black,
+                            fontWeight: FontWeight.w700,
+                            fontSize: 16)),
+                    IconButton(
+                      onPressed: () {
+                        _handleAddVariant();
+                      },
+                      icon: const Icon(Icons.add),
+                    )
+                  ],
+                ),
+                ...variantList.map(
+                  (e) => buildVariantCard(e, context),
                 ),
                 TextButton(
                   onPressed: () {
@@ -299,6 +268,10 @@ class _InventoryFormState extends State<InventoryForm> {
       Fluttertoast.showToast(msg: "Please select a category");
       return false;
     }
+    if (imageList.isEmpty) {
+      Fluttertoast.showToast(msg: "Atleast 1 image is needed");
+      return false;
+    }
     if (!_formKey.currentState!.validate()) {
       Fluttertoast.showToast(msg: "Some required fields are missing");
       return false;
@@ -307,15 +280,241 @@ class _InventoryFormState extends State<InventoryForm> {
         name: nameController.text,
         category_id: selectedCategory!.id!,
         short_description: shortDesController.text,
-        description: desController.text,
-        quantity: int.parse(quantityController.text),
-        price: double.parse(priceController.text));
-    return ProductRepository.add(temp, imageList: imageList).then((value) {
+        description: desController.text);
+    final createProductResult =
+        await ProductRepository.add(temp, imageList: imageList).then((value) {
       Fluttertoast.showToast(msg: "Your product have been created");
-      return true;
+      return value;
     }).catchError((e) {
       Fluttertoast.showToast(msg: "Some error has happened");
-      return false;
+      return null;
     });
+    return createProductResult == null;
+  }
+
+  void _handleAddVariant({Variant? variant}) {
+    var price = .0;
+    var quantity = 0;
+    var variantImageList = <String>[];
+    if (variant != null) {
+      price = variant.price;
+      quantity = variant.quantity;
+      variantImageList.addAll(variant.img_paths_url);
+    }
+    showDialog(
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) => AlertDialog(
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                "Variant",
+                style: GoogleFonts.openSans(
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20),
+              ),
+              TextFormField(
+                style: const TextStyle(color: Colors.black),
+                initialValue: variant == null ? null : price.toString(),
+                keyboardType: TextInputType.number,
+                onChanged: (value) {
+                  price = double.parse(value);
+                },
+                decoration: const InputDecoration(
+                  hintText: 'Price',
+                ),
+              ),
+              TextFormField(
+                style: const TextStyle(color: Colors.black),
+                keyboardType: TextInputType.number,
+                initialValue: variant == null ? null : quantity.toString(),
+                onChanged: (value) {
+                  quantity = int.parse(value);
+                },
+                decoration: const InputDecoration(
+                  hintText: 'Quantity',
+                ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text("Images:",
+                      style: GoogleFonts.openSans(
+                          color: Colors.black,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 16)),
+                  IconButton(
+                    onPressed: () async {
+                      variantImageList.addAll(
+                          (await _handleVariantSelectImage())
+                              .map((e) => e.path));
+                      setState(() {});
+                    },
+                    icon: const Icon(Icons.add),
+                  )
+                ],
+              ),
+              Wrap(
+                children: [
+                  ...variantImageList.map((e) {
+                    return InkWell(
+                        onTap: () {
+                          showImageViewer(
+                              context,
+                              (Uri.parse(e).isAbsolute
+                                  ? CachedNetworkImageProvider(e)
+                                  : FileImage(File(e))) as ImageProvider,
+                              onViewerDismissed: () {});
+                        },
+                        child: Uri.parse(e).isAbsolute
+                            ? CachedNetworkImage(
+                                width: 100,
+                                height: 100,
+                                imageUrl: e,
+                                progressIndicatorBuilder:
+                                    (context, e, progress) =>
+                                        CircularPercentIndicator(
+                                  radius: 30.0,
+                                  lineWidth: 5.0,
+                                  percent: progress.downloaded /
+                                      (progress.totalSize ??
+                                          progress.downloaded),
+                                  progressColor: Colors.black,
+                                ),
+                              )
+                            : Image.file(width: 100, height: 100, File(e)));
+                  })
+                ],
+              ),
+              TextButton(
+                onPressed: () {
+                  if (variantImageList.isEmpty) {
+                    Fluttertoast.showToast(msg: "At least 1 image is needed.");
+                    return;
+                  }
+                  if (quantity <= 0) {
+                    Fluttertoast.showToast(
+                        msg: "Quantity must be an integer and not less than 1");
+                    return;
+                  }
+                  Navigator.of(context).pop(true);
+                },
+                style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all(Colors.black)),
+                child: Text(
+                  "Add variant",
+                  style: GoogleFonts.openSans(
+                      fontSize: 16,
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    ).then((value) {
+      if (value != null && value) {
+        setState(() {
+          if (variant == null) {
+            variantList.add(Variant(
+                price: price,
+                quantity: quantity,
+                img_paths_url: variantImageList));
+            return;
+          }
+          final index = variantList.indexOf(variant);
+          final result = variant.copyWith(
+              price: price,
+              quantity: quantity,
+              img_paths_url: variantImageList);
+          variantList[index] = result;
+        });
+      }
+    });
+  }
+
+  Future<List<XFile>> _handleVariantSelectImage() async {
+    final ImagePicker picker = ImagePicker();
+    return await picker.pickMultiImage();
+  }
+
+  Widget buildVariantCard(Variant variant, BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+          border: Border.all(), borderRadius: BorderRadius.circular(10.0)),
+      padding: const EdgeInsets.all(8.0),
+      margin: const EdgeInsets.only(bottom: 5.0),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  Text(variant.id == null ? "N/A" : variant.id.toString()),
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Text("Price: ${variant.price}"),
+                      Text("Quantity: ${variant.quantity}")
+                    ],
+                  ),
+                ],
+              ),
+              Row(
+                children: [
+                  IconButton(
+                      onPressed: () {
+                        _handleAddVariant(variant: variant);
+                      },
+                      icon: const Icon(Icons.edit)),
+                  IconButton(
+                      onPressed: () {
+                        setState(() {
+                          variantList.remove(variant);
+                        });
+                      },
+                      icon: const Icon(Icons.delete)),
+                ],
+              )
+            ],
+          ),
+          Wrap(
+            children: variant.img_paths_url
+                .map((e) => InkWell(
+                    onTap: () {
+                      showImageViewer(
+                          context,
+                          (Uri.parse(e).isAbsolute
+                              ? CachedNetworkImageProvider(e)
+                              : FileImage(File(e))) as ImageProvider,
+                          onViewerDismissed: () {});
+                    },
+                    child: Uri.parse(e).isAbsolute
+                        ? CachedNetworkImage(
+                            width: 50,
+                            height: 50,
+                            imageUrl: e,
+                            progressIndicatorBuilder: (context, e, progress) =>
+                                CircularPercentIndicator(
+                              radius: 30.0,
+                              lineWidth: 5.0,
+                              percent: progress.downloaded /
+                                  (progress.totalSize ?? progress.downloaded),
+                              progressColor: Colors.black,
+                            ),
+                          )
+                        : Image.file(width: 50, height: 50, File(e))))
+                .toList(),
+          )
+        ],
+      ),
+    );
   }
 }

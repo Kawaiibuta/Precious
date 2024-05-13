@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:precious/data_sources/product/product.dart';
+import 'package:precious/data_sources/variant/variant.dart';
 import 'package:precious/resources/endpoints.dart';
 import 'package:precious/resources/utils/dio_utils.dart';
 
@@ -60,7 +61,6 @@ class ProductRepository {
         ]);
       });
     }
-    debugPrint(data.fields.toString());
     final result = await dio
         .request(
           EndPoint.product,
@@ -118,5 +118,31 @@ class ProductRepository {
       return false;
     });
     return result;
+  }
+
+  static Future<Variant?> addVariant(
+      int productId, Variant value, List<XFile> images) async {
+    var map = value.toJson();
+    map.remove("id");
+    map.remove("img_paths_url");
+    var data = FormData.fromMap(map);
+    images.forEach((element) async {
+      data.files.addAll([
+        MapEntry("img", MultipartFile.fromBytes(await element.readAsBytes()))
+      ]);
+    });
+    final response = await dio
+        .request(EndPoint.productVariant(productId),
+            options: Options(
+              method: "POST",
+              headers: headers,
+            ),
+            data: data)
+        .then((value) => Variant.fromJson(value.data))
+        .catchError((error) {
+      debugPrint(error.toString());
+      return null;
+    });
+    return response;
   }
 }
