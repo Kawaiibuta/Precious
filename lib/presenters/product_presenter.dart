@@ -3,46 +3,34 @@ import 'package:precious/data_sources/product/product.dart';
 import 'package:precious/data_sources/product_repository.dart';
 import 'package:precious/presenters/base_presenter.dart';
 
-class ProductPresenter {
-  static Map<int, Product> productList = {};
-  static const quantityForEach = 20;
-  static List<int> selectedProduct = [];
-  Future<List<Product>> getAll({bool more = false}) async {
-    if (productList.values.isNotEmpty && more == false) {
-      return productList.values.toList();
+class ProductPresenter implements Presenter {
+  @override
+  List<int> selected = [];
+  @override
+  Future<List<Product>> getAll({bool more = false, bool reset = false}) async {
+    if (!more && ProductRepository.list.isNotEmpty) {
+      return ProductRepository.list.values.toList();
     }
+    if (reset) ProductRepository.reset();
     debugPrint("get Product");
-    final result = await ProductRepository.getAll(
-            start: productList.length + 1, quantity: quantityForEach)
-        .then((e) {
-      for (var element in e) {
-        productList.addEntries(<int, Product>{element.id!: element}.entries);
-      }
+    final result = await ProductRepository.getAll().then((e) {
       return e;
     }).catchError((e) {
       debugPrint(e.toString());
       return <Product>[];
     });
-
     return result;
   }
 
+  @override
   Future<Product?> getOne(int id, {detail = false}) async {
-    if (productList.keys.contains(id)) {
+    final productList = ProductRepository.list;
+    if (productList.keys.contains(id) && !detail) {
       var product = productList[id]!;
       if (product.variants != null) return product;
-      if (detail) {
-        product = await ProductRepository.getOne(id)
-            .then((value) => productList.update(id, (_) => value ?? product));
-      }
       return product;
     }
-    final result = await ProductRepository.getOne(id).then((value) {
-      if (value != null) {
-        productList.addEntries(<int, Product>{id: value}.entries);
-      }
-      return value;
-    });
+    final result = await ProductRepository.getOne(id);
     return result;
   }
 
@@ -53,14 +41,11 @@ class ProductPresenter {
     });
   }
 
-  Future<bool> delete(List<int> items) async {
-    bool item = true;
-    items.forEach((element) async {
-      item = await ProductRepository.delete(element).then((value) {
-        if (value) productList.removeWhere((key, value) => value.id == element);
-        return value;
-      }).catchError((e) => false);
+  @override
+  Future<bool> delete(int id) async {
+    return ProductRepository.delete(id).catchError((error) {
+      debugPrint(error.toString());
+      return false;
     });
-    return item;
   }
 }

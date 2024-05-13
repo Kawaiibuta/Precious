@@ -7,16 +7,18 @@ import 'package:precious/data_sources/product/product.dart';
 import 'package:precious/data_sources/variant/variant.dart';
 import 'package:precious/presenters/product_presenter.dart';
 
+const variantSize = 50;
+
 class ProductCardAdmin extends StatefulWidget {
   const ProductCardAdmin(
       {super.key,
-      this.product,
+      required this.product,
       this.productId,
       this.onSelected,
       this.onDisSelected})
-      : assert(productId == null || product == null),
+      : assert(productId == null),
         assert(!(productId == null && product == null));
-  final Product? product;
+  final Product product;
   final int? productId;
   final Function? onSelected;
   final Function? onDisSelected;
@@ -34,26 +36,17 @@ class _ProductCardAdminState extends State<ProductCardAdmin> {
   ProductPresenter productPresenter = ProductPresenter();
   @override
   void initState() {
-    if (widget.product != null) {
-      product = widget.product!;
-      image = widget.product!.img_paths_url;
-      price = widget.product!.price;
-      if (product!.variants == null) {
-        productPresenter
-            .getOne(widget.product!.id!, detail: true)
-            .then((value) => setState(() {
-                  product = value;
-                }));
-      } else {
-        setState(() {});
-      }
+    product = widget.product;
+    image = widget.product.img_paths_url;
+    price = widget.product.price;
+    if (product!.variants == null) {
+      productPresenter
+          .getOne(widget.product.id!, detail: true)
+          .then((value) => setState(() {
+                product = value;
+              }));
     } else {
-      productPresenter.getOne(widget.productId!).then((value) {
-        if (value == null) Navigator.of(context).pop();
-        setState(() {
-          product = value!;
-        });
-      });
+      setState(() {});
     }
     super.initState();
   }
@@ -73,7 +66,12 @@ class _ProductCardAdminState extends State<ProductCardAdmin> {
         });
       },
       child: AnimatedContainer(
-        height: detailSelected ? 520 : 100,
+        height: detailSelected
+            ? (product != null ? product!.variants!.length : 0) /
+                    (MediaQuery.of(context).size.width / 50) *
+                    80 +
+                430
+            : 100,
         curve: Curves.easeOut,
         padding: EdgeInsets.all(detailSelected ? 10.0 : 5.0),
         duration: const Duration(milliseconds: 1000),
@@ -161,7 +159,7 @@ class _ProductCardAdminState extends State<ProductCardAdmin> {
                                   ),
                             !detailSelected
                                 ? Text(
-                                    widget.product!.short_description,
+                                    widget.product.short_description,
                                     style: DefaultTextStyle.of(context)
                                         .style
                                         .merge(const TextStyle(

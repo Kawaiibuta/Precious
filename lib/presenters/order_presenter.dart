@@ -1,26 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:precious/data_sources/order/order.dart';
 import 'package:precious/data_sources/order_repository.dart';
+import 'package:precious/presenters/base_presenter.dart';
 
-class OrderPresenter {
-  static Map<int, Order> orderList = {};
-  static const quantityForEach = 20;
-  static List<int> selectedOrder = [];
-
-  Future<List<Order>> getAll({bool more = false}) async {
-    if (orderList.values.isNotEmpty) {
-      return orderList.values.toList();
+class OrderPresenter implements Presenter {
+  @override
+  List<int> selected = [];
+  Future<List<Order>> getAll({bool more = false, bool reset = false}) async {
+    if (OrderRepository.list.isNotEmpty) {
+      return OrderRepository.list.values.toList();
     }
-    final result = await OrderRepository.getAll().then((e) {
-      for (var element in e) {
-        orderList.addEntries(<int, Order>{element.id!: element}.entries);
-      }
-      return e;
-    }).catchError((e) {
+    if (reset) OrderRepository.reset();
+    final result = await OrderRepository.getAll().catchError((e) {
       debugPrint(e.toString());
       return <Order>[];
     });
-
     return result;
+  }
+
+  @override
+  delete(int id) {
+    // TODO: implement delete
+    throw UnimplementedError();
+  }
+
+  @override
+  getOne(int id, {bool detail = false}) {
+    // TODO: implement getOne
+    throw UnimplementedError();
   }
 }

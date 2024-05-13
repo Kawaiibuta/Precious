@@ -1,9 +1,10 @@
+import 'dart:async';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:precious/data_sources/product_repository.dart';
+import 'package:precious/presenters/base_presenter.dart';
+import 'package:precious/presenters/order_presenter.dart';
 import 'package:precious/presenters/product_presenter.dart';
 import 'package:precious/views/admin/order_page_admin.dart';
 import 'package:precious/views/admin/product_page_admin.dart';
@@ -41,12 +42,23 @@ final drawerItemList = [
 
 class _HomePageAdminState extends State<HomePageAdmin> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
-  var openList = [
-    {"icon": Icons.add, "name": "add"}
-  ];
-  List<int> itemList = [];
-  final productPresenter = ProductPresenter();
   var controller = SidebarXController(selectedIndex: 0, extended: true);
+  late Presenter _presenter;
+  StreamController floatingButtonStreamController =
+      StreamController<List<int>>();
+  Stream get floatingButtonStream => floatingButtonStreamController.stream;
+  @override
+  void initState() {
+    super.initState();
+    _presenter = getPresenter();
+  }
+
+  @override
+  void dispose() {
+    floatingButtonStreamController.close();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -118,142 +130,148 @@ class _HomePageAdminState extends State<HomePageAdmin> {
                       })))
               .toList(),
         ),
-        floatingActionButton: Stack(
-          children: [
-            ...openList.reversed
-                .toList()
-                .asMap()
-                .map((key, value) => MapEntry(
-                    key,
-                    AnimatedPositioned(
-                      duration: const Duration(milliseconds: 1000),
-                      curve: Curves.easeOut,
-                      bottom: openList.isNotEmpty && key != 0 ? key * 65 : 0,
-                      right: 10.0,
-                      child: Container(
-                        width: 60,
-                        height: 60,
-                        child: FloatingActionButton(
-                          backgroundColor: Colors.black,
-                          onPressed: () {
-                            switch (value['name']) {
-                              case "add":
-                                Navigator.of(context).pushNamed(
-                                    "${(drawerItemList[controller.selectedIndex]['name'] as String).toLowerCase()}_form");
-                                break;
-                              case "delete":
-                                _handleDeleteItem(
-                                    (drawerItemList[controller.selectedIndex]
-                                            ['name'] as String)
-                                        .toLowerCase());
-                              default:
-                            }
-                          },
-                          child: Icon(
-                            value["icon"] as IconData,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                    )))
-                .values
-          ],
-        ));
+        floatingActionButton: StreamBuilder<List<int>>(
+            stream: floatingButtonStreamController.stream as Stream<List<int>>,
+            builder: (context, snapshot) {
+              var openList = (snapshot.data ?? []).toList();
+              return Stack(
+                children: [
+                  ...floatingButtonList.reversed
+                      .toList()
+                      .asMap()
+                      .map((key, value) => MapEntry(
+                          key,
+                          AnimatedPositioned(
+                              duration: const Duration(milliseconds: 900),
+                              curve: Curves.easeOut,
+                              bottom: openList.isNotEmpty &&
+                                      key != 0 &&
+                                      openList.contains(key)
+                                  ? key * 65
+                                  : 0,
+                              right: 10.0,
+                              child: Container(
+                                width: 60,
+                                height: 60,
+                                child: FloatingActionButton(
+                                  backgroundColor: Colors.black,
+                                  onPressed: () {
+                                    switch (value['name']) {
+                                      case "add":
+                                        Navigator.of(context).pushNamed(
+                                            "${(drawerItemList[controller.selectedIndex]['name'] as String).toLowerCase()}_form");
+                                        break;
+                                      case "delete":
+                                        _handleDeleteItem();
+                                      default:
+                                    }
+                                  },
+                                  child: Icon(
+                                    value["icon"] as IconData,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ))))
+                      .values
+                ],
+              );
+            }));
   }
 
-  void _handleDeleteItem(String lowerCase) async {
-    if (lowerCase == 'inventory') {
-      final futureItemList = ProductPresenter.selectedProduct
-          .map((e) => ProductRepository.getOne(e));
-      final itemList = await Future.wait(futureItemList);
-      showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-                backgroundColor: Colors.white,
-                surfaceTintColor: Colors.white,
-                content: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Text("Delete items"),
-                    Text("Do you want to delete ${itemList.length} items?"),
-                    DataTable(
-                        columns: const [
-                          DataColumn(
-                            label: Expanded(
-                              child: Text(
-                                'Id',
-                                style: TextStyle(fontStyle: FontStyle.italic),
-                              ),
-                            ),
-                          ),
-                          DataColumn(
-                            label: Expanded(
-                              child: Text(
-                                'name',
-                                style: TextStyle(fontStyle: FontStyle.italic),
-                              ),
-                            ),
-                          ),
-                        ],
-                        rows: itemList
-                            .map((e) => DataRow(
-                                  cells: <DataCell>[
-                                    DataCell(Text(e!.id!.toString())),
-                                    DataCell(Text(e.name)),
-                                  ],
-                                ))
-                            .toList()),
-                    Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          OutlinedButton(
-                              style: ButtonStyle(
-                                  backgroundColor:
-                                      MaterialStateProperty.all(Colors.white)),
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                              child: Text(
-                                "Cancel",
-                                style:
-                                    GoogleFonts.openSans(color: Colors.black),
-                              )),
-                          OutlinedButton(
-                              onPressed: () async {
-                                final futureResult = ProductPresenter
-                                    .selectedProduct
-                                    .map((e) => ProductRepository.delete(e))
-                                    .toList();
-                                final result = await Future.wait(futureResult);
-                                Fluttertoast.showToast(
-                                    msg:
-                                        "${result.where((element) => element == true).length} have been removed successfully");
+  void _handleDeleteItem() async {
+    debugPrint(_presenter.selected.toString());
+    // final futureItemList = _presenter.selected.map((e) => _presenter.getOne(e));
+    // final itemList = await Future.wait(futureItemList);
+    // showDialog(
+    //     context: context,
+    //     builder: (context) => AlertDialog(
+    //           backgroundColor: Colors.white,
+    //           surfaceTintColor: Colors.white,
+    //           content: Column(
+    //             mainAxisSize: MainAxisSize.min,
+    //             children: [
+    //               const Text("Delete items"),
+    //               Text("Do you want to delete ${itemList.length} items?"),
+    //               DataTable(
+    //                   columns: const [
+    //                     DataColumn(
+    //                       label: Expanded(
+    //                         child: Text(
+    //                           'Id',
+    //                           style: TextStyle(fontStyle: FontStyle.italic),
+    //                         ),
+    //                       ),
+    //                     ),
+    //                     DataColumn(
+    //                       label: Expanded(
+    //                         child: Text(
+    //                           'name',
+    //                           style: TextStyle(fontStyle: FontStyle.italic),
+    //                         ),
+    //                       ),
+    //                     ),
+    //                   ],
+    //                   rows: itemList
+    //                       .map((e) => DataRow(
+    //                             cells: <DataCell>[
+    //                               DataCell(Text(e!.id!.toString())),
+    //                               DataCell(Text(e.name)),
+    //                             ],
+    //                           ))
+    //                       .toList()),
+    //               Row(
+    //                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    //                   children: [
+    //                     OutlinedButton(
+    //                         style: ButtonStyle(
+    //                             backgroundColor:
+    //                                 MaterialStateProperty.all(Colors.white)),
+    //                         onPressed: () {
+    //                           Navigator.of(context).pop();
+    //                         },
+    //                         child: Text(
+    //                           "Cancel",
+    //                           style: GoogleFonts.openSans(color: Colors.black),
+    //                         )),
+    //                     OutlinedButton(
+    //                         onPressed: () async {
+    //                           final futureResult = _presenter.selected
+    //                               .map((e) => _presenter.delete(e))
+    //                               .toList();
+    //                           final result = await Future.wait(futureResult);
+    //                           Fluttertoast.showToast(
+    //                               msg:
+    //                                   "${result.where((element) => element == true).length} have been removed successfully");
 
-                                Navigator.of(context).pop();
-                              },
-                              style: ButtonStyle(
-                                  backgroundColor:
-                                      MaterialStateProperty.all(Colors.black)),
-                              child: Text("OK",
-                                  style: GoogleFonts.openSans(
-                                      color: Colors.white))),
-                        ])
-                  ],
-                ),
-              )).then((value) => Navigator.of(context).setState(() {}));
-    }
+    //                           Navigator.of(context).pop();
+    //                         },
+    //                         style: ButtonStyle(
+    //                             backgroundColor:
+    //                                 MaterialStateProperty.all(Colors.black)),
+    //                         child: Text("OK",
+    //                             style:
+    //                                 GoogleFonts.openSans(color: Colors.white))),
+    //                   ])
+    //             ],
+    //           ),
+    //         )).then((value) => Navigator.of(context).setState(() {}));
   }
 
   Widget getRoute() => switch (controller.selectedIndex) {
         0 => ProductPageAdmin(
-            openFloatingButton: (List<int> i) {
-              setState(() {
-                openList = i.map((e) => floatingButtonList[e]).toList();
-              });
-            },
+            presenter: getPresenter() as ProductPresenter,
+            openFloatingButton: (List<int> e) =>
+                floatingButtonStreamController.sink.add(e),
           ),
         1 => const UserPageAdmin(),
         2 => const OrderPageAdmin(),
         _ => const OrderPageAdmin()
+      };
+
+  Presenter getPresenter() => switch (controller.selectedIndex) {
+        0 => ProductPresenter(),
+        1 => ProductPresenter(),
+        2 => OrderPresenter(),
+        _ => ProductPresenter(),
       };
 }

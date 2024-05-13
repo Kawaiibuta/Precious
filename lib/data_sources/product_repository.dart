@@ -7,8 +7,14 @@ import 'package:precious/resources/endpoints.dart';
 import 'package:precious/resources/utils/dio_utils.dart';
 
 class ProductRepository {
-  static Future<List<Product>> getAll(
-      {int start = 1, int quantity = 30, int type = -1}) async {
+  static Map<int, Product> list = {};
+  static const quantityForEach = 20;
+  static Future<List<Product>> getAll({
+    int start = 0,
+    int quantity = quantityForEach,
+    int type = -1,
+  }) async {
+    if (start <= 0) start = list.length + 1;
     debugPrint(EndPoint.productWithParam(
         start: start, quantity: quantity, type: type));
     final result = await dio
@@ -26,6 +32,9 @@ class ProductRepository {
       debugPrint(e.toString());
       return <Product>[];
     });
+    for (var element in result) {
+      list.addEntries(<int, Product>{element.id!: element}.entries);
+    }
     return result;
   }
 
@@ -44,6 +53,7 @@ class ProductRepository {
       debugPrint("Error from getOne $e");
       return null;
     });
+    list.update(id, (value) => result);
     return result;
   }
 
@@ -144,5 +154,9 @@ class ProductRepository {
       return null;
     });
     return response;
+  }
+
+  static void reset() {
+    list.clear();
   }
 }

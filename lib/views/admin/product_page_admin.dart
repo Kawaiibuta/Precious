@@ -47,15 +47,10 @@ List<Product> filterProductList(
 }
 
 class ProductPageAdmin extends StatefulWidget {
-  const ProductPageAdmin({super.key, this.openFloatingButton, this.onSelected});
+  const ProductPageAdmin(
+      {super.key, this.openFloatingButton, required this.presenter});
+  final ProductPresenter presenter;
   final Function? openFloatingButton;
-  final Function? onSelected;
-
-  static ProductPageAdmin fromMap(Map<String, dynamic> param) {
-    return ProductPageAdmin(
-        openFloatingButton: param['openFloatingButton'],
-        onSelected: param['onSelected']);
-  }
 
   @override
   _ProductPageAdminState createState() => _ProductPageAdminState();
@@ -67,7 +62,6 @@ class _ProductPageAdminState extends State<ProductPageAdmin> {
   late Future<List<ProductCategory>> categoryListFuture;
   List<ProductCategory> selectedCategory = [];
   late List<ProductCategory> categoryList;
-  final productPresenter = ProductPresenter();
   final categoryPresenter = ProductCategoryPresenter();
   ProductSortOption sortOption = ProductSortOption.nameAsc;
   String searchString = "";
@@ -75,7 +69,7 @@ class _ProductPageAdminState extends State<ProductPageAdmin> {
   @override
   void initState() {
     super.initState();
-    productListFuture = productPresenter.getAll().then((e) async {
+    productListFuture = widget.presenter.getAll().then((e) async {
       productList = e;
       return e;
     });
@@ -91,9 +85,9 @@ class _ProductPageAdminState extends State<ProductPageAdmin> {
     return RefreshIndicator(
       onRefresh: () async {
         debugPrint("Refresh");
-        ProductPresenter.selectedProduct.clear();
         _configFloatingButton();
-        productListFuture = productPresenter.getAll();
+        productListFuture = widget.presenter.getAll(reset: true);
+        if (widget.openFloatingButton != null) widget.openFloatingButton!([0]);
         await productListFuture;
         setState(() {});
         return;
@@ -218,24 +212,23 @@ class _ProductPageAdminState extends State<ProductPageAdmin> {
   }
 
   void _handleSelect(int i) {
-    if (ProductPresenter.selectedProduct.contains(i)) {
-      ProductPresenter.selectedProduct.remove(i);
+    if (widget.presenter.selected.contains(i)) {
+      widget.presenter.selected.remove(i);
     } else {
-      ProductPresenter.selectedProduct.add(i);
+      widget.presenter.selected.add(i);
     }
     _configFloatingButton();
   }
 
   void _configFloatingButton() {
-    if (widget.onSelected != null) widget.onSelected!();
     if (widget.openFloatingButton != null) {
-      if (ProductPresenter.selectedProduct.length >= 2) {
+      if (widget.presenter.selected.length >= 2) {
         widget.openFloatingButton!([0, 1]);
       }
-      if (ProductPresenter.selectedProduct.isEmpty) {
+      if (widget.presenter.selected.isEmpty) {
         widget.openFloatingButton!([0]);
       }
-      if (ProductPresenter.selectedProduct.length == 1) {
+      if (widget.presenter.selected.length == 1) {
         widget.openFloatingButton!([0, 1, 2]);
       }
     }
