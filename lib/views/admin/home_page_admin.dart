@@ -5,7 +5,9 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:precious/data_sources/product_repository.dart';
 import 'package:precious/presenters/product_presenter.dart';
+import 'package:precious/views/admin/order_page_admin.dart';
 import 'package:precious/views/admin/product_page_admin.dart';
+import 'package:precious/views/admin/user_page_admin.dart';
 import 'package:sidebarx/sidebarx.dart';
 
 class HomePageAdmin extends StatefulWidget {
@@ -25,10 +27,6 @@ final floatingButtonList = [
 ];
 
 final drawerItemList = [
-  {
-    "icon": Icons.home,
-    "name": "Home",
-  },
   {"icon": Icons.inventory, "name": "Inventory"},
   {
     "icon": Icons.person,
@@ -36,7 +34,7 @@ final drawerItemList = [
   },
   {
     "icon": Icons.receipt,
-    "name": "order",
+    "name": "Order",
   },
   {"icon": Icons.monitor, "name": "Statistic"}
 ];
@@ -48,18 +46,12 @@ class _HomePageAdminState extends State<HomePageAdmin> {
   ];
   List<int> itemList = [];
   final productPresenter = ProductPresenter();
-  var controller = SidebarXController(selectedIndex: 1);
+  var controller = SidebarXController(selectedIndex: 0, extended: true);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         key: _scaffoldKey,
-        body: ProductPageAdmin(
-          openFloatingButton: (List<int> i) {
-            setState(() {
-              openList = i.map((e) => floatingButtonList[e]).toList();
-            });
-          },
-        ),
+        body: getRoute(),
         drawer: SidebarX(
           controller: _controller,
           theme: SidebarXTheme(
@@ -119,9 +111,11 @@ class _HomePageAdminState extends State<HomePageAdmin> {
           },
           items: drawerItemList
               .map((e) => SidebarXItem(
-                    icon: e["icon"] as IconData,
-                    label: e['name'] as String,
-                  ))
+                  icon: e["icon"] as IconData,
+                  label: e['name'] as String,
+                  onTap: () => setState(() {
+                        controller.selectIndex(drawerItemList.indexOf(e));
+                      })))
               .toList(),
         ),
         floatingActionButton: Stack(
@@ -249,4 +243,17 @@ class _HomePageAdminState extends State<HomePageAdmin> {
               )).then((value) => Navigator.of(context).setState(() {}));
     }
   }
+
+  Widget getRoute() => switch (controller.selectedIndex) {
+        0 => ProductPageAdmin(
+            openFloatingButton: (List<int> i) {
+              setState(() {
+                openList = i.map((e) => floatingButtonList[e]).toList();
+              });
+            },
+          ),
+        1 => const UserPageAdmin(),
+        2 => const OrderPageAdmin(),
+        _ => const OrderPageAdmin()
+      };
 }

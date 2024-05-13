@@ -10,4 +10,5 @@ class EndPoint {
   static const type = "${baseUrl}api/type/";
   static const variant = "${baseUrl}api/variant/";
   static String productVariant(int id) => variant + id.toString();
+  static const order = "${baseUrl}api/order";
 }
