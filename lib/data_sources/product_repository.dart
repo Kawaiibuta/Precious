@@ -5,6 +5,7 @@ import 'package:precious/data_sources/product/product.dart';
 import 'package:precious/data_sources/variant/variant.dart';
 import 'package:precious/resources/endpoints.dart';
 import 'package:precious/resources/utils/dio_utils.dart';
+import 'package:precious/views/item_detail_page.dart';
 
 class ProductRepository {
   static Map<int, Product> list = {};
@@ -53,37 +54,44 @@ class ProductRepository {
       debugPrint("Error from getOne $e");
       return null;
     });
-    list.update(id, (value) => result);
+    if (list.containsKey(id))
+      list.update(id, (value) => result);
+    else
+      list.addEntries(<int, Product>{result.id!: result}.entries);
     return result;
   }
 
-  static Future<Product?> add(Product product, {List<XFile>? imageList}) async {
+  static Future<Product?> add(
+      Product product, Map<String, Uint8List> imageList) async {
     var map = product.toJson();
     map.remove("id");
     map.remove("img_paths_url");
-    map.remove("rating");
     map.remove("variants");
-    var data = FormData.fromMap(map);
-    if (imageList != null) {
-      imageList.forEach((element) async {
-        data.files.addAll([
-          MapEntry("img", MultipartFile.fromBytes(await element.readAsBytes()))
-        ]);
-      });
-    }
+    map.remove("price");
+    map.remove("quantity");
+    var data = FormData.fromMap({
+      ...map,
+      "img[]": imageList
+          .map((key, value) =>
+              MapEntry(key, MultipartFile.fromBytes(value, filename: key)))
+          .values
+          .toList()
+    });
     final result = await dio
         .request(
-          EndPoint.product,
-          options: Options(
-            method: 'POST',
-            headers: headers,
-          ),
-          data: data,
-        )
-        .then((value) => Product.fromJson(value.data))
-        .catchError((e) {
-      debugPrint(e.toString());
-
+      EndPoint.product,
+      options: Options(
+        method: 'POST',
+        headers: headers,
+      ),
+      data: data,
+    )
+        .then((value) {
+      final result = Product.fromJson(value.data);
+      list.addEntries(<int, Product>{result.id!: result}.entries);
+      return result;
+    }).catchError((e) {
+      debugPrint(e.response.data.toString());
       return null;
     });
     return result;
@@ -116,14 +124,16 @@ class ProductRepository {
     var headers = {'accept': 'application/json'};
     final result = await dio
         .request(
-          EndPoint.productDetail(id),
-          options: Options(
-            method: 'DELETE',
-            headers: headers,
-          ),
-        )
-        .then((value) => true)
-        .catchError((e) {
+      EndPoint.productDetail(id),
+      options: Options(
+        method: 'DELETE',
+        headers: headers,
+      ),
+    )
+        .then((value) {
+      list.remove(id);
+      return true;
+    }).catchError((e) {
       debugPrint(e.toString());
       return false;
     });
@@ -131,18 +141,22 @@ class ProductRepository {
   }
 
   static Future<Variant?> addVariant(
-      int productId, Variant value, List<XFile> images) async {
+      int productId, Variant value, Map<String, Uint8List> images) async {
+    if (!list.containsKey(productId)) await getOne(productId);
     var map = value.toJson();
+    debugPrint(map.toString());
     map.remove("id");
     map.remove("img_paths_url");
-    var data = FormData.fromMap(map);
-    images.forEach((element) async {
-      data.files.addAll([
-        MapEntry("img", MultipartFile.fromBytes(await element.readAsBytes()))
-      ]);
+    var data = FormData.fromMap({
+      ...map,
+      "product_id": productId,
+      "img[]": images
+          .map((key, value) =>
+              MapEntry(key, MultipartFile.fromBytes(value, filename: key)))
+          .values
     });
     final response = await dio
-        .request(EndPoint.productVariant(productId),
+        .request(EndPoint.variant,
             options: Options(
               method: "POST",
               headers: headers,
@@ -150,9 +164,13 @@ class ProductRepository {
             data: data)
         .then((value) => Variant.fromJson(value.data))
         .catchError((error) {
-      debugPrint(error.toString());
+      debugPrint(error.response.toString());
       return null;
     });
+    if (list[productId]!.variants == null) {
+      list.update(productId, (value) => value.copyWith(variants: []));
+    }
+    list[productId]!.variants!.add(response);
     return response;
   }
 

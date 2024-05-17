@@ -48,7 +48,7 @@ class MyApp extends StatelessWidget {
         Locale('en'),
       ],
       initialRoute: _settingPresenter.firstRun
-          ? HomePageAdmin.name
+          ? LoginOrSignUpPage.name
           : LoginOrSignUpPage.name,
       routes: MyRoutes(_settingPresenter).routes,
     );

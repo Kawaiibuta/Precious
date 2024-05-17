@@ -9,6 +9,9 @@ part of 'order.dart';
 _$OrderImpl _$$OrderImplFromJson(Map<String, dynamic> json) => _$OrderImpl(
       id: (json['id'] as num?)?.toInt() ?? null,
       userId: (json['user_id'] as num?)?.toInt() ?? null,
+      user: json['user'] == null
+          ? null
+          : User.fromJson(json['user'] as Map<String, dynamic>),
       status: json['status'] as String,
       createAt: json['created_at'] == null
           ? null
@@ -24,6 +27,7 @@ Map<String, dynamic> _$$OrderImplToJson(_$OrderImpl instance) =>
     <String, dynamic>{
       'id': instance.id,
       'user_id': instance.userId,
+      'user': instance.user,
       'status': instance.status,
       'created_at': instance.createAt?.toIso8601String(),
       'total_price': instance.totalPrice,

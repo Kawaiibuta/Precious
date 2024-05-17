@@ -3,9 +3,14 @@ import 'dart:async';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:precious/data_sources/product/product.dart';
 import 'package:precious/presenters/base_presenter.dart';
 import 'package:precious/presenters/order_presenter.dart';
 import 'package:precious/presenters/product_presenter.dart';
+import 'package:precious/views/admin/inventory_form.dart';
+import 'package:precious/views/admin/order_form.dart';
 import 'package:precious/views/admin/order_page_admin.dart';
 import 'package:precious/views/admin/product_page_admin.dart';
 import 'package:precious/views/admin/user_page_admin.dart';
@@ -126,6 +131,7 @@ class _HomePageAdminState extends State<HomePageAdmin> {
                   icon: e["icon"] as IconData,
                   label: e['name'] as String,
                   onTap: () => setState(() {
+                        _presenter.selected.clear();
                         controller.selectIndex(drawerItemList.indexOf(e));
                       })))
               .toList(),
@@ -163,6 +169,8 @@ class _HomePageAdminState extends State<HomePageAdmin> {
                                         break;
                                       case "delete":
                                         _handleDeleteItem();
+                                      case "edit":
+                                        _handleUpdateItem();
                                       default:
                                     }
                                   },
@@ -180,86 +188,86 @@ class _HomePageAdminState extends State<HomePageAdmin> {
 
   void _handleDeleteItem() async {
     debugPrint(_presenter.selected.toString());
-    // final futureItemList = _presenter.selected.map((e) => _presenter.getOne(e));
-    // final itemList = await Future.wait(futureItemList);
-    // showDialog(
-    //     context: context,
-    //     builder: (context) => AlertDialog(
-    //           backgroundColor: Colors.white,
-    //           surfaceTintColor: Colors.white,
-    //           content: Column(
-    //             mainAxisSize: MainAxisSize.min,
-    //             children: [
-    //               const Text("Delete items"),
-    //               Text("Do you want to delete ${itemList.length} items?"),
-    //               DataTable(
-    //                   columns: const [
-    //                     DataColumn(
-    //                       label: Expanded(
-    //                         child: Text(
-    //                           'Id',
-    //                           style: TextStyle(fontStyle: FontStyle.italic),
-    //                         ),
-    //                       ),
-    //                     ),
-    //                     DataColumn(
-    //                       label: Expanded(
-    //                         child: Text(
-    //                           'name',
-    //                           style: TextStyle(fontStyle: FontStyle.italic),
-    //                         ),
-    //                       ),
-    //                     ),
-    //                   ],
-    //                   rows: itemList
-    //                       .map((e) => DataRow(
-    //                             cells: <DataCell>[
-    //                               DataCell(Text(e!.id!.toString())),
-    //                               DataCell(Text(e.name)),
-    //                             ],
-    //                           ))
-    //                       .toList()),
-    //               Row(
-    //                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    //                   children: [
-    //                     OutlinedButton(
-    //                         style: ButtonStyle(
-    //                             backgroundColor:
-    //                                 MaterialStateProperty.all(Colors.white)),
-    //                         onPressed: () {
-    //                           Navigator.of(context).pop();
-    //                         },
-    //                         child: Text(
-    //                           "Cancel",
-    //                           style: GoogleFonts.openSans(color: Colors.black),
-    //                         )),
-    //                     OutlinedButton(
-    //                         onPressed: () async {
-    //                           final futureResult = _presenter.selected
-    //                               .map((e) => _presenter.delete(e))
-    //                               .toList();
-    //                           final result = await Future.wait(futureResult);
-    //                           Fluttertoast.showToast(
-    //                               msg:
-    //                                   "${result.where((element) => element == true).length} have been removed successfully");
+    final futureItemList = _presenter.selected.map((e) => _presenter.getOne(e));
+    final itemList = await Future.wait(futureItemList);
+    showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+              backgroundColor: Colors.white,
+              surfaceTintColor: Colors.white,
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text("Delete items"),
+                  Text("Do you want to delete ${itemList.length} items?"),
+                  DataTable(
+                      columns: const [
+                        DataColumn(
+                          label: Expanded(
+                            child: Text(
+                              'Id',
+                              style: TextStyle(fontStyle: FontStyle.italic),
+                            ),
+                          ),
+                        ),
+                        DataColumn(
+                          label: Expanded(
+                            child: Text(
+                              'name',
+                              style: TextStyle(fontStyle: FontStyle.italic),
+                            ),
+                          ),
+                        ),
+                      ],
+                      rows: itemList
+                          .map((e) => DataRow(
+                                cells: <DataCell>[
+                                  DataCell(Text(e!.id!.toString())),
+                                  DataCell(Text(e.name)),
+                                ],
+                              ))
+                          .toList()),
+                  Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        OutlinedButton(
+                            style: ButtonStyle(
+                                backgroundColor:
+                                    MaterialStateProperty.all(Colors.white)),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: Text(
+                              "Cancel",
+                              style: GoogleFonts.openSans(color: Colors.black),
+                            )),
+                        OutlinedButton(
+                            onPressed: () async {
+                              final futureResult = _presenter.selected
+                                  .map((e) => _presenter.delete(e))
+                                  .toList();
+                              final result = await Future.wait(futureResult);
+                              Fluttertoast.showToast(
+                                  msg:
+                                      "${result.where((element) => element == true).length} have been removed successfully");
 
-    //                           Navigator.of(context).pop();
-    //                         },
-    //                         style: ButtonStyle(
-    //                             backgroundColor:
-    //                                 MaterialStateProperty.all(Colors.black)),
-    //                         child: Text("OK",
-    //                             style:
-    //                                 GoogleFonts.openSans(color: Colors.white))),
-    //                   ])
-    //             ],
-    //           ),
-    //         )).then((value) => Navigator.of(context).setState(() {}));
+                              Navigator.of(context).pop();
+                            },
+                            style: ButtonStyle(
+                                backgroundColor:
+                                    MaterialStateProperty.all(Colors.black)),
+                            child: Text("OK",
+                                style:
+                                    GoogleFonts.openSans(color: Colors.white))),
+                      ])
+                ],
+              ),
+            )).then((value) => Navigator.of(context).setState(() {}));
   }
 
   Widget getRoute() => switch (controller.selectedIndex) {
         0 => ProductPageAdmin(
-            presenter: getPresenter() as ProductPresenter,
+            presenter: _presenter as ProductPresenter,
             openFloatingButton: (List<int> e) =>
                 floatingButtonStreamController.sink.add(e),
           ),
@@ -273,5 +281,26 @@ class _HomePageAdminState extends State<HomePageAdmin> {
         1 => ProductPresenter(),
         2 => OrderPresenter(),
         _ => ProductPresenter(),
+      };
+
+  void _handleUpdateItem() async {
+    debugPrint(_presenter.selected.toString());
+    if (_presenter.selected.isEmpty) {
+      return;
+    }
+    final item = await _presenter.getOne(_presenter.selected[0]);
+    Navigator.of(context)
+        .push(MaterialPageRoute(
+            builder: (context) => InventoryForm(
+                  product: item as Product,
+                )))
+        .then((value) => setState(() {}));
+  }
+
+  Widget getAddForm() => switch (controller.selectedIndex) {
+        0 => const InventoryForm(),
+        1 => const OrderForm(),
+        2 => const OrderPageAdmin(),
+        _ => const SizedBox.shrink()
       };
 }

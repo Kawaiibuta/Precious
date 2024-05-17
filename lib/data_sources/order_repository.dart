@@ -24,14 +24,32 @@ class OrderRepository {
       debugPrint(e.toString());
       return <Order>[];
     });
-    list.addEntries(response
+    list.addAll(response
         .asMap()
-        .map((key, value) => MapEntry(value.id ?? key, value))
-        .entries);
+        .map((key, value) => MapEntry(value.id ?? key, value)));
     return response;
   }
 
   static void reset() {
     list.clear();
+  }
+
+  static Future<Order?> getOne(int id) async {
+    final response = await dio
+        .request(
+          EndPoint.orderDetail(id),
+          options: Options(
+            method: 'GET',
+            headers: headers,
+          ),
+        )
+        .then((value) => Order.fromJson(value.data))
+        .catchError((error) {
+      debugPrint(error.response.toString());
+      return null;
+    });
+
+    list.update(id, (value) => response);
+    return response;
   }
 }

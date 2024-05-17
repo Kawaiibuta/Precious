@@ -86,6 +86,12 @@ class _ProductPageAdminState extends State<ProductPageAdmin> {
       onRefresh: () async {
         debugPrint("Refresh");
         _configFloatingButton();
+        categoryListFuture = categoryPresenter.getAll().then((value) {
+          categoryList = value;
+          categoryList.removeAt(0);
+          return value;
+        });
+        widget.presenter.selected.clear();
         productListFuture = widget.presenter.getAll(reset: true);
         if (widget.openFloatingButton != null) widget.openFloatingButton!([0]);
         await productListFuture;

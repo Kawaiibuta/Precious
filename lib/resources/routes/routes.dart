@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:precious/presenters/setting_presenter.dart';
 import 'package:precious/views/admin/home_page_admin.dart';
 import 'package:precious/views/admin/inventory_form.dart';
+import 'package:precious/views/admin/order_form.dart';
 import 'package:precious/views/home_page.dart';
 import 'package:precious/views/item_detail_page.dart';
 import 'package:precious/views/landing_page.dart';
@@ -29,6 +30,7 @@ class MyRoutes {
         LandingPage.name: (_) => const LandingPage(),
         HomePage.name: (_) => const HomePage(),
         InventoryForm.name: (_) => const InventoryForm(),
+        OrderForm.name: (_) => const OrderForm(),
         HomePageAdmin.name: (_) => const HomePageAdmin(),
       };
 }

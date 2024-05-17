@@ -10,15 +10,15 @@ import 'package:image_picker/image_picker.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:precious/data_sources/product/product.dart';
 import 'package:precious/data_sources/product_category/product_category.dart';
-import 'package:precious/data_sources/product_repository.dart';
 import 'package:precious/data_sources/variant/variant.dart';
 import 'package:precious/presenters/category_presenter.dart';
 import 'package:precious/presenters/product_presenter.dart';
 import 'package:precious/views/item_detail_page.dart';
 
 class InventoryForm extends StatefulWidget {
-  const InventoryForm({super.key});
+  const InventoryForm({super.key, this.product});
   static const name = "inventory_form";
+  final Product? product;
   @override
   _InventoryFormState createState() => _InventoryFormState();
 }
@@ -28,7 +28,8 @@ class _InventoryFormState extends State<InventoryForm> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final categoryPresenter = ProductCategoryPresenter();
   final productPresenter = ProductPresenter();
-  ProductCategory? selectedCategory;
+  int? selectedCategory;
+  List<String> currentImageList = [];
   var product = Product(variants: []);
   var variantList = <Variant>[];
   List<XFile> imageList = [];
@@ -36,13 +37,19 @@ class _InventoryFormState extends State<InventoryForm> {
   final shortDesController = TextEditingController();
   final desController = TextEditingController();
   final priceController = TextEditingController();
-  final quantityController = TextEditingController();
   var addable = false;
   @override
   void initState() {
     super.initState();
+    if (widget.product != null) {
+      product = widget.product!;
+      nameController.text = product.name;
+      shortDesController.text = product.short_description;
+      desController.text = product.description;
+      priceController.text = product.price.toString();
+      selectedCategory = product.category_id;
+    }
     futureCategoryList = categoryPresenter.getAll();
-    quantityController.value = const TextEditingValue(text: "1");
   }
 
   @override
@@ -135,13 +142,13 @@ class _InventoryFormState extends State<InventoryForm> {
                                   child: OutlinedButton(
                                       onPressed: () {
                                         setState(() {
-                                          selectedCategory = e;
+                                          selectedCategory = e.id;
                                         });
                                       },
                                       style: ButtonStyle(
                                           backgroundColor:
                                               MaterialStateProperty.all(
-                                                  e == selectedCategory
+                                                  e.id == selectedCategory
                                                       ? Colors.black
                                                       : Colors.transparent)),
                                       child: Text(
@@ -149,7 +156,7 @@ class _InventoryFormState extends State<InventoryForm> {
                                         style: TextStyle(
                                             fontSize: 12,
                                             fontWeight: FontWeight.bold,
-                                            color: e == selectedCategory
+                                            color: e.id == selectedCategory
                                                 ? Colors.white
                                                 : Colors.black),
                                       )),
@@ -264,6 +271,7 @@ class _InventoryFormState extends State<InventoryForm> {
   void _handleExtendImage(XFile e) async {}
 
   Future<bool> _handleOnChange() async {
+    debugPrint("asda");
     if (selectedCategory == null) {
       Fluttertoast.showToast(msg: "Please select a category");
       return false;
@@ -278,17 +286,36 @@ class _InventoryFormState extends State<InventoryForm> {
     }
     final temp = Product(
         name: nameController.text,
-        category_id: selectedCategory!.id!,
+        category_id: selectedCategory!,
         short_description: shortDesController.text,
         description: desController.text);
     final createProductResult =
-        await ProductRepository.add(temp, imageList: imageList).then((value) {
-      Fluttertoast.showToast(msg: "Your product have been created");
+        await productPresenter.add(temp, imageList).then((value) {
+      if (value == null) {
+        Fluttertoast.showToast(msg: "Some unexpected error has happened");
+      } else {
+        Fluttertoast.showToast(msg: "Your product have been created");
+        Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) => ItemDetailPage(id: value.id!),
+        ));
+      }
+
       return value;
     }).catchError((e) {
-      Fluttertoast.showToast(msg: "Some error has happened");
+      Fluttertoast.showToast(msg: e.toString());
       return null;
     });
+    if (createProductResult != null) {
+      var futureList = <Future<Variant?>>[];
+      for (var variant in variantList) {
+        futureList
+            .add(productPresenter.addVariant(createProductResult.id!, variant));
+      }
+      await Future.wait(futureList).catchError((error) {
+        debugPrint(error.toString());
+        return <Variant?>[];
+      });
+    }
     return createProductResult == null;
   }
 
@@ -417,6 +444,7 @@ class _InventoryFormState extends State<InventoryForm> {
       ),
     ).then((value) {
       if (value != null && value) {
+        debugPrint(quantity.toString());
         setState(() {
           if (variant == null) {
             variantList.add(Variant(

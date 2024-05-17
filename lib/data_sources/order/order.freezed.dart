@@ -23,6 +23,7 @@ mixin _$Order {
   int? get id => throw _privateConstructorUsedError;
   @JsonKey(name: "user_id")
   int? get userId => throw _privateConstructorUsedError;
+  User? get user => throw _privateConstructorUsedError;
   String get status => throw _privateConstructorUsedError;
   @JsonKey(name: "created_at", fromJson: _sendDateTimeFromJson)
   DateTime? get createAt => throw _privateConstructorUsedError;
@@ -43,11 +44,14 @@ abstract class $OrderCopyWith<$Res> {
   $Res call(
       {int? id,
       @JsonKey(name: "user_id") int? userId,
+      User? user,
       String status,
       @JsonKey(name: "created_at", fromJson: _sendDateTimeFromJson)
       DateTime? createAt,
       @JsonKey(name: "total_price") double totalPrice,
       List<OrderedProduct> items});
+
+  $UserCopyWith<$Res>? get user;
 }
 
 /// @nodoc
@@ -65,6 +69,7 @@ class _$OrderCopyWithImpl<$Res, $Val extends Order>
   $Res call({
     Object? id = freezed,
     Object? userId = freezed,
+    Object? user = freezed,
     Object? status = null,
     Object? createAt = freezed,
     Object? totalPrice = null,
@@ -79,6 +84,10 @@ class _$OrderCopyWithImpl<$Res, $Val extends Order>
           ? _value.userId
           : userId // ignore: cast_nullable_to_non_nullable
               as int?,
+      user: freezed == user
+          ? _value.user
+          : user // ignore: cast_nullable_to_non_nullable
+              as User?,
       status: null == status
           ? _value.status
           : status // ignore: cast_nullable_to_non_nullable
@@ -97,6 +106,18 @@ class _$OrderCopyWithImpl<$Res, $Val extends Order>
               as List<OrderedProduct>,
     ) as $Val);
   }
+
+  @override
+  @pragma('vm:prefer-inline')
+  $UserCopyWith<$Res>? get user {
+    if (_value.user == null) {
+      return null;
+    }
+
+    return $UserCopyWith<$Res>(_value.user!, (value) {
+      return _then(_value.copyWith(user: value) as $Val);
+    });
+  }
 }
 
 /// @nodoc
@@ -109,11 +130,15 @@ abstract class _$$OrderImplCopyWith<$Res> implements $OrderCopyWith<$Res> {
   $Res call(
       {int? id,
       @JsonKey(name: "user_id") int? userId,
+      User? user,
       String status,
       @JsonKey(name: "created_at", fromJson: _sendDateTimeFromJson)
       DateTime? createAt,
       @JsonKey(name: "total_price") double totalPrice,
       List<OrderedProduct> items});
+
+  @override
+  $UserCopyWith<$Res>? get user;
 }
 
 /// @nodoc
@@ -129,6 +154,7 @@ class __$$OrderImplCopyWithImpl<$Res>
   $Res call({
     Object? id = freezed,
     Object? userId = freezed,
+    Object? user = freezed,
     Object? status = null,
     Object? createAt = freezed,
     Object? totalPrice = null,
@@ -143,6 +169,10 @@ class __$$OrderImplCopyWithImpl<$Res>
           ? _value.userId
           : userId // ignore: cast_nullable_to_non_nullable
               as int?,
+      user: freezed == user
+          ? _value.user
+          : user // ignore: cast_nullable_to_non_nullable
+              as User?,
       status: null == status
           ? _value.status
           : status // ignore: cast_nullable_to_non_nullable
@@ -169,6 +199,7 @@ class _$OrderImpl with DiagnosticableTreeMixin implements _Order {
   const _$OrderImpl(
       {this.id = null,
       @JsonKey(name: "user_id") this.userId = null,
+      this.user = null,
       required this.status,
       @JsonKey(name: "created_at", fromJson: _sendDateTimeFromJson)
       this.createAt = null,
@@ -185,6 +216,9 @@ class _$OrderImpl with DiagnosticableTreeMixin implements _Order {
   @override
   @JsonKey(name: "user_id")
   final int? userId;
+  @override
+  @JsonKey()
+  final User? user;
   @override
   final String status;
   @override
@@ -204,7 +238,7 @@ class _$OrderImpl with DiagnosticableTreeMixin implements _Order {
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'Order(id: $id, userId: $userId, status: $status, createAt: $createAt, totalPrice: $totalPrice, items: $items)';
+    return 'Order(id: $id, userId: $userId, user: $user, status: $status, createAt: $createAt, totalPrice: $totalPrice, items: $items)';
   }
 
   @override
@@ -214,6 +248,7 @@ class _$OrderImpl with DiagnosticableTreeMixin implements _Order {
       ..add(DiagnosticsProperty('type', 'Order'))
       ..add(DiagnosticsProperty('id', id))
       ..add(DiagnosticsProperty('userId', userId))
+      ..add(DiagnosticsProperty('user', user))
       ..add(DiagnosticsProperty('status', status))
       ..add(DiagnosticsProperty('createAt', createAt))
       ..add(DiagnosticsProperty('totalPrice', totalPrice))
@@ -227,6 +262,7 @@ class _$OrderImpl with DiagnosticableTreeMixin implements _Order {
             other is _$OrderImpl &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.userId, userId) || other.userId == userId) &&
+            (identical(other.user, user) || other.user == user) &&
             (identical(other.status, status) || other.status == status) &&
             (identical(other.createAt, createAt) ||
                 other.createAt == createAt) &&
@@ -237,8 +273,8 @@ class _$OrderImpl with DiagnosticableTreeMixin implements _Order {
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, id, userId, status, createAt,
-      totalPrice, const DeepCollectionEquality().hash(_items));
+  int get hashCode => Object.hash(runtimeType, id, userId, user, status,
+      createAt, totalPrice, const DeepCollectionEquality().hash(_items));
 
   @JsonKey(ignore: true)
   @override
@@ -258,6 +294,7 @@ abstract class _Order implements Order {
   const factory _Order(
       {final int? id,
       @JsonKey(name: "user_id") final int? userId,
+      final User? user,
       required final String status,
       @JsonKey(name: "created_at", fromJson: _sendDateTimeFromJson)
       final DateTime? createAt,
@@ -271,6 +308,8 @@ abstract class _Order implements Order {
   @override
   @JsonKey(name: "user_id")
   int? get userId;
+  @override
+  User? get user;
   @override
   String get status;
   @override
