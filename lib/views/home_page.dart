@@ -10,6 +10,7 @@ import 'package:precious/views/search_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
+
   static const name = '/homePage';
 
   @override
@@ -22,17 +23,29 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Update titles with the current localization
     routes = [
       {
-        "title": "Home",
+        "title": AppLocalizations.of(context)!.home_bottom_title,
         "icon": Icons.home,
-        "route": LandingPage(
-          changePage: _handleChangePage,
-        )
       },
-      {"title": "Search", "icon": Icons.search, "route": SearchPage()},
-      {"title": "Cart", "icon": Icons.shopping_cart, "route": CartPage()},
-      {"title": "Profile", "icon": Icons.person, "route": ProfilePage()},
+      {
+        "title": AppLocalizations.of(context)!.search_bottom_title,
+        "icon": Icons.search,
+      },
+      {
+        "title": AppLocalizations.of(context)!.cart_bottom_title,
+        "icon": Icons.shopping_cart,
+      },
+      {
+        "title": AppLocalizations.of(context)!.profile_bottom_title,
+        "icon": Icons.person,
+      },
     ];
   }
 

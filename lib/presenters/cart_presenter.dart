@@ -1,5 +1,5 @@
-import 'package:precious/data_sources/cart/cart.dart';
-import 'package:precious/data_sources/cart_item/cart_item.dart';
+import 'package:precious/models/cart/cart.dart';
+import 'package:precious/models/cart_item/cart_item.dart';
 import 'package:precious/data_sources/cart_repository.dart';
 
 abstract class CartPageContract {

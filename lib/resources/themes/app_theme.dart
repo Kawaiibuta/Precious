@@ -11,10 +11,15 @@ class AppTheme {
     colorScheme: ColorScheme.fromSeed(
         seedColor: Colors.white,
         background: Colors.white,
+        onBackground: Colors.black,
         primary: Colors.black,
         onPrimary: Colors.white,
         primaryContainer: Colors.grey.shade400,
-        onPrimaryContainer: Colors.black),
+        onPrimaryContainer: Colors.black,
+        secondary: Colors.white70,
+        onSecondary: Colors.grey.shade700,
+        secondaryContainer: Colors.white,
+        onSecondaryContainer: Colors.grey),
   );
 
   static final themeDark = ThemeData(
@@ -25,7 +30,9 @@ class AppTheme {
           primary: Colors.white,
           onPrimary: Colors.black,
           primaryContainer: Colors.grey.shade800,
-          onPrimaryContainer: Colors.white));
+          onPrimaryContainer: Colors.white,
+          secondary: Colors.white,
+          onSecondary: Colors.grey.shade700));
 
   static final textTheme = TextTheme(
     headlineLarge: TextStyle(

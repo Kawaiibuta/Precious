@@ -1,10 +1,11 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-import 'package:precious/data_sources/product_category/product_category.dart';
+import 'package:precious/models/product_category/product_category.dart';
 import 'package:precious/resources/endpoints.dart';
 import 'package:precious/resources/utils/dio_utils.dart';
 
 class ProductCategoryRepository {
+  static Map<int, ProductCategory> list = {};
   static Future<List<ProductCategory>> getAll() async {
     final result = await dio
         .request(EndPoint.category,
@@ -18,6 +19,9 @@ class ProductCategoryRepository {
       debugPrint(e.toString());
       return <ProductCategory>[];
     });
+
+    list.addEntries(
+        result.map((e) => <int, ProductCategory>{e.id!: e}.entries.first));
     return result.toList();
   }
 

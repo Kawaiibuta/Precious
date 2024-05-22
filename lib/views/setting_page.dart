@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:precious/presenters/setting_presenter.dart';
 import 'package:precious/resources/app_export.dart';
 import 'package:precious/resources/widgets/round_container_box.dart';
 import 'package:precious/resources/widgets/setting_button.dart';
+import 'package:precious/views/user_detail_page.dart';
 
 class SettingPage extends StatefulWidget {
   static const name = '/settings';

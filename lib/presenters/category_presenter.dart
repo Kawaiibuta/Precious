@@ -1,10 +1,15 @@
 import 'package:precious/data_sources/category_reppsitory.dart';
-import 'package:precious/data_sources/product_category/product_category.dart';
+import 'package:precious/models/product_category/product_category.dart';
+import 'package:precious/presenters/base_presenter.dart';
 
-class ProductCategoryPresenter {
+class ProductCategoryPresenter implements Presenter {
   static Map<int, ProductCategory> categoryList = {};
 
-  Future<List<ProductCategory>> getAll() async {
+  @override
+  List<int> selected = [];
+  @override
+  Future<List<ProductCategory>> getAll(
+      {bool more = false, bool reset = false}) async {
     if (categoryList.values.isNotEmpty) return categoryList.values.toList();
     final result = await ProductCategoryRepository.getAll().then((value) {
       for (var element in value) {
@@ -17,7 +22,8 @@ class ProductCategoryPresenter {
     return result;
   }
 
-  Future<ProductCategory?> getOne(int id) async {
+  @override
+  Future<ProductCategory?> getOne(int id, {bool detail = false}) async {
     if (categoryList.keys.contains(id)) return categoryList[id];
     final result = await ProductCategoryRepository.getOne(id);
     if (result != null) {
@@ -25,5 +31,11 @@ class ProductCategoryPresenter {
           .addEntries(<int, ProductCategory>{result.id!: result}.entries);
     }
     return result;
+  }
+
+  @override
+  delete(int id) {
+    // TODO: implement delete
+    throw UnimplementedError();
   }
 }

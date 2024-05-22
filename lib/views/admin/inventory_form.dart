@@ -1,41 +1,40 @@
 import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:precious/data_sources/product/product.dart';
-import 'package:precious/data_sources/product_category/product_category.dart';
-import 'package:precious/data_sources/product_repository.dart';
-import 'package:precious/presenters/category_presenter.dart';
-import 'package:precious/presenters/product_presenter.dart';
+import 'package:precious/models/option/option.dart';
+import 'package:precious/models/option/optionValue/option_value.dart';
+import 'package:precious/models/product/product.dart';
+import 'package:precious/main.dart';
+import 'package:precious/presenters/inventory_form_presenter.dart';
+import 'package:precious/resources/app_export.dart';
 
 class InventoryForm extends StatefulWidget {
-  const InventoryForm({super.key});
+  const InventoryForm({super.key, this.product});
   static const name = "inventory_form";
+  final Product? product;
   @override
   _InventoryFormState createState() => _InventoryFormState();
 }
 
-class _InventoryFormState extends State<InventoryForm> {
-  late Future<List<ProductCategory>> futureCategoryList;
+class _InventoryFormState extends State<InventoryForm>
+    implements InventoryFormContract {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final categoryPresenter = ProductCategoryPresenter();
-  final productPresenter = ProductPresenter();
-  ProductCategory? selectedCategory;
-  var product = Product();
-  List<XFile> imageList = [];
   final nameController = TextEditingController();
   final shortDesController = TextEditingController();
   final desController = TextEditingController();
   final priceController = TextEditingController();
-  final quantityController = TextEditingController();
-  var addable = false;
+  var loading = false;
+  late InventoryFormPresenter _presenter;
   @override
   void initState() {
     super.initState();
-    futureCategoryList = categoryPresenter.getAll();
-    quantityController.value = TextEditingValue(text: "1");
+    _presenter = InventoryFormPresenter(this, item: widget.product);
+    WidgetsBinding.instance.addPostFrameCallback((_) => _presenter.init());
   }
 
   @override
@@ -62,55 +61,23 @@ class _InventoryFormState extends State<InventoryForm> {
                       color: Colors.black),
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(top: 5.0, bottom: 5.0),
-                  child: Row(
-                    children: [
-                      Flexible(
-                        flex: 3,
-                        child: TextFormField(
-                          controller: nameController,
-                          style: const TextStyle(color: Colors.black),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return "Name cannot be empty";
-                            } else {
-                              return null;
-                            }
-                          },
-                          decoration: const InputDecoration(
-                            label: Text("Name"),
-                            border: OutlineInputBorder(),
-                            focusedBorder: OutlineInputBorder(),
-                            hintText: 'Your product name here',
-                          ),
-                        ),
-                      ),
-                      Flexible(
-                        flex: 1,
-                        child: TextFormField(
-                          controller: quantityController,
-                          style: const TextStyle(
-                            color: Colors.black,
-                          ),
-                          textAlign: TextAlign.center,
-                          keyboardType: TextInputType.number,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return "Quantity cannot be empty";
-                            }
-                            if (int.parse(value) <= 0) {
-                              return "Quantity cannot be less than 1";
-                            }
-                            return null;
-                          },
-                          decoration: const InputDecoration(
-                            label: Text("Quantity"),
-                            border: OutlineInputBorder(),
-                            focusedBorder: OutlineInputBorder(),
-                          ),
-                        ),
-                      ),
-                    ],
+                  padding: EdgeInsets.symmetric(horizontal: 5.h),
+                  child: TextFormField(
+                    controller: nameController,
+                    style: const TextStyle(color: Colors.black),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "Name cannot be empty";
+                      } else {
+                        return null;
+                      }
+                    },
+                    decoration: const InputDecoration(
+                      label: Text("Name"),
+                      border: OutlineInputBorder(),
+                      focusedBorder: OutlineInputBorder(),
+                      hintText: 'Your product name here',
+                    ),
                   ),
                 ),
                 Padding(
@@ -134,55 +101,51 @@ class _InventoryFormState extends State<InventoryForm> {
                     ),
                   ),
                 ),
-                FutureBuilder(
-                    future: futureCategoryList,
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting ||
-                          !snapshot.hasData) return const SizedBox.shrink();
-                      final categoriesList = snapshot.data!;
-                      // categoriesList.removeAt(0);
-                      return Wrap(
-                        children: [
-                          Align(
-                            alignment: Alignment.center,
-                            child: Text("Categories:",
-                                style: GoogleFonts.openSans(
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.w700,
-                                    fontSize: 16)),
-                          ),
-                          ...categoriesList.map((e) => Padding(
-                                padding: const EdgeInsets.only(
-                                    left: 2.0, right: 2.0),
-                                child: ButtonTheme(
-                                  // minWidth: 50,
-                                  height: 10,
-                                  child: OutlinedButton(
-                                      onPressed: () {
-                                        setState(() {
-                                          selectedCategory = e;
-                                        });
-                                      },
-                                      style: ButtonStyle(
-                                          backgroundColor:
-                                              MaterialStateProperty.all(
-                                                  e == selectedCategory
-                                                      ? Colors.black
-                                                      : Colors.transparent)),
-                                      child: Text(
-                                        e.name,
-                                        style: TextStyle(
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.bold,
-                                            color: e == selectedCategory
+                if (loading)
+                  const SizedBox.shrink()
+                else
+                  Wrap(
+                    children: [
+                      Align(
+                        alignment: Alignment.center,
+                        child: Text("Categories:",
+                            style: GoogleFonts.openSans(
+                                color: Colors.black,
+                                fontWeight: FontWeight.w700,
+                                fontSize: 16)),
+                      ),
+                      ..._presenter.categoryList.map((e) => Padding(
+                            padding:
+                                const EdgeInsets.only(left: 2.0, right: 2.0),
+                            child: ButtonTheme(
+                              // minWidth: 50,
+                              height: 10,
+                              child: OutlinedButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      _presenter.selectedCategory = e.id;
+                                    });
+                                  },
+                                  style: ButtonStyle(
+                                      backgroundColor:
+                                          MaterialStateProperty.all(e.id ==
+                                                  _presenter.selectedCategory
+                                              ? Colors.black
+                                              : Colors.transparent)),
+                                  child: Text(
+                                    e.name,
+                                    style: TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.bold,
+                                        color:
+                                            e.id == _presenter.selectedCategory
                                                 ? Colors.white
                                                 : Colors.black),
-                                      )),
-                                ),
-                              ))
-                        ],
-                      );
-                    }),
+                                  )),
+                            ),
+                          ))
+                    ],
+                  ),
                 Padding(
                   padding: const EdgeInsets.only(top: 5.0, bottom: 5.0),
                   child: TextField(
@@ -194,31 +157,6 @@ class _InventoryFormState extends State<InventoryForm> {
                       border: OutlineInputBorder(),
                       focusedBorder: OutlineInputBorder(),
                       hintText: 'Your product description',
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 5.0, bottom: 5.0),
-                  child: TextFormField(
-                    controller: priceController,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return "Price cannot be empty";
-                      }
-                      try {
-                        double.parse(value);
-                      } catch (e) {
-                        return "Price must be a number";
-                      }
-                      return null;
-                    },
-                    style: const TextStyle(color: Colors.black),
-                    keyboardType: TextInputType.number,
-                    decoration: const InputDecoration(
-                      label: Text("Price"),
-                      focusedBorder: OutlineInputBorder(),
-                      border: OutlineInputBorder(),
-                      hintText: 'The price',
                     ),
                   ),
                 ),
@@ -240,7 +178,7 @@ class _InventoryFormState extends State<InventoryForm> {
                 ),
                 Wrap(
                   children: [
-                    ...imageList.map((e) {
+                    ..._presenter.imageList.map((e) {
                       return InkWell(
                         child: Container(
                           width: 100,
@@ -260,6 +198,44 @@ class _InventoryFormState extends State<InventoryForm> {
                     })
                   ],
                 ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text("Options:",
+                        style: GoogleFonts.openSans(
+                            color: Colors.black,
+                            fontWeight: FontWeight.w700,
+                            fontSize: 16)),
+                    IconButton(
+                      onPressed: () {
+                        _handleAddOption();
+                      },
+                      icon: const Icon(Icons.add),
+                    )
+                  ],
+                ),
+                ..._presenter.product.options.map(
+                  (e) => buildOptionCard(e, context),
+                ),
+                // Row(
+                //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //   children: [
+                //     Text("Variant:",
+                //         style: GoogleFonts.openSans(
+                //             color: Colors.black,
+                //             fontWeight: FontWeight.w700,
+                //             fontSize: 16)),
+                //     IconButton(
+                //       onPressed: () {
+                //         _handleAddVariant();
+                //       },
+                //       icon: const Icon(Icons.add),
+                //     )
+                //   ],
+                // ),
+                // ..._presenter.product.variants!.map(
+                //   (e) => buildVariantCard(e, context),
+                // ),
                 TextButton(
                   onPressed: () {
                     _handleOnChange();
@@ -273,7 +249,7 @@ class _InventoryFormState extends State<InventoryForm> {
                         color: Colors.white,
                         fontWeight: FontWeight.bold),
                   ),
-                )
+                ),
               ],
             ),
           ),
@@ -282,40 +258,312 @@ class _InventoryFormState extends State<InventoryForm> {
     );
   }
 
-  void _handleAutoID() {}
-
   void _handleSelectImage() {
     final ImagePicker picker = ImagePicker();
     picker.pickMultiImage().then((value) => setState(() {
           debugPrint(value.toString());
-          imageList = imageList + value;
+          _presenter.imageList = _presenter.imageList + value;
         }));
   }
 
-  void _handleExtendImage(XFile e) async {}
-
   Future<bool> _handleOnChange() async {
-    if (selectedCategory == null) {
+    //Validate the  before adding to the presenter to crate/update product
+    //Check missing field
+    //Check imageList
+    //Check selected category
+    if (_presenter.selectedCategory == null) {
       Fluttertoast.showToast(msg: "Please select a category");
+      return false;
+    }
+    if (_presenter.imageList.isEmpty) {
+      Fluttertoast.showToast(msg: "At least 1 image is needed");
       return false;
     }
     if (!_formKey.currentState!.validate()) {
       Fluttertoast.showToast(msg: "Some required fields are missing");
       return false;
     }
-    final temp = Product(
+    _presenter.item = _presenter.product.copyWith(
         name: nameController.text,
-        category_id: selectedCategory!.id!,
-        short_description: shortDesController.text,
+        shortDescription: shortDesController.text,
         description: desController.text,
-        quantity: int.parse(quantityController.text),
-        price: double.parse(priceController.text));
-    return ProductRepository.add(temp, imageList: imageList).then((value) {
-      Fluttertoast.showToast(msg: "Your product have been created");
-      return true;
-    }).catchError((e) {
-      Fluttertoast.showToast(msg: "Some error has happened");
-      return false;
+        categoryId: _presenter.selectedCategory ?? 0);
+    if (widget.product == null) {
+      _presenter.add();
+    } else {
+      _presenter.update();
+    }
+    return true;
+  }
+
+  void _handleAddOption({Option? option}) {
+    List<OptionValue> optionValue = <OptionValue>[];
+    var name = '';
+    if (option != null) {
+      optionValue = option.values;
+      name = option.name;
+    }
+    showDialog(
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) => AlertDialog(
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SizedBox(
+                height: 300.h,
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      Row(
+                        children: [
+                          Text(
+                            "Option",
+                            style: GoogleFonts.openSans(
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20),
+                          ),
+                          SizedBox(
+                            width: 10.0.h,
+                          ),
+                          Flexible(
+                            child: TextFormField(
+                              style: const TextStyle(color: Colors.black),
+                              initialValue:
+                                  option == null ? null : name.toString(),
+                              onChanged: (value) {
+                                name = value;
+                              },
+                              decoration: const InputDecoration(
+                                hintText: 'Name',
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      ...optionValue
+                          .asMap()
+                          .map((key, e) => MapEntry(
+                              key,
+                              Container(
+                                margin: const EdgeInsets.only(top: 5.0),
+                                child: TextFormField(
+                                  style: const TextStyle(color: Colors.black),
+                                  initialValue: option == null
+                                      ? null
+                                      : e.value.toString(),
+                                  onChanged: (value) {
+                                    optionValue[key] = e.copyWith(value: value);
+                                  },
+                                  decoration: InputDecoration(
+                                    hintText: 'Enter your value here',
+                                    focusedBorder: const OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color: Colors.black, width: 1.0),
+                                    ),
+                                    suffixIcon: IconButton(
+                                      onPressed: () => setState(() {
+                                        debugPrint(optionValue.toString());
+                                        optionValue.removeAt(key);
+                                      }),
+                                      icon: const Icon(Icons.clear),
+                                    ),
+                                    enabledBorder: const OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color: Colors.black, width: 1.0),
+                                    ),
+                                  ),
+                                ),
+                              )))
+                          .values,
+                      IconButton(
+                        onPressed: () {
+                          setState(() {
+                            optionValue.add(OptionValue(value: ""));
+                          });
+                        },
+                        icon: const Icon(Icons.add),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Container(
+                margin: const EdgeInsets.only(top: 10.0),
+                child: TextButton(
+                  onPressed: () {
+                    if (name.isEmpty) {
+                      Fluttertoast.showToast(
+                          msg: "Please fill out all field in the form.");
+                      return;
+                    }
+                    if (optionValue
+                        .where((element) => element.value.isEmpty)
+                        .isNotEmpty) {
+                      Fluttertoast.showToast(
+                          msg: "All the option value must have a value.");
+                      return;
+                    }
+                    Navigator.of(context).pop(true);
+                  },
+                  style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all(Colors.black)),
+                  child: Text(
+                    "Update",
+                    style: GoogleFonts.openSans(
+                        fontSize: 16,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    ).then((value) {
+      if (value != null && value) {
+        setState(() {
+          if (option == null) {
+            _presenter.product.options
+                .add(Option(name: name, values: optionValue));
+            return;
+          }
+          final index = _presenter.product.options.indexOf(option);
+          final result = option.copyWith(name: name, values: optionValue);
+          _presenter.product.options[index] = result;
+        });
+      }
     });
+  }
+
+  buildOptionCard(Option e, BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+          border: Border.all(), borderRadius: BorderRadius.circular(10.0)),
+      padding: const EdgeInsets.all(8.0),
+      margin: const EdgeInsets.only(bottom: 5.0),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Name: ",
+                        style: GoogleFonts.openSans(
+                            fontWeight: FontWeight.bold, fontSize: 20.h),
+                      ),
+                      Text(e.name,
+                          style: GoogleFonts.openSans(
+                              fontWeight: FontWeight.w400, fontSize: 20.h))
+                    ],
+                  ),
+                ],
+              ),
+              Row(
+                children: [
+                  IconButton(
+                      onPressed: () {
+                        _handleAddOption(option: e);
+                      },
+                      icon: const Icon(Icons.edit)),
+                  IconButton(
+                      onPressed: () {
+                        setState(() {
+                          _presenter.product.options.remove(e);
+                        });
+                      },
+                      icon: const Icon(Icons.delete)),
+                ],
+              )
+            ],
+          ),
+          Wrap(
+            children: e.values
+                .map((e) => Padding(
+                      padding: EdgeInsets.only(right: 8.0.h),
+                      child: TextButton(
+                        onPressed: () {},
+                        style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all(
+                                Colors.grey.shade200)),
+                        child: Text(
+                          e.value,
+                        ),
+                      ),
+                    ))
+                .toList(),
+          )
+        ],
+      ),
+    );
+  }
+
+  @override
+  void onAddFail() {
+    // TODO: implement onAddFail
+  }
+
+  @override
+  void onAddSuccess() {
+    // TODO: implement onAddSuccess
+  }
+
+  @override
+  void onStartAsyncTask() {
+    showDialog(
+        context: NavigationService.navigatorKey.currentContext!,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return const SimpleDialog(
+            elevation: 0.0,
+            backgroundColor: Colors.transparent,
+            children: <Widget>[
+              Center(
+                child: CircularProgressIndicator(),
+              )
+            ],
+          );
+        });
+  }
+
+  @override
+  void onEndAsyncTask() {
+    Get.back();
+  }
+
+  @override
+  void onInitFail() {
+    // TODO: implement onInitFail
+  }
+
+  @override
+  void onInitSuccess() {
+    // TODO: implement onInitSuccess
+  }
+
+  @override
+  void onRefreshFail() {
+    // TODO: implement onRefreshFail
+  }
+
+  @override
+  void onRefreshSuccess() {
+    // TODO: implement onRefreshSuccess
+  }
+  @override
+  void onUpdateFail() {
+    // TODO: implement onUpdateFail
+  }
+
+  @override
+  void onUpdateSuccess() {
+    // TODO: implement onUpdateSuccess
   }
 }

@@ -1,7 +1,7 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:intl/intl.dart';
-import 'package:precious/data_sources/product/product.dart';
+import 'package:precious/models/product/product.dart';
 import 'package:precious/resources/app_export.dart';
 import 'package:precious/views/item_detail_page.dart';
 
@@ -15,6 +15,8 @@ class ProductCard extends StatefulWidget {
 
 class _ProductCardState extends State<ProductCard> {
   final noSimbolInUSFormat = NumberFormat.currency(locale: "en_US");
+
+  static final _cacheManager = DefaultCacheManager();
 
   @override
   void initState() {
@@ -32,7 +34,7 @@ class _ProductCardState extends State<ProductCard> {
             ));
           },
           child: SizedBox(
-            width: 165,
+            width: 165.h,
             child: Column(
               children: [
                 // Container(
@@ -49,14 +51,10 @@ class _ProductCardState extends State<ProductCard> {
                 //               as ImageProvider,
                 //           fit: BoxFit.cover)),
                 // ),
-                Image(
+                Image.network(widget.product.imgPathUrls[0],
                     height: 110.v,
-                    image:
-                        (Uri.parse(widget.product.img_paths_url[0]).isAbsolute
-                                ? CachedNetworkImageProvider(
-                                    widget.product.img_paths_url[0])
-                                : AssetImage(widget.product.img_paths_url[0]))
-                            as ImageProvider,
+                    cacheHeight: 110.v.toInt(),
+                    cacheWidth: 165.h.toInt(),
                     fit: BoxFit.cover),
                 Text(
                   widget.product.name,
@@ -66,7 +64,7 @@ class _ProductCardState extends State<ProductCard> {
                       color: Colors.black),
                 ),
                 Text(
-                  widget.product.short_description,
+                  widget.product.shortDescription,
                   style: const TextStyle(
                       fontWeight: FontWeight.normal, fontSize: 10),
                 ),
