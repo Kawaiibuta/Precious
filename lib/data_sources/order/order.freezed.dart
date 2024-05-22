@@ -37,7 +37,7 @@ mixin _$Order {
   double get totalPrice => throw _privateConstructorUsedError;
   String get address => throw _privateConstructorUsedError;
   @JsonKey(name: "phone_number")
-  String get phoneNumber => throw _privateConstructorUsedError;
+  String? get phoneNumber => throw _privateConstructorUsedError;
   List<OrderedProduct> get items => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -63,7 +63,7 @@ abstract class $OrderCopyWith<$Res> {
       DateTime? createAt,
       @JsonKey(name: "total_price", includeToJson: false) double totalPrice,
       String address,
-      @JsonKey(name: "phone_number") String phoneNumber,
+      @JsonKey(name: "phone_number") String? phoneNumber,
       List<OrderedProduct> items});
 
   $UserCopyWith<$Res>? get user;
@@ -90,7 +90,7 @@ class _$OrderCopyWithImpl<$Res, $Val extends Order>
     Object? createAt = freezed,
     Object? totalPrice = null,
     Object? address = null,
-    Object? phoneNumber = null,
+    Object? phoneNumber = freezed,
     Object? items = null,
   }) {
     return _then(_value.copyWith(
@@ -126,10 +126,10 @@ class _$OrderCopyWithImpl<$Res, $Val extends Order>
           ? _value.address
           : address // ignore: cast_nullable_to_non_nullable
               as String,
-      phoneNumber: null == phoneNumber
+      phoneNumber: freezed == phoneNumber
           ? _value.phoneNumber
           : phoneNumber // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       items: null == items
           ? _value.items
           : items // ignore: cast_nullable_to_non_nullable
@@ -170,7 +170,7 @@ abstract class _$$OrderImplCopyWith<$Res> implements $OrderCopyWith<$Res> {
       DateTime? createAt,
       @JsonKey(name: "total_price", includeToJson: false) double totalPrice,
       String address,
-      @JsonKey(name: "phone_number") String phoneNumber,
+      @JsonKey(name: "phone_number") String? phoneNumber,
       List<OrderedProduct> items});
 
   @override
@@ -196,7 +196,7 @@ class __$$OrderImplCopyWithImpl<$Res>
     Object? createAt = freezed,
     Object? totalPrice = null,
     Object? address = null,
-    Object? phoneNumber = null,
+    Object? phoneNumber = freezed,
     Object? items = null,
   }) {
     return _then(_$OrderImpl(
@@ -232,10 +232,10 @@ class __$$OrderImplCopyWithImpl<$Res>
           ? _value.address
           : address // ignore: cast_nullable_to_non_nullable
               as String,
-      phoneNumber: null == phoneNumber
+      phoneNumber: freezed == phoneNumber
           ? _value.phoneNumber
           : phoneNumber // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       items: null == items
           ? _value.items
           : items // ignore: cast_nullable_to_non_nullable
@@ -261,7 +261,7 @@ class _$OrderImpl with DiagnosticableTreeMixin implements _Order {
       @JsonKey(name: "total_price", includeToJson: false)
       required this.totalPrice,
       required this.address,
-      @JsonKey(name: "phone_number") required this.phoneNumber,
+      @JsonKey(name: "phone_number") this.phoneNumber,
       this.items = const []});
 
   factory _$OrderImpl.fromJson(Map<String, dynamic> json) =>
@@ -293,7 +293,7 @@ class _$OrderImpl with DiagnosticableTreeMixin implements _Order {
   final String address;
   @override
   @JsonKey(name: "phone_number")
-  final String phoneNumber;
+  final String? phoneNumber;
   @override
   @JsonKey()
   final List<OrderedProduct> items;
@@ -385,7 +385,7 @@ abstract class _Order implements Order {
       @JsonKey(name: "total_price", includeToJson: false)
       required final double totalPrice,
       required final String address,
-      @JsonKey(name: "phone_number") required final String phoneNumber,
+      @JsonKey(name: "phone_number") final String? phoneNumber,
       final List<OrderedProduct> items}) = _$OrderImpl;
 
   factory _Order.fromJson(Map<String, dynamic> json) = _$OrderImpl.fromJson;
@@ -416,7 +416,7 @@ abstract class _Order implements Order {
   String get address;
   @override
   @JsonKey(name: "phone_number")
-  String get phoneNumber;
+  String? get phoneNumber;
   @override
   List<OrderedProduct> get items;
   @override

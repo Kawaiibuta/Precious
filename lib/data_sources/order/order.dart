@@ -28,7 +28,7 @@ class Order with _$Order {
       @JsonKey(name: "total_price", includeToJson: false)
       required double totalPrice,
       required String address,
-      @JsonKey(name: "phone_number") required String phoneNumber,
+      @JsonKey(name: "phone_number") String? phoneNumber,
       @Default([]) List<OrderedProduct> items}) = _Order;
   factory Order.fromJson(Map<String, dynamic> json) => _$OrderFromJson(json);
 }

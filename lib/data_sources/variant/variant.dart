@@ -12,6 +12,7 @@ class Variant with _$Variant {
       required String name,
       @Default(0.0) double price,
       @Default(0) int quantity,
+      @JsonKey(name: "product_id") required int productId,
       @JsonKey(name: "variant_option_values", includeToJson: false)
       List<VariantOption>? variantOptionValues,
       @JsonKey(name: "img_paths_url", includeToJson: false)

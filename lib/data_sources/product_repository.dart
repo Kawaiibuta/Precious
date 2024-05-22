@@ -40,7 +40,11 @@ class ProductRepository {
     return result;
   }
 
-  static Future<Product?> getOne(int id) async {
+  static Future<Product?> getOne(int id, {detail = true}) async {
+    if ((list.containsKey(id) && list[id]!.options.isNotEmpty) || !detail) {
+      return list[id];
+    }
+
     final result = await dio
         .request(
       EndPoint.productDetail(id),

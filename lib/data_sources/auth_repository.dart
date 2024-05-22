@@ -8,10 +8,10 @@ import 'package:precious/resources/utils/dio_utils.dart';
 
 class AuthRepository {
   static User? currentUser;
-
+  static String? idToken;
   static Future<User?> updateCurrentUser() async {
     debugPrint("Update current user");
-    final idToken = await auth.FirebaseAuth.instance.currentUser!.getIdToken();
+    idToken = await auth.FirebaseAuth.instance.currentUser!.getIdToken();
     final data = json.encode({"idToken": idToken});
     final response = await dio
         .request(
@@ -27,6 +27,8 @@ class AuthRepository {
       return null;
     });
     currentUser = response;
+    currentUser = currentUser!
+        .copyWith(name: auth.FirebaseAuth.instance.currentUser!.displayName);
     return response;
   }
 }

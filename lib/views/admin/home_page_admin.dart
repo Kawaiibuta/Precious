@@ -74,7 +74,7 @@ class _HomePageAdminState extends State<HomePageAdmin>
   Widget build(BuildContext context) {
     return Scaffold(
         key: _scaffoldKey,
-        body: getRoute(),
+        body: SafeArea(child: getRoute()),
         drawer: SidebarX(
           controller: _controller,
           showToggleButton: false,

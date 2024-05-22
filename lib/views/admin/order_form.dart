@@ -402,8 +402,13 @@ class _OrderFormState extends State<OrderForm> implements OrderFormContract {
 
   @override
   onAddSuccess() {
-    // TODO: implement onAddSuccess
-    throw UnimplementedError();
+    const snackBar = SnackBar(
+      content: Text('The order has been placed.'),
+    );
+
+// Find the ScaffoldMessenger in the widget tree
+// and use it to show a SnackBar.
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
   @override
@@ -478,8 +483,9 @@ class _OrderFormState extends State<OrderForm> implements OrderFormContract {
                           ),
                           onChanged: (value) async {
                             if (value != null) {
-                              final result =
-                                  await ProductRepository.getOne(value.id!);
+                              final result = await ProductRepository.getOne(
+                                  value.id!,
+                                  detail: true);
                               setState(() {
                                 selectedProduct = result;
                                 if (selectedProduct != null) {

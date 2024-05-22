@@ -17,7 +17,7 @@ _$OrderImpl _$$OrderImplFromJson(Map<String, dynamic> json) => _$OrderImpl(
       createAt: _sendDateTimeFromJson(json['created_at'] as String),
       totalPrice: (json['total_price'] as num).toDouble(),
       address: json['address'] as String,
-      phoneNumber: json['phone_number'] as String,
+      phoneNumber: json['phone_number'] as String?,
       items: (json['items'] as List<dynamic>?)
               ?.map((e) => OrderedProduct.fromJson(e as Map<String, dynamic>))
               .toList() ??

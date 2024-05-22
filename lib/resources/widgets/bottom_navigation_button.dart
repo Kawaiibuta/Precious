@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:precious/resources/app_export.dart';
 
 class BottomNavigationButton extends StatefulWidget {
   const BottomNavigationButton(
@@ -50,40 +51,53 @@ class _BottomNavigationButtonState extends State<BottomNavigationButton> {
         child: AnimatedContainer(
             duration: const Duration(milliseconds: 700),
             height: 35,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                AnimatedContainer(
-                  height: 35,
-                  width: 35,
-                  duration: const Duration(milliseconds: 700),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: widget.selected
-                        ? widget.selectedIconBackgroundColor
-                        : widget.iconBackgroundColor,
-                  ),
-                  child: Icon(widget.icon,
-                      size: 25,
-                      color: widget.selected ? widget.selectedIconColor : null),
-                ),
-                widget.showTitleSelected
-                    ? AnimatedContainer(
-                        margin: EdgeInsets.only(left: 5),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        duration: const Duration(milliseconds: 700),
-                        width: widget.selected ? textSize.width : 0,
-                        child: Text(
-                          textAlign: TextAlign.center,
-                          softWrap: false,
-                          widget.title ?? "",
-                          style: widget.titleDecoration,
-                        ),
-                      )
-                    : const SizedBox.shrink()
-              ],
+            child: SizedBox(
+              width: widget.showTitleSelected & widget.selected ? 96.h : null,
+              child: Stack(
+                alignment: Alignment.centerLeft,
+                fit: StackFit.loose,
+                children: [
+                  widget.showTitleSelected & widget.selected
+                      ? Positioned(
+                          left: 24.h,
+                          child: AnimatedContainer(
+                            padding: EdgeInsets.only(
+                                left: 12.h, right: 8.h, top: 2.v, bottom: 2.v),
+                            decoration: BoxDecoration(
+                              color: widget.selected
+                                  ? widget.selectedTitleBackgroundColor
+                                  : widget.titleBackgroundColor,
+                              borderRadius: BorderRadius.only(
+                                  topRight: Radius.circular(26.h),
+                                  bottomRight: Radius.circular(26.h)),
+                            ),
+                            duration: const Duration(milliseconds: 700),
+                            child: Text(
+                              textAlign: TextAlign.center,
+                              softWrap: false,
+                              widget.title ?? "",
+                              style: widget.titleDecoration,
+                            ),
+                          ),
+                        )
+                      : const SizedBox.shrink(),
+                  AnimatedContainer(
+                    height: 35,
+                    width: 35,
+                    duration: const Duration(milliseconds: 700),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: widget.selected
+                          ? widget.selectedIconBackgroundColor
+                          : widget.iconBackgroundColor,
+                    ),
+                    child: Icon(widget.icon,
+                        size: 25,
+                        color:
+                            widget.selected ? widget.selectedIconColor : null),
+                  )
+                ],
+              ),
             )));
   }
 

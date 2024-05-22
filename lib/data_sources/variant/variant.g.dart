@@ -12,6 +12,7 @@ _$VariantImpl _$$VariantImplFromJson(Map<String, dynamic> json) =>
       name: json['name'] as String,
       price: (json['price'] as num?)?.toDouble() ?? 0.0,
       quantity: (json['quantity'] as num?)?.toInt() ?? 0,
+      productId: (json['product_id'] as num).toInt(),
       variantOptionValues: (json['variant_option_values'] as List<dynamic>?)
           ?.map((e) => VariantOption.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -26,4 +27,5 @@ Map<String, dynamic> _$$VariantImplToJson(_$VariantImpl instance) =>
       'name': instance.name,
       'price': instance.price,
       'quantity': instance.quantity,
+      'product_id': instance.productId,
     };

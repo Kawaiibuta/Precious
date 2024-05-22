@@ -1,5 +1,6 @@
 import 'package:precious/data_sources/order/order.dart';
 import 'package:precious/data_sources/order_repository.dart';
+import 'package:precious/data_sources/user_repository.dart';
 import 'package:precious/presenters/page_contract.dart';
 import 'package:precious/presenters/page_presenter.dart';
 
@@ -23,7 +24,7 @@ class AdminOrderPresenter extends PagePresenter {
   @override
   Future<void> init() async {
     _contract.onStartAsyncTask();
-    await Future.wait([OrderRepository.getAll()]);
+    await Future.wait([OrderRepository.getAll(), UserRepository.getAll()]);
     _contract.onInitSuccess();
     _contract.onEndAsyncTask();
   }

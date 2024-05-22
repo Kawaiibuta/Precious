@@ -4,7 +4,6 @@ import 'package:precious/views/admin/home_page_admin.dart';
 import 'package:precious/views/admin/inventory_form.dart';
 import 'package:precious/views/admin/order_form.dart';
 import 'package:precious/views/home_page.dart';
-import 'package:precious/views/item_detail_page.dart';
 import 'package:precious/views/landing_page.dart';
 import 'package:precious/views/login_or_sign_up_page.dart';
 import 'package:precious/views/login_page.dart';
@@ -13,6 +12,7 @@ import 'package:precious/views/setting_page.dart';
 import 'package:precious/views/sign_up_page.dart';
 import 'package:precious/views/sign_up_success_page.dart';
 import 'package:precious/views/start_page.dart';
+import 'package:precious/views/user_detail_page.dart';
 
 class MyRoutes {
   final SettingPresenter _settingPresenter;
@@ -31,6 +31,7 @@ class MyRoutes {
         HomePage.name: (_) => const HomePage(),
         InventoryForm.name: (_) => const InventoryForm(),
         OrderForm.name: (_) => const OrderForm(),
+        UserDetailPage.name: (_) => const UserDetailPage(),
         HomePageAdmin.name: (_) => const HomePageAdmin(),
       };
 }

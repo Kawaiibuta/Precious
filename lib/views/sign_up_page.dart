@@ -221,8 +221,8 @@ class _SignUpPageState extends State<SignUpPage> implements SignUpPageContract {
                                 errorMaxLines: 2,
                                 fillColor: Colors.transparent,
                                 suffixIcon: Icon(_confirmPasswordError
-                                    ? Icons.check_circle_rounded
-                                    : Icons.cancel),
+                                    ? Icons.cancel_rounded
+                                    : Icons.check_circle_rounded),
                                 suffixIconColor: Colors.black,
                               ),
                               style: Theme.of(context)
@@ -347,6 +347,10 @@ class _SignUpPageState extends State<SignUpPage> implements SignUpPageContract {
 
   void _signUp() {
     if (_confirmPasswordFieldKey.currentState!.validate()) {
+      showDialog(
+          context: context,
+          builder: (context) => const Center(
+              child: CircularProgressIndicator(color: Colors.grey)));
       _presenter.signUp(_usernameController.text, _emailController.text,
           _passwordController.text, _confirmPasswordController.text);
     } else {
@@ -356,6 +360,7 @@ class _SignUpPageState extends State<SignUpPage> implements SignUpPageContract {
 
   @override
   void onSignUpError(FirebaseException e) {
+    Navigator.of(context).pop();
     switch (e.code) {
       case 'email-already-in-use':
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -377,6 +382,6 @@ class _SignUpPageState extends State<SignUpPage> implements SignUpPageContract {
 
   @override
   void onSignUpSuccess() {
-    Navigator.of(context).pushReplacementNamed(SignUpSuccessPage.name);
+    Navigator.of(context).popAndPushNamed(SignUpSuccessPage.name);
   }
 }

@@ -15,7 +15,10 @@ class EndPoint {
   static const order = "${baseUrl}api/order/";
   static String orderDetail(int id) => order + id.toString();
   static const user = "${baseUrl}api/user/";
-  static String userDetail(int id) => user + id.toString();
+  static String userDetail(int id) => "${user}find_by_id/$id";
   static String findUserByUid(String uid) => "${user}find_by_uid/$uid";
   static const option = "${baseUrl}api/option/";
+  static const login = "${baseUrl}api/auth/login_firebase";
+
+  static const cart = "${baseUrl}api/cart";
 }

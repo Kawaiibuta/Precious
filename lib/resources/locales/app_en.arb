@@ -19,6 +19,63 @@
     "start_shopping":"Start Shopping",
     "my_cart":"My Cart",
     "limit_buy":"The purchase number has reached limit.",
+
+    "home_bottom_title":"Home",
+    "search_bottom_title":"Search",
+    "cart_bottom_title":"Cart",
+    "profile_bottom_title":"Profile",
+
+    "no_variants_msg":"The product has no variants",
+
+    "my_order_button_title":"My Order",
+    "my_favourites_button_title":"My Favourites",
+    "shipping_address_button_title":"Shipping Address",
+    "my_card_button_title":"My Card",
+    "settings_button_title":"Settings",
+    "faq_button_title":"FAQs",
+    "privacy_policy_button_title":"Privacy Policy",
+    "language_button_title":"Language",
+    "notification_button_title":"Notification",
+    "dark_mode_button_title":"Dark Mode",
+    "help_center_button_title":"Help Center",
+
+    "log_out":"Log Out",
+
+    "upload_image":"Upload Image",
+    "name_text_field_title":"Name",
+    "gender_checkbox_title":"Gender",
+    "age_text_field_title":"Age",
+    "email_text_field_title":"Email",
+    "save_button_title":"Save",
+    "male_checkbox_title":"Male",
+    "female_checkbox_title":"Female",
+
+
+    "my_cart":"My Cart",
+    "delete_all_text_button":"Delete all",
+    "empty_cart_msg":"There are no items in the cart currently. Check more of our products in the Home page",
+    "limit_buy":"The purchase number has reached limit.",
+
+    "total_buy_item_text":"{count, plural, =0{Total (0 items)} =1{Total (1 item)} other{Total ({count} items)}}",
+    "@total_buy_item_text":{
+        "placeholder":{
+            "count":{
+                "type":"num",
+                "format":"compact"
+            }
+        }
+    },
+    
+    "checkout_product_list_title":"Product",
+    "delivery_address_title":"Delivery Address",
+    "address_detail_title":"Address detail",
+    "province_or_city_title":"Province/City",
+    "country_title":"Country",
+    "payment_title":"Payment",
+    "momo_payment_method_title":"Momo",
+    "total_price_title": "Total price",
+    "place_order_button_title":"Place Order",
+
     "username_empty_msg":"Username must not be empty",
     "email_empty_msg":"Email must not be empty",
     "email_incorrect_format":"Incorrect email format",

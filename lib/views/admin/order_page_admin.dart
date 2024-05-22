@@ -6,7 +6,6 @@ import 'package:intl/intl.dart';
 import 'package:precious/data_sources/order/order.dart';
 import 'package:precious/main.dart';
 import 'package:precious/presenters/admin_order_presenter.dart';
-import 'package:precious/presenters/order_presenter.dart';
 import 'package:precious/resources/app_export.dart';
 import 'package:precious/resources/widgets/custom_search_bar.dart';
 import 'package:precious/resources/widgets/order_card_admin.dart';
@@ -40,68 +39,73 @@ class _OrderPageAdminState extends State<OrderPageAdmin>
             padding: const EdgeInsets.only(
               top: 20.0,
             ),
-            child: Column(children: [
-              CustomSearchBar(
-                onChange: (p0) {
-                  setState(() {
-                    _presenter.searchString = p0;
-                  });
-                },
-              ),
-              SingleChildScrollView(
-                  child: Column(mainAxisSize: MainAxisSize.min, children: [
-                TabBar(
-                  indicatorSize: TabBarIndicatorSize.tab,
-                  indicatorWeight: 4,
-                  indicatorColor: Colors.black,
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  onTap: (i) => setState(() {
-                    _presenter.selectedTab = i;
-                  }),
-                  tabs: const [
-                    Tab(icon: Text('Ngày')),
-                    Tab(icon: Text('Tháng')),
-                    Tab(icon: Text('Năm')),
-                  ],
+            child: SingleChildScrollView(
+              physics: ScrollPhysics(),
+              child: Column(children: [
+                CustomSearchBar(
+                  onChange: (p0) {
+                    setState(() {
+                      _presenter.searchString = p0;
+                    });
+                  },
                 ),
-                InkWell(
-                  onTap: () => setState(() {
-                    _presenter.option = !_presenter.option;
-                  }),
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 12.h),
-                    child: Row(
-                      children: [
-                        const Text("Options"),
-                        AnimatedRotation(
-                          turns: _presenter.option ? 0 : 1 / 4,
-                          duration: Durations.long2,
-                          child: const Icon(Icons.arrow_drop_down_rounded),
-                        )
-                      ],
+                SingleChildScrollView(
+                    child: Column(mainAxisSize: MainAxisSize.min, children: [
+                  TabBar(
+                    indicatorSize: TabBarIndicatorSize.tab,
+                    indicatorWeight: 4,
+                    indicatorColor: Colors.black,
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    onTap: (i) => setState(() {
+                      _presenter.selectedTab = i;
+                    }),
+                    tabs: const [
+                      Tab(icon: Text('Day')),
+                      Tab(icon: Text('Month')),
+                      Tab(icon: Text('Year')),
+                    ],
+                  ),
+                  InkWell(
+                    onTap: () => setState(() {
+                      _presenter.option = !_presenter.option;
+                    }),
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 12.h),
+                      child: Row(
+                        children: [
+                          const Text("Options"),
+                          AnimatedRotation(
+                            turns: _presenter.option ? 0 : 1 / 4,
+                            duration: Durations.long2,
+                            child: const Icon(Icons.arrow_drop_down_rounded),
+                          )
+                        ],
+                      ),
                     ),
                   ),
-                ),
-                AnimatedContainer(
-                  height: _presenter.option ? 50.h : 0.h,
-                  duration: Durations.long2,
-                  child: CheckboxListTile(
-                    title: const Text("Pending only"),
-                    value: _presenter.option,
-                    onChanged: (newValue) {
-                      setState(() {
-                        _presenter.checkedValue = !_presenter.checkedValue;
-                      });
-                    },
-                    controlAffinity: ListTileControlAffinity
-                        .leading, //  <-- leading Checkbox
+                  AnimatedContainer(
+                    height: _presenter.option ? 50.h : 0,
+                    clipBehavior: Clip.antiAlias,
+                    decoration: BoxDecoration(),
+                    duration: Durations.long2,
+                    child: CheckboxListTile(
+                      title: const Text("Pending only"),
+                      value: _presenter.checkedValue,
+                      onChanged: (newValue) {
+                        setState(() {
+                          _presenter.checkedValue = !_presenter.checkedValue;
+                        });
+                      },
+                      controlAffinity: ListTileControlAffinity
+                          .leading, //  <-- leading Checkbox
+                    ),
                   ),
-                ),
-                Padding(
-                    padding: EdgeInsets.symmetric(vertical: 10.h),
-                    child: buildOrderList())
-              ]))
-            ])),
+                  Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 0),
+                      child: buildOrderList())
+                ]))
+              ]),
+            )),
       ),
     );
   }
@@ -231,11 +235,13 @@ class _OrderPageAdminState extends State<OrderPageAdmin>
   }
 
   @override
-  void onInitSuccess() {}
+  void onInitSuccess() {
+    setState(() {});
+  }
 
   @override
   void onRefreshSuccess() {
-    // TODO: implement onRefreshSuccess
+    setState(() {});
   }
 
   @override

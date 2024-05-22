@@ -8,6 +8,7 @@ part 'user.freezed.dart';
 class User with _$User {
   factory User(
       {@Default(null) int? id,
+      String? name,
       required String uid,
       required int gender,
       String? email,

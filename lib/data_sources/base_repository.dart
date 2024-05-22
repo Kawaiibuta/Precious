@@ -1,1 +1,1 @@
-
+mixin BaseRepository {}

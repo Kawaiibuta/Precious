@@ -24,6 +24,7 @@ mixin _$VariantOption {
   int? get id => throw _privateConstructorUsedError;
   @JsonKey(name: "option_id", includeToJson: false)
   int get optionId => throw _privateConstructorUsedError;
+  Option? get option => throw _privateConstructorUsedError;
   @JsonKey(name: "option_value", includeToJson: false)
   OptionValue get optionValue => throw _privateConstructorUsedError;
 
@@ -42,9 +43,11 @@ abstract class $VariantOptionCopyWith<$Res> {
   $Res call(
       {@JsonKey(includeToJson: false) int? id,
       @JsonKey(name: "option_id", includeToJson: false) int optionId,
+      Option? option,
       @JsonKey(name: "option_value", includeToJson: false)
       OptionValue optionValue});
 
+  $OptionCopyWith<$Res>? get option;
   $OptionValueCopyWith<$Res> get optionValue;
 }
 
@@ -63,6 +66,7 @@ class _$VariantOptionCopyWithImpl<$Res, $Val extends VariantOption>
   $Res call({
     Object? id = freezed,
     Object? optionId = null,
+    Object? option = freezed,
     Object? optionValue = null,
   }) {
     return _then(_value.copyWith(
@@ -74,11 +78,27 @@ class _$VariantOptionCopyWithImpl<$Res, $Val extends VariantOption>
           ? _value.optionId
           : optionId // ignore: cast_nullable_to_non_nullable
               as int,
+      option: freezed == option
+          ? _value.option
+          : option // ignore: cast_nullable_to_non_nullable
+              as Option?,
       optionValue: null == optionValue
           ? _value.optionValue
           : optionValue // ignore: cast_nullable_to_non_nullable
               as OptionValue,
     ) as $Val);
+  }
+
+  @override
+  @pragma('vm:prefer-inline')
+  $OptionCopyWith<$Res>? get option {
+    if (_value.option == null) {
+      return null;
+    }
+
+    return $OptionCopyWith<$Res>(_value.option!, (value) {
+      return _then(_value.copyWith(option: value) as $Val);
+    });
   }
 
   @override
@@ -101,9 +121,12 @@ abstract class _$$VariantOptionImplCopyWith<$Res>
   $Res call(
       {@JsonKey(includeToJson: false) int? id,
       @JsonKey(name: "option_id", includeToJson: false) int optionId,
+      Option? option,
       @JsonKey(name: "option_value", includeToJson: false)
       OptionValue optionValue});
 
+  @override
+  $OptionCopyWith<$Res>? get option;
   @override
   $OptionValueCopyWith<$Res> get optionValue;
 }
@@ -121,6 +144,7 @@ class __$$VariantOptionImplCopyWithImpl<$Res>
   $Res call({
     Object? id = freezed,
     Object? optionId = null,
+    Object? option = freezed,
     Object? optionValue = null,
   }) {
     return _then(_$VariantOptionImpl(
@@ -132,6 +156,10 @@ class __$$VariantOptionImplCopyWithImpl<$Res>
           ? _value.optionId
           : optionId // ignore: cast_nullable_to_non_nullable
               as int,
+      option: freezed == option
+          ? _value.option
+          : option // ignore: cast_nullable_to_non_nullable
+              as Option?,
       optionValue: null == optionValue
           ? _value.optionValue
           : optionValue // ignore: cast_nullable_to_non_nullable
@@ -148,6 +176,7 @@ class _$VariantOptionImpl
   _$VariantOptionImpl(
       {@JsonKey(includeToJson: false) this.id = null,
       @JsonKey(name: "option_id", includeToJson: false) required this.optionId,
+      this.option,
       @JsonKey(name: "option_value", includeToJson: false)
       required this.optionValue});
 
@@ -161,12 +190,14 @@ class _$VariantOptionImpl
   @JsonKey(name: "option_id", includeToJson: false)
   final int optionId;
   @override
+  final Option? option;
+  @override
   @JsonKey(name: "option_value", includeToJson: false)
   final OptionValue optionValue;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'VariantOption(id: $id, optionId: $optionId, optionValue: $optionValue)';
+    return 'VariantOption(id: $id, optionId: $optionId, option: $option, optionValue: $optionValue)';
   }
 
   @override
@@ -176,6 +207,7 @@ class _$VariantOptionImpl
       ..add(DiagnosticsProperty('type', 'VariantOption'))
       ..add(DiagnosticsProperty('id', id))
       ..add(DiagnosticsProperty('optionId', optionId))
+      ..add(DiagnosticsProperty('option', option))
       ..add(DiagnosticsProperty('optionValue', optionValue));
   }
 
@@ -187,13 +219,15 @@ class _$VariantOptionImpl
             (identical(other.id, id) || other.id == id) &&
             (identical(other.optionId, optionId) ||
                 other.optionId == optionId) &&
+            (identical(other.option, option) || other.option == option) &&
             (identical(other.optionValue, optionValue) ||
                 other.optionValue == optionValue));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, id, optionId, optionValue);
+  int get hashCode =>
+      Object.hash(runtimeType, id, optionId, option, optionValue);
 
   @JsonKey(ignore: true)
   @override
@@ -214,6 +248,7 @@ abstract class _VariantOption implements VariantOption {
       {@JsonKey(includeToJson: false) final int? id,
       @JsonKey(name: "option_id", includeToJson: false)
       required final int optionId,
+      final Option? option,
       @JsonKey(name: "option_value", includeToJson: false)
       required final OptionValue optionValue}) = _$VariantOptionImpl;
 
@@ -226,6 +261,8 @@ abstract class _VariantOption implements VariantOption {
   @override
   @JsonKey(name: "option_id", includeToJson: false)
   int get optionId;
+  @override
+  Option? get option;
   @override
   @JsonKey(name: "option_value", includeToJson: false)
   OptionValue get optionValue;

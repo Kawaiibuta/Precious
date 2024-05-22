@@ -21,6 +21,7 @@ User _$UserFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$User {
   int? get id => throw _privateConstructorUsedError;
+  String? get name => throw _privateConstructorUsedError;
   String get uid => throw _privateConstructorUsedError;
   int get gender => throw _privateConstructorUsedError;
   String? get email => throw _privateConstructorUsedError;
@@ -44,6 +45,7 @@ abstract class $UserCopyWith<$Res> {
   @useResult
   $Res call(
       {int? id,
+      String? name,
       String uid,
       int gender,
       String? email,
@@ -68,6 +70,7 @@ class _$UserCopyWithImpl<$Res, $Val extends User>
   @override
   $Res call({
     Object? id = freezed,
+    Object? name = freezed,
     Object? uid = null,
     Object? gender = null,
     Object? email = freezed,
@@ -82,6 +85,10 @@ class _$UserCopyWithImpl<$Res, $Val extends User>
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as int?,
+      name: freezed == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String?,
       uid: null == uid
           ? _value.uid
           : uid // ignore: cast_nullable_to_non_nullable
@@ -127,6 +134,7 @@ abstract class _$$UserImplCopyWith<$Res> implements $UserCopyWith<$Res> {
   @useResult
   $Res call(
       {int? id,
+      String? name,
       String uid,
       int gender,
       String? email,
@@ -148,6 +156,7 @@ class __$$UserImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? id = freezed,
+    Object? name = freezed,
     Object? uid = null,
     Object? gender = null,
     Object? email = freezed,
@@ -162,6 +171,10 @@ class __$$UserImplCopyWithImpl<$Res>
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as int?,
+      name: freezed == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String?,
       uid: null == uid
           ? _value.uid
           : uid // ignore: cast_nullable_to_non_nullable
@@ -203,6 +216,7 @@ class __$$UserImplCopyWithImpl<$Res>
 class _$UserImpl with DiagnosticableTreeMixin implements _User {
   _$UserImpl(
       {this.id = null,
+      this.name,
       required this.uid,
       required this.gender,
       this.email,
@@ -219,6 +233,8 @@ class _$UserImpl with DiagnosticableTreeMixin implements _User {
   @override
   @JsonKey()
   final int? id;
+  @override
+  final String? name;
   @override
   final String uid;
   @override
@@ -247,7 +263,7 @@ class _$UserImpl with DiagnosticableTreeMixin implements _User {
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'User(id: $id, uid: $uid, gender: $gender, email: $email, age: $age, phoneNumber: $phoneNumber, userRole: $userRole, addresses: $addresses, avatar_url: $avatar_url)';
+    return 'User(id: $id, name: $name, uid: $uid, gender: $gender, email: $email, age: $age, phoneNumber: $phoneNumber, userRole: $userRole, addresses: $addresses, avatar_url: $avatar_url)';
   }
 
   @override
@@ -256,6 +272,7 @@ class _$UserImpl with DiagnosticableTreeMixin implements _User {
     properties
       ..add(DiagnosticsProperty('type', 'User'))
       ..add(DiagnosticsProperty('id', id))
+      ..add(DiagnosticsProperty('name', name))
       ..add(DiagnosticsProperty('uid', uid))
       ..add(DiagnosticsProperty('gender', gender))
       ..add(DiagnosticsProperty('email', email))
@@ -272,6 +289,7 @@ class _$UserImpl with DiagnosticableTreeMixin implements _User {
         (other.runtimeType == runtimeType &&
             other is _$UserImpl &&
             (identical(other.id, id) || other.id == id) &&
+            (identical(other.name, name) || other.name == name) &&
             (identical(other.uid, uid) || other.uid == uid) &&
             (identical(other.gender, gender) || other.gender == gender) &&
             (identical(other.email, email) || other.email == email) &&
@@ -291,6 +309,7 @@ class _$UserImpl with DiagnosticableTreeMixin implements _User {
   int get hashCode => Object.hash(
       runtimeType,
       id,
+      name,
       uid,
       gender,
       email,
@@ -317,6 +336,7 @@ class _$UserImpl with DiagnosticableTreeMixin implements _User {
 abstract class _User implements User {
   factory _User(
           {final int? id,
+          final String? name,
           required final String uid,
           required final int gender,
           final String? email,
@@ -331,6 +351,8 @@ abstract class _User implements User {
 
   @override
   int? get id;
+  @override
+  String? get name;
   @override
   String get uid;
   @override

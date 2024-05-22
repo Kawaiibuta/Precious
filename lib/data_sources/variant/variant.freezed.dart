@@ -25,6 +25,8 @@ mixin _$Variant {
   String get name => throw _privateConstructorUsedError;
   double get price => throw _privateConstructorUsedError;
   int get quantity => throw _privateConstructorUsedError;
+  @JsonKey(name: "product_id")
+  int get productId => throw _privateConstructorUsedError;
   @JsonKey(name: "variant_option_values", includeToJson: false)
   List<VariantOption>? get variantOptionValues =>
       throw _privateConstructorUsedError;
@@ -46,6 +48,7 @@ abstract class $VariantCopyWith<$Res> {
       String name,
       double price,
       int quantity,
+      @JsonKey(name: "product_id") int productId,
       @JsonKey(name: "variant_option_values", includeToJson: false)
       List<VariantOption>? variantOptionValues,
       @JsonKey(name: "img_paths_url", includeToJson: false)
@@ -69,6 +72,7 @@ class _$VariantCopyWithImpl<$Res, $Val extends Variant>
     Object? name = null,
     Object? price = null,
     Object? quantity = null,
+    Object? productId = null,
     Object? variantOptionValues = freezed,
     Object? imgPathUrls = null,
   }) {
@@ -88,6 +92,10 @@ class _$VariantCopyWithImpl<$Res, $Val extends Variant>
       quantity: null == quantity
           ? _value.quantity
           : quantity // ignore: cast_nullable_to_non_nullable
+              as int,
+      productId: null == productId
+          ? _value.productId
+          : productId // ignore: cast_nullable_to_non_nullable
               as int,
       variantOptionValues: freezed == variantOptionValues
           ? _value.variantOptionValues
@@ -113,6 +121,7 @@ abstract class _$$VariantImplCopyWith<$Res> implements $VariantCopyWith<$Res> {
       String name,
       double price,
       int quantity,
+      @JsonKey(name: "product_id") int productId,
       @JsonKey(name: "variant_option_values", includeToJson: false)
       List<VariantOption>? variantOptionValues,
       @JsonKey(name: "img_paths_url", includeToJson: false)
@@ -134,6 +143,7 @@ class __$$VariantImplCopyWithImpl<$Res>
     Object? name = null,
     Object? price = null,
     Object? quantity = null,
+    Object? productId = null,
     Object? variantOptionValues = freezed,
     Object? imgPathUrls = null,
   }) {
@@ -153,6 +163,10 @@ class __$$VariantImplCopyWithImpl<$Res>
       quantity: null == quantity
           ? _value.quantity
           : quantity // ignore: cast_nullable_to_non_nullable
+              as int,
+      productId: null == productId
+          ? _value.productId
+          : productId // ignore: cast_nullable_to_non_nullable
               as int,
       variantOptionValues: freezed == variantOptionValues
           ? _value._variantOptionValues
@@ -174,6 +188,7 @@ class _$VariantImpl with DiagnosticableTreeMixin implements _Variant {
       required this.name,
       this.price = 0.0,
       this.quantity = 0,
+      @JsonKey(name: "product_id") required this.productId,
       @JsonKey(name: "variant_option_values", includeToJson: false)
       final List<VariantOption>? variantOptionValues,
       @JsonKey(name: "img_paths_url", includeToJson: false)
@@ -195,6 +210,9 @@ class _$VariantImpl with DiagnosticableTreeMixin implements _Variant {
   @override
   @JsonKey()
   final int quantity;
+  @override
+  @JsonKey(name: "product_id")
+  final int productId;
   final List<VariantOption>? _variantOptionValues;
   @override
   @JsonKey(name: "variant_option_values", includeToJson: false)
@@ -218,7 +236,7 @@ class _$VariantImpl with DiagnosticableTreeMixin implements _Variant {
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'Variant(id: $id, name: $name, price: $price, quantity: $quantity, variantOptionValues: $variantOptionValues, imgPathUrls: $imgPathUrls)';
+    return 'Variant(id: $id, name: $name, price: $price, quantity: $quantity, productId: $productId, variantOptionValues: $variantOptionValues, imgPathUrls: $imgPathUrls)';
   }
 
   @override
@@ -230,6 +248,7 @@ class _$VariantImpl with DiagnosticableTreeMixin implements _Variant {
       ..add(DiagnosticsProperty('name', name))
       ..add(DiagnosticsProperty('price', price))
       ..add(DiagnosticsProperty('quantity', quantity))
+      ..add(DiagnosticsProperty('productId', productId))
       ..add(DiagnosticsProperty('variantOptionValues', variantOptionValues))
       ..add(DiagnosticsProperty('imgPathUrls', imgPathUrls));
   }
@@ -244,6 +263,8 @@ class _$VariantImpl with DiagnosticableTreeMixin implements _Variant {
             (identical(other.price, price) || other.price == price) &&
             (identical(other.quantity, quantity) ||
                 other.quantity == quantity) &&
+            (identical(other.productId, productId) ||
+                other.productId == productId) &&
             const DeepCollectionEquality()
                 .equals(other._variantOptionValues, _variantOptionValues) &&
             const DeepCollectionEquality()
@@ -258,6 +279,7 @@ class _$VariantImpl with DiagnosticableTreeMixin implements _Variant {
       name,
       price,
       quantity,
+      productId,
       const DeepCollectionEquality().hash(_variantOptionValues),
       const DeepCollectionEquality().hash(_imgPathUrls));
 
@@ -281,6 +303,7 @@ abstract class _Variant implements Variant {
       required final String name,
       final double price,
       final int quantity,
+      @JsonKey(name: "product_id") required final int productId,
       @JsonKey(name: "variant_option_values", includeToJson: false)
       final List<VariantOption>? variantOptionValues,
       @JsonKey(name: "img_paths_url", includeToJson: false)
@@ -297,6 +320,9 @@ abstract class _Variant implements Variant {
   double get price;
   @override
   int get quantity;
+  @override
+  @JsonKey(name: "product_id")
+  int get productId;
   @override
   @JsonKey(name: "variant_option_values", includeToJson: false)
   List<VariantOption>? get variantOptionValues;

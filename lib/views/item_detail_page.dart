@@ -3,12 +3,9 @@ import 'dart:math';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:easy_image_viewer/easy_image_viewer.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:precious/data_sources/product/product.dart';
 import 'package:precious/presenters/product_presenter.dart';
@@ -31,7 +28,7 @@ class ItemDetailPage extends StatefulWidget {
   static const name = '/productDetail';
 
   @override
-  _ItemDetailPageState createState() => _ItemDetailPageState();
+  State<ItemDetailPage> createState() => _ItemDetailPageState();
 }
 
 class _ItemDetailPageState extends State<ItemDetailPage> {
@@ -44,7 +41,7 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
   @override
   void initState() {
     super.initState();
-    productFuture = productPresenter.getOne(widget.id).then((e) {
+    productFuture = productPresenter.getOne(widget.id, detail: true).then((e) {
       __handleUp(e);
       return e;
     });
@@ -87,7 +84,7 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
                                       ? CachedNetworkImageProvider(i)
                                       : AssetImage(i)) as ImageProvider,
                                   onViewerDismissed: () {
-                                print("dismissed");
+                                debugPrint("dismissed");
                               });
                             },
                             child: CachedNetworkImage(
@@ -141,7 +138,7 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
     setState(() {
       open = true;
     });
-    showCupertinoModalBottomSheet(
+    showModalBottomSheet(
         context: context,
         builder: (context) => StatefulBuilder(
               builder: (context, setState) {
@@ -237,9 +234,9 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
                             ]),
                           ),
                           Row(children: [
-                            ...[8, 9, 10, 11]
+                            ...product.variants
                                 .asMap()
-                                .map((key, value) => MapEntry(
+                                .map((key, variant) => MapEntry(
                                       key,
                                       Container(
                                         width: 50,
@@ -259,7 +256,7 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
                                             selectedSize = key;
                                             setState(() {});
                                           },
-                                          child: Text(value.toString(),
+                                          child: Text("4",
                                               style: GoogleFonts.openSans(
                                                   fontSize: 17,
                                                   color: selectedSize == key
@@ -270,7 +267,6 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
                                       ),
                                     ))
                                 .values
-                                .toList()
                           ]),
                           Padding(
                             padding:
@@ -294,7 +290,7 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
                                         showImageViewer(context,
                                             CachedNetworkImageProvider(e),
                                             onViewerDismissed: () {
-                                          print("dismissed");
+                                          debugPrint("Dismissed");
                                         });
                                       },
                                       child: Image.network(
@@ -337,63 +333,64 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
                           bottom: 30,
                           left: 0,
                           right: 0,
-                          child: Align(
-                            alignment: Alignment.center,
-                            child: Container(
-                                height: 50,
-                                margin: const EdgeInsets.only(
-                                    left: 25.0, right: 25.0),
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10),
-                                    color: Colors.white),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Expanded(
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          const Text("Total price"),
-                                          Text(
-                                            product.price > 10 ^ 6
-                                                ? "${(product.price ~/ pow(10, 6))}Tr"
-                                                : "${(product.price ~/ pow(10, 3))}K",
-                                            style: GoogleFonts.openSans(
-                                                fontSize: 20,
-                                                color: Colors.black,
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                        ],
-                                      ),
+                          child: Container(
+                              height: 50,
+                              margin: const EdgeInsets.only(
+                                  left: 25.0, right: 25.0),
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  color: Colors.white),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Expanded(
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        const Text("Total price"),
+                                        Text(
+                                          product.price > 10 ^ 6
+                                              ? "${(product.price ~/ pow(10, 6))}Tr"
+                                              : "${(product.price ~/ pow(10, 3))}K",
+                                          style: GoogleFonts.openSans(
+                                              fontSize: 20,
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ],
                                     ),
-                                    Expanded(
-                                        flex: 2,
-                                        child: InkWell(
-                                          child: Container(
-                                            height: double.infinity,
-                                            decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(100),
-                                                color: Colors.black),
-                                            child: const Center(
-                                              child: Text("Add to cart",
-                                                  style: TextStyle(
-                                                      fontSize: 20,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: Colors.white)),
-                                            ),
+                                  ),
+                                  Expanded(
+                                      flex: 2,
+                                      child: InkWell(
+                                        onTap: () => _addToCart(product),
+                                        child: Container(
+                                          height: double.infinity,
+                                          decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(100),
+                                              color: Colors.black),
+                                          child: const Center(
+                                            child: Text("Add to cart",
+                                                style: TextStyle(
+                                                    fontSize: 20,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.white)),
                                           ),
-                                        ))
-                                  ],
-                                )),
-                          )),
+                                        ),
+                                      ))
+                                ],
+                              ))),
                     ],
                   ),
                 );
               },
             ));
+  }
+
+  void _addToCart(Product product) {
+    //TODO:
   }
 }

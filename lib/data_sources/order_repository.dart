@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:precious/data_sources/order/order.dart';
+import 'package:precious/presenters/order_detail_presenter.dart';
 import 'package:precious/resources/endpoints.dart';
 import 'package:precious/resources/utils/dio_utils.dart';
 
@@ -73,23 +74,39 @@ class OrderRepository {
 
   static Future<Order> add(Map<int, int> items, int userId, String address,
       String phoneNumber) async {
-    final data = FormData.fromMap({
-      "items": items,
+    final result = [];
+    for (var item in items.entries) {
+      result.add(<String, int>{"variant_id": item.key, 'quantity': item.value});
+    }
+    final data = json.encode({
+      "items": result,
       "user_id": userId,
       "address": address,
       "phone_number": phoneNumber
     });
-    debugPrint("start call API");
+
+    debugPrint("start call API: ${data.toString()}");
     final response = await dio
         .request(EndPoint.order,
             options: Options(method: "POST", headers: headers), data: data)
-        .then((value) => Order.fromJson(value.data))
-        .catchError((DioException error) {
-      debugPrint(error.response.toString());
-    });
+        .then((value) => Order.fromJson(value.data));
     if (response.id != null) {
       list.addEntries(<int, Order>{response.id!: response}.entries);
     }
+    return response;
+  }
+
+  static Future<Order?> update(int id, OrderStatus status) async {
+    final data = json.encode({"status": status.toString()});
+    final response = await dio
+        .request(EndPoint.orderDetail(id),
+            options: Options(method: "PATCH", headers: headers), data: data)
+        .then((value) => Order.fromJson(value.data))
+        .catchError((error) {
+      debugPrint(error);
+      return null;
+    });
+    list.update(id, (value) => response);
     return response;
   }
 }

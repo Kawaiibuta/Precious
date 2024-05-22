@@ -34,6 +34,10 @@ class OrderFormPresenter implements FormPresenter {
   Future<void> add() async {
     try {
       _contract.onStartAsyncFunction();
+      if (variants.isEmpty) {
+        _contract.onMissingField();
+        throw (Exception("At least one product is selected."));
+      }
       final items = variants.map((key, value) => MapEntry(key.id!, value));
       if (addressController.text.isEmpty || phoneController.text.isEmpty) {
         _contract.onMissingField();
