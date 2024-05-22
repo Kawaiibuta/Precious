@@ -21,7 +21,7 @@ class _CustomBottomNavigationState extends State<CustomBottomNavigation> {
     return SizedBox(
       height: 60.v,
       child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: widget.routes
               .asMap()
