@@ -1,5 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:precious/data_sources/variant/variant.dart';
+import 'package:precious/models/variant/variant.dart';
 import 'package:flutter/foundation.dart';
 
 part 'cart_item.freezed.dart';

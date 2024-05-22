@@ -1,4 +1,4 @@
-import 'package:precious/data_sources/order/order.dart';
+import 'package:precious/models/order/order.dart';
 import 'package:precious/data_sources/order_repository.dart';
 import 'package:precious/data_sources/user_repository.dart';
 import 'package:precious/presenters/page_contract.dart';

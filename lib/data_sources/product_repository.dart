@@ -2,9 +2,9 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-import 'package:precious/data_sources/option/option.dart';
-import 'package:precious/data_sources/product/product.dart';
-import 'package:precious/data_sources/variant/variant.dart';
+import 'package:precious/models/option/option.dart';
+import 'package:precious/models/product/product.dart';
+import 'package:precious/models/variant/variant.dart';
 import 'package:precious/resources/endpoints.dart';
 import 'package:precious/resources/utils/dio_utils.dart';
 

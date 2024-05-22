@@ -1,7 +1,7 @@
 // ignore_for_file: invalid_annotation_target
 
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:precious/data_sources/variant/variant.dart';
+import 'package:precious/models/variant/variant.dart';
 
 part 'ordered_product.g.dart';
 part 'ordered_product.freezed.dart';

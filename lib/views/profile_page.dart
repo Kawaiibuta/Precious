@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:precious/data_sources/user/user.dart';
+import 'package:precious/models/user/user.dart';
 import 'package:precious/presenters/profile_presenter.dart';
 import 'package:precious/resources/app_export.dart';
 import 'package:precious/resources/widgets/custom_elevated_button.dart';

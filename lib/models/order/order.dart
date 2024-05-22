@@ -2,8 +2,8 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:precious/data_sources/orderedProduct/ordered_product.dart';
-import 'package:precious/data_sources/user/user.dart';
+import 'package:precious/models/orderedProduct/ordered_product.dart';
+import 'package:precious/models/user/user.dart';
 
 part 'order.g.dart';
 part 'order.freezed.dart';

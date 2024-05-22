@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:percent_indicator/circular_percent_indicator.dart';
-import 'package:precious/data_sources/product/product.dart';
+import 'package:precious/models/product/product.dart';
 import 'package:precious/presenters/product_presenter.dart';
 import 'package:precious/resources/utils/string_utils.dart';
 import 'package:precious/resources/widgets/custom_search_bar.dart';

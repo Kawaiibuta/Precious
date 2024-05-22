@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:precious/data_sources/variant/variant_option/variant_option.dart';
+import 'package:precious/models/variant/variant_option/variant_option.dart';
 
 part 'variant.g.dart';
 part 'variant.freezed.dart';

@@ -4,11 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:precious/data_sources/category_reppsitory.dart';
-import 'package:precious/data_sources/option/option.dart';
-import 'package:precious/data_sources/product/product.dart';
-import 'package:precious/data_sources/product_category/product_category.dart';
+import 'package:precious/models/option/option.dart';
+import 'package:precious/models/product/product.dart';
+import 'package:precious/models/product_category/product_category.dart';
 import 'package:precious/data_sources/product_repository.dart';
-import 'package:precious/data_sources/variant/variant.dart';
+import 'package:precious/models/variant/variant.dart';
 import 'package:precious/main.dart';
 import 'package:precious/presenters/form_presenter.dart';
 

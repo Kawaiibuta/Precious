@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:precious/data_sources/user_repository.dart';
-import 'package:precious/data_sources/user/user.dart' as model;
+import 'package:precious/models/user/user.dart' as model;
 import 'package:precious/data_sources/auth_repository.dart';
 
 class LoginRepository {

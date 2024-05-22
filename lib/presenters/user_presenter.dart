@@ -1,6 +1,6 @@
-import 'package:precious/data_sources/user/user.dart';
 import 'package:precious/data_sources/user_repository.dart';
 import 'package:precious/presenters/base_presenter.dart';
+import 'package:precious/models/user/user.dart';
 
 class UserPresenter implements Presenter {
   @override

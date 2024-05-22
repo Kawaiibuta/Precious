@@ -1,6 +1,6 @@
-import 'package:precious/data_sources/option/optionValue/option_value.dart';
-import 'package:precious/data_sources/product/product.dart';
-import 'package:precious/data_sources/variant/variant.dart';
+import 'package:precious/models/option/optionValue/option_value.dart';
+import 'package:precious/models/product/product.dart';
+import 'package:precious/models/variant/variant.dart';
 
 class DataException implements Exception {
   String reason;

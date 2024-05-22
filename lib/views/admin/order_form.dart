@@ -10,13 +10,13 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 
 import 'package:google_fonts/google_fonts.dart';
-import 'package:precious/data_sources/option/optionValue/option_value.dart';
+import 'package:precious/models/option/optionValue/option_value.dart';
 import 'package:precious/data_sources/order_repository.dart';
-import 'package:precious/data_sources/product/product.dart';
+import 'package:precious/models/product/product.dart';
 import 'package:precious/data_sources/product_repository.dart';
-import 'package:precious/data_sources/user/user.dart';
+import 'package:precious/models/user/user.dart';
 import 'package:precious/data_sources/user_repository.dart';
-import 'package:precious/data_sources/variant/variant.dart';
+import 'package:precious/models/variant/variant.dart';
 import 'package:precious/main.dart';
 import 'package:precious/presenters/order_form_presenter.dart';
 import 'package:precious/resources/app_export.dart';

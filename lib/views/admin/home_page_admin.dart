@@ -6,7 +6,7 @@ import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:precious/data_sources/product/product.dart';
+import 'package:precious/models/product/product.dart';
 import 'package:precious/data_sources/product_repository.dart';
 import 'package:precious/presenters/admin_product_presenter.dart';
 import 'package:precious/presenters/home_page_presenter.dart';

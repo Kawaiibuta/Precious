@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:flutter/material.dart';
-import 'package:precious/data_sources/user/user.dart';
+import 'package:precious/models/user/user.dart';
 import 'package:precious/resources/utils/dio_utils.dart';
 
 class AuthRepository {

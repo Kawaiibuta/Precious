@@ -3,7 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-import 'package:precious/data_sources/order/order.dart';
+import 'package:precious/models/order/order.dart';
 import 'package:precious/main.dart';
 import 'package:precious/presenters/admin_order_presenter.dart';
 import 'package:precious/resources/app_export.dart';

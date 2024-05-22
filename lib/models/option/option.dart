@@ -1,5 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:precious/data_sources/option/optionValue/option_value.dart';
+import 'package:precious/models/option/optionValue/option_value.dart';
 
 part 'option.g.dart';
 part 'option.freezed.dart';

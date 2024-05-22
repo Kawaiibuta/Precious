@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:precious/data_sources/option/option.dart';
-import 'package:precious/data_sources/option/optionValue/option_value.dart';
+import 'package:precious/models/option/option.dart';
+import 'package:precious/models/option/optionValue/option_value.dart';
 
 part 'variant_option.g.dart';
 part 'variant_option.freezed.dart';

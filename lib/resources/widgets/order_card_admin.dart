@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-import 'package:precious/data_sources/order/order.dart';
+import 'package:precious/models/order/order.dart';
 import 'package:precious/resources/app_export.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:precious/views/admin/order_detail_admin.dart';

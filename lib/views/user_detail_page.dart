@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart' hide User;
 import 'package:flutter/material.dart';
-import 'package:precious/data_sources/user/user.dart';
+import 'package:precious/models/user/user.dart';
 import 'package:precious/presenters/user_detail_presenter.dart';
 import 'package:precious/resources/app_export.dart';
 import 'package:precious/resources/endpoints.dart';

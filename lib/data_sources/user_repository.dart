@@ -2,7 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:precious/data_sources/auth_repository.dart';
-import 'package:precious/data_sources/user/user.dart' as model;
+import 'package:precious/models/user/user.dart' as model;
 import 'package:precious/resources/endpoints.dart';
 import 'package:precious/resources/utils/dio_utils.dart';
 

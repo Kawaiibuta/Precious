@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:precious/data_sources/order/order.dart';
+import 'package:precious/models/order/order.dart';
 import 'package:precious/presenters/order_detail_presenter.dart';
 import 'package:precious/resources/endpoints.dart';
 import 'package:precious/resources/utils/dio_utils.dart';

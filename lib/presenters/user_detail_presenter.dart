@@ -1,5 +1,5 @@
 import 'package:precious/data_sources/auth_repository.dart';
-import 'package:precious/data_sources/user/user.dart';
+import 'package:precious/models/user/user.dart';
 import 'package:precious/data_sources/user_repository.dart';
 
 abstract class UserDetailPageContract {

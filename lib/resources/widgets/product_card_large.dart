@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:precious/data_sources/product/product.dart';
+import 'package:precious/models/product/product.dart';
 import 'package:precious/resources/app_export.dart';
 import 'package:precious/resources/widgets/round_container_box.dart';
 

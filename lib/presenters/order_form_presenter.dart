@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:precious/data_sources/auth_repository.dart';
 import 'package:precious/data_sources/order_repository.dart';
 import 'package:precious/data_sources/product_repository.dart';
-import 'package:precious/data_sources/user/user.dart';
+import 'package:precious/models/user/user.dart';
 import 'package:precious/data_sources/user_repository.dart';
-import 'package:precious/data_sources/variant/variant.dart';
+import 'package:precious/models/variant/variant.dart';
 import 'package:precious/presenters/form_presenter.dart';
 
 abstract class OrderFormContract {

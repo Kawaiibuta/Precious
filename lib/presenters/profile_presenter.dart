@@ -1,6 +1,6 @@
 import 'package:precious/data_sources/auth_repository.dart';
 import 'package:precious/data_sources/login_repository.dart';
-import 'package:precious/data_sources/user/user.dart';
+import 'package:precious/models/user/user.dart';
 
 abstract class ProfilePageContract {
   void onGetUserDetailSuccess(User user);

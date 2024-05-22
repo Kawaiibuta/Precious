@@ -2,8 +2,8 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:precious/data_sources/option/option.dart';
-import 'package:precious/data_sources/variant/variant.dart';
+import 'package:precious/models/option/option.dart';
+import 'package:precious/models/variant/variant.dart';
 
 part 'product.g.dart';
 part 'product.freezed.dart';
