@@ -4,11 +4,14 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:precious/data_sources/product/product.dart';
-import 'package:precious/presenters/base_presenter.dart';
-import 'package:precious/presenters/order_presenter.dart';
-import 'package:precious/presenters/product_presenter.dart';
+import 'package:precious/data_sources/product_repository.dart';
+import 'package:precious/presenters/admin_product_presenter.dart';
+import 'package:precious/presenters/home_page_presenter.dart';
+import 'package:precious/presenters/page_presenter.dart';
+import 'package:precious/resources/widgets/variant_dialog.dart';
 import 'package:precious/views/admin/inventory_form.dart';
 import 'package:precious/views/admin/order_form.dart';
 import 'package:precious/views/admin/order_page_admin.dart';
@@ -45,17 +48,20 @@ final drawerItemList = [
   {"icon": Icons.monitor, "name": "Statistic"}
 ];
 
-class _HomePageAdminState extends State<HomePageAdmin> {
+class _HomePageAdminState extends State<HomePageAdmin>
+    implements HomePageContract {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
-  var controller = SidebarXController(selectedIndex: 0, extended: true);
-  late Presenter _presenter;
+  var controller =
+      Get.put(SidebarXController(selectedIndex: 0, extended: true));
+  late HomePagePresenter _presenter;
+  var multiItemSelection = true;
   StreamController floatingButtonStreamController =
       StreamController<List<int>>();
   Stream get floatingButtonStream => floatingButtonStreamController.stream;
   @override
   void initState() {
     super.initState();
-    _presenter = getPresenter();
+    _presenter = HomePagePresenter(this);
   }
 
   @override
@@ -71,6 +77,7 @@ class _HomePageAdminState extends State<HomePageAdmin> {
         body: getRoute(),
         drawer: SidebarX(
           controller: _controller,
+          showToggleButton: false,
           theme: SidebarXTheme(
             margin: const EdgeInsets.all(10),
             textStyle: const TextStyle(color: Colors.white),
@@ -131,7 +138,8 @@ class _HomePageAdminState extends State<HomePageAdmin> {
                   icon: e["icon"] as IconData,
                   label: e['name'] as String,
                   onTap: () => setState(() {
-                        _presenter.selected.clear();
+                        controller.setExtended(false);
+                        // _presenter.selected.clear();
                         controller.selectIndex(drawerItemList.indexOf(e));
                       })))
               .toList(),
@@ -170,7 +178,7 @@ class _HomePageAdminState extends State<HomePageAdmin> {
                                       case "delete":
                                         _handleDeleteItem();
                                       case "edit":
-                                        _handleUpdateItem();
+                                        _handleEditItem();
                                       default:
                                     }
                                   },
@@ -187,8 +195,9 @@ class _HomePageAdminState extends State<HomePageAdmin> {
   }
 
   void _handleDeleteItem() async {
-    debugPrint(_presenter.selected.toString());
-    final futureItemList = _presenter.selected.map((e) => _presenter.getOne(e));
+    final futureItemList = _getPresenter(controller.selectedIndex)
+        .selected
+        .map((e) => ProductRepository.getOne(e));
     final itemList = await Future.wait(futureItemList);
     showDialog(
         context: context,
@@ -243,14 +252,15 @@ class _HomePageAdminState extends State<HomePageAdmin> {
                             )),
                         OutlinedButton(
                             onPressed: () async {
-                              final futureResult = _presenter.selected
-                                  .map((e) => _presenter.delete(e))
+                              var currentPresenter =
+                                  _getPresenter(controller.selectedIndex);
+                              final futureResult = currentPresenter.selected
+                                  .map((e) => currentPresenter.delete(e))
                                   .toList();
                               final result = await Future.wait(futureResult);
                               Fluttertoast.showToast(
                                   msg:
                                       "${result.where((element) => element == true).length} have been removed successfully");
-
                               Navigator.of(context).pop();
                             },
                             style: ButtonStyle(
@@ -267,7 +277,6 @@ class _HomePageAdminState extends State<HomePageAdmin> {
 
   Widget getRoute() => switch (controller.selectedIndex) {
         0 => ProductPageAdmin(
-            presenter: _presenter as ProductPresenter,
             openFloatingButton: (List<int> e) =>
                 floatingButtonStreamController.sink.add(e),
           ),
@@ -276,26 +285,16 @@ class _HomePageAdminState extends State<HomePageAdmin> {
         _ => const OrderPageAdmin()
       };
 
-  Presenter getPresenter() => switch (controller.selectedIndex) {
-        0 => ProductPresenter(),
-        1 => ProductPresenter(),
-        2 => OrderPresenter(),
-        _ => ProductPresenter(),
+  StatefulWidget getWidget(int index) => switch (index) {
+        0 => ProductPageAdmin(
+            openFloatingButton: (List<int> e) =>
+                floatingButtonStreamController.sink.add(e)),
+        _ => const ProductPageAdmin(),
       };
-
-  void _handleUpdateItem() async {
-    debugPrint(_presenter.selected.toString());
-    if (_presenter.selected.isEmpty) {
-      return;
-    }
-    final item = await _presenter.getOne(_presenter.selected[0]);
-    Navigator.of(context)
-        .push(MaterialPageRoute(
-            builder: (context) => InventoryForm(
-                  product: item as Product,
-                )))
-        .then((value) => setState(() {}));
-  }
+  PagePresenter _getPresenter(int index) => switch (index) {
+        0 => Get.find<AdminProductPresenter>(),
+        _ => Get.find<AdminProductPresenter>(),
+      };
 
   Widget getAddForm() => switch (controller.selectedIndex) {
         0 => const InventoryForm(),
@@ -303,4 +302,21 @@ class _HomePageAdminState extends State<HomePageAdmin> {
         2 => const OrderPageAdmin(),
         _ => const SizedBox.shrink()
       };
+
+  @override
+  Future<void> onInitSuccess() {
+    // TODO: implement onInitSuccess
+    throw UnimplementedError();
+  }
+
+  Future<void> _handleEditItem() async {
+    Product? response = await ProductRepository.getOne(
+        (_getPresenter(controller.selectedIndex) as AdminProductPresenter)
+            .selected[0]);
+    if (response != null) {
+      showDialog(
+          context: context,
+          builder: (context) => VariantDialog(product: response));
+    }
+  }
 }

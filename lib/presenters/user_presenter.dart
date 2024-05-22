@@ -25,8 +25,6 @@ class UserPresenter implements Presenter {
 
   Future<User?> getOneByUId(String uid) async {
     await getAll();
-    return UserRepository.list.values
-        .where((element) => element.uid == uid)
-        .first;
+    return UserRepository.list.values.first;
   }
 }

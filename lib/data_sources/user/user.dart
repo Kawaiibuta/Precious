@@ -7,12 +7,14 @@ part 'user.freezed.dart';
 @Freezed()
 class User with _$User {
   factory User(
-          {@Default(null) int? id,
-          required String uid,
-          required int gender,
-          String? email,
-          int? age,
-          @JsonKey(name: "avatar_img_path_url") required String avatar_url}) =
-      _User;
+      {@Default(null) int? id,
+      required String uid,
+      required int gender,
+      String? email,
+      int? age,
+      @JsonKey(name: "phone_number") String? phoneNumber,
+      required String userRole,
+      @Default([]) List<String> addresses,
+      @JsonKey(name: "avatar_img_path_url") String? avatar_url}) = _User;
   factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
 }

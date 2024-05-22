@@ -35,11 +35,11 @@ class _ProductCardState extends State<ProductCard> {
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
                       image: DecorationImage(
-                          image: (Uri.parse(widget.product.img_paths_url[0])
+                          image: (Uri.parse(widget.product.imgPathUrls[0])
                                       .isAbsolute
                                   ? CachedNetworkImageProvider(
-                                      widget.product.img_paths_url[0])
-                                  : AssetImage(widget.product.img_paths_url[0]))
+                                      widget.product.imgPathUrls[0])
+                                  : AssetImage(widget.product.imgPathUrls[0]))
                               as ImageProvider,
                           fit: BoxFit.cover)),
                 ),
@@ -51,7 +51,7 @@ class _ProductCardState extends State<ProductCard> {
                       color: Colors.black),
                 ),
                 Text(
-                  widget.product.short_description,
+                  widget.product.shortDescription,
                   style: const TextStyle(
                       fontWeight: FontWeight.normal, fontSize: 10),
                 ),

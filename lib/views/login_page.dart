@@ -1,8 +1,13 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:precious/data_sources/auth_repository.dart';
+import 'package:precious/data_sources/user_repository.dart';
 import 'package:precious/presenters/login_presenter.dart';
 import 'package:precious/resources/app_export.dart';
 import 'package:precious/resources/widgets/custom_elevated_button.dart';
+import 'package:precious/views/admin/home_page_admin.dart';
+import 'package:precious/views/home_page.dart';
 
 class LoginPage extends StatefulWidget {
   static const name = '/login';
@@ -194,6 +199,11 @@ class _LoginPageState extends State<LoginPage> implements LoginPageContract {
 
   @override
   void onLoginSuccess() {
-    // TODO: implement onLoginSuccess
+    //Develope screen.
+    if (AuthRepository.currentUser!.userRole == "ADMIN") {
+      Navigator.of(context).pushNamed(HomePageAdmin.name);
+    } else {
+      Navigator.of(context).pushNamed(HomePage.name);
+    }
   }
 }

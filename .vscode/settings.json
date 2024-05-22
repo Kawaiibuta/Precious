@@ -6,5 +6,8 @@
                 "cmd": "flutter pub get"
             }
         ]
-    }
+    },
+    "cSpell.words": [
+        "Fluttertoast"
+    ]
 }

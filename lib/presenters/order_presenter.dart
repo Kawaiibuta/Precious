@@ -31,6 +31,12 @@ class OrderPresenter implements Presenter {
     return result;
   }
 
+  Future<String> pay(int id, PaymentMethod type) async {
+    final order = await getOne(id);
+    if (order == null || order.isPaid) return "";
+    return await OrderRepository.pay(id, type);
+  }
+
   @override
   delete(int id) {
     // TODO: implement delete
@@ -38,8 +44,8 @@ class OrderPresenter implements Presenter {
   }
 
   @override
-  getOne(int id, {bool detail = false}) {
-    // TODO: implement getOne
-    throw UnimplementedError();
+  Future<Order?> getOne(int id, {bool detail = false}) async {
+    if (OrderRepository.list.containsKey(id)) return OrderRepository.list[id];
+    return null;
   }
 }

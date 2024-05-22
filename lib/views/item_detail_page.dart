@@ -76,7 +76,7 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
                         viewportFraction: 1,
                         aspectRatio: MediaQuery.of(context).size.width /
                             MediaQuery.of(context).size.height),
-                    items: product.img_paths_url.map((i) {
+                    items: product.imgPathUrls.map((i) {
                       return Builder(
                         builder: (BuildContext context) {
                           return InkWell(
@@ -178,7 +178,7 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
                                         crossAxisAlignment:
                                             CrossAxisAlignment.end,
                                         children: [
-                                          Text(product.short_description,
+                                          Text(product.shortDescription,
                                               style: GoogleFonts.openSans(
                                                   fontSize: 10,
                                                   color: Colors.grey,

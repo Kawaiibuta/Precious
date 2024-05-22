@@ -1,12 +1,13 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:precious/data_sources/order/order.dart';
+import 'package:precious/data_sources/order_repository.dart';
+import 'package:precious/presenters/order_presenter.dart';
 import 'package:precious/presenters/product_presenter.dart';
 import 'package:precious/resources/app_export.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class OrderDetailAdmin extends StatefulWidget {
   const OrderDetailAdmin({super.key, required this.order});
@@ -16,6 +17,7 @@ class OrderDetailAdmin extends StatefulWidget {
 }
 
 class _OrderDetailAdminState extends State<OrderDetailAdmin> {
+  final OrderPresenter orderPresenter = OrderPresenter();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -118,21 +120,22 @@ class _OrderDetailAdminState extends State<OrderDetailAdmin> {
                           ],
                         ),
                       ),
-                      Container(
-                        height: 50.h,
-                        width: double.infinity,
-                        color: Colors.black,
-                        child: TextButton(
-                          onPressed: () {},
-                          child: Text(
-                            "Liên hệ",
-                            style: GoogleFonts.openSans(
-                                fontSize: 20.h,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white),
+                      if (!widget.order.isPaid)
+                        Container(
+                          height: 50.h,
+                          width: double.infinity,
+                          color: Colors.black,
+                          child: TextButton(
+                            onPressed: () => _handleCheckout(),
+                            child: Text(
+                              "Thanh toán",
+                              style: GoogleFonts.openSans(
+                                  fontSize: 20.h,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white),
+                            ),
                           ),
-                        ),
-                      )
+                        )
                     ],
                   )),
               Padding(
@@ -142,12 +145,12 @@ class _OrderDetailAdminState extends State<OrderDetailAdmin> {
                         borderRadius: BorderRadius.circular(10),
                         border: Border.all()),
                     margin: EdgeInsets.symmetric(horizontal: 20.h),
-                    padding: EdgeInsets.all(10.h),
+                    clipBehavior: Clip.antiAlias,
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Padding(
-                          padding: const EdgeInsets.all(0.0),
+                          padding: const EdgeInsets.all(10.0),
                           child: Row(
                             children: [
                               Container(
@@ -156,9 +159,10 @@ class _OrderDetailAdminState extends State<OrderDetailAdmin> {
                                 decoration:
                                     const BoxDecoration(shape: BoxShape.circle),
                                 clipBehavior: Clip.antiAlias,
-                                child: widget.order.user != null
+                                child: widget.order.user != null &&
+                                        widget.order.user!.avatar_url != null
                                     ? SvgPicture.network(
-                                        widget.order.user!.avatar_url)
+                                        widget.order.user!.avatar_url!)
                                     : const Icon(Icons.person),
                               ),
                               Padding(
@@ -169,7 +173,7 @@ class _OrderDetailAdminState extends State<OrderDetailAdmin> {
                                       fontSize: 30.0.h,
                                       fontWeight: FontWeight.bold),
                                 ),
-                              )
+                              ),
                             ],
                           ),
                         ),
@@ -179,9 +183,8 @@ class _OrderDetailAdminState extends State<OrderDetailAdmin> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 const Text("Tuổi"),
-                                Text(
-                                    (widget.order.user!.age ?? "Không xác định")
-                                        .toString()),
+                                Text((widget.order.user!.age ?? "Unknown")
+                                    .toString()),
                               ]),
                         ),
                         Padding(
@@ -190,11 +193,25 @@ class _OrderDetailAdminState extends State<OrderDetailAdmin> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 const Text("Email"),
-                                Text((widget.order.user!.email ??
-                                        "Không xác định")
+                                Text((widget.order.user!.email ?? "Unknown")
                                     .toString()),
                               ]),
                         ),
+                        Container(
+                          height: 50.h,
+                          width: double.infinity,
+                          color: Colors.black,
+                          child: TextButton(
+                            onPressed: () {},
+                            child: Text(
+                              "Contact",
+                              style: GoogleFonts.openSans(
+                                  fontSize: 20.h,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white),
+                            ),
+                          ),
+                        )
                       ],
                     )),
               ),
@@ -216,7 +233,7 @@ class _OrderDetailAdminState extends State<OrderDetailAdmin> {
                               Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: Text(
-                                  "Danh sách sản phẩm",
+                                  "Order detail",
                                   style: GoogleFonts.openSans(
                                       fontSize: 20.0.h,
                                       fontWeight: FontWeight.bold),
@@ -266,7 +283,7 @@ class _OrderDetailAdminState extends State<OrderDetailAdmin> {
                       borderRadius: BorderRadius.circular(10.0.h))),
                 ),
                 child: Text(
-                  "Xác nhận",
+                  "Confirm order",
                   style: GoogleFonts.openSans(
                       fontSize: 16.h,
                       color: Colors.white,
@@ -284,58 +301,77 @@ class _OrderDetailAdminState extends State<OrderDetailAdmin> {
     final productPresenter = ProductPresenter();
     var result = <Widget>[];
     for (var item in widget.order.items) {
-      final product = await productPresenter.getOne(item.id, detail: true);
-      result.add(Container(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              width: 100.h,
-              height: 70.h,
-              margin: EdgeInsets.only(right: 10.h),
-              decoration:
-                  BoxDecoration(borderRadius: BorderRadius.circular(15.h)),
-              clipBehavior: Clip.antiAlias,
-              child: CachedNetworkImage(imageUrl: product!.img_paths_url[0]),
+      final product = await productPresenter.getOne(item.id!, detail: true);
+      result.add(Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 100.h,
+            height: 70.h,
+            margin: EdgeInsets.only(right: 10.h),
+            decoration:
+                BoxDecoration(borderRadius: BorderRadius.circular(15.h)),
+            clipBehavior: Clip.antiAlias,
+            child: CachedNetworkImage(imageUrl: product!.imgPathUrls[0]),
+          ),
+          Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text("Name: ${product.name}"),
+                Text("Variant: ${item.variantId}"),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(item.price.toString()),
+                    Text("Quantity: ${item.quantity}"),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    TextButton(
+                        onPressed: () {},
+                        style: ButtonStyle(
+                          shape: MaterialStateProperty.all(
+                              RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(30.0))),
+                        ),
+                        child: Text(
+                          "Kiểm tra kho hàng",
+                          style: TextStyle(fontSize: 15.h),
+                        ))
+                  ],
+                ),
+              ],
             ),
-            Expanded(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text("Name: ${product.name}"),
-                  Text("Variant: ${item.variantId}"),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(product.variants![item.variantId].price.toString()),
-                      Text("Quantity: ${item.quantity}"),
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      TextButton(
-                          onPressed: () {},
-                          style: ButtonStyle(
-                            shape: MaterialStateProperty.all(
-                                RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(30.0))),
-                          ),
-                          child: Text(
-                            "Kiểm tra kho hàng",
-                            style: TextStyle(fontSize: 15.h),
-                          ))
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ));
     }
     return result;
+  }
+
+  _handleCheckout() {
+    showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+              title: const Text("Payment"),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextButton.icon(
+                      onPressed: () {},
+                      icon: const ImageIcon(AssetImage(
+                          "assets/images/momo-primary-logo/MoMo Primary Logo/png/momo_icon_square_pinkbg_RGB.png")),
+                      label: const Text("Thanh toán qua momo."))
+                ],
+              ),
+            ));
+    orderPresenter
+        .pay(widget.order.id!, PaymentMethod.cash)
+        .then((value) => launchUrl(Uri.parse(value)));
   }
 }

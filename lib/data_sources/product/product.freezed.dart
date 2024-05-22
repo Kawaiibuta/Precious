@@ -20,15 +20,24 @@ Product _$ProductFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$Product {
+  @JsonKey(includeToJson: false)
   int? get id => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
-  int get category_id => throw _privateConstructorUsedError;
-  String get short_description => throw _privateConstructorUsedError;
+  @JsonKey(name: "category_id")
+  int get categoryId => throw _privateConstructorUsedError;
+  @JsonKey(name: "short_description")
+  String get shortDescription => throw _privateConstructorUsedError;
   String get description => throw _privateConstructorUsedError;
-  List<String> get img_paths_url => throw _privateConstructorUsedError;
-  List<Variant>? get variants => throw _privateConstructorUsedError;
+  @JsonKey(name: "img_paths_url", includeToJson: false)
+  List<String> get imgPathUrls => throw _privateConstructorUsedError;
+  @JsonKey(includeToJson: false)
+  List<Variant> get variants => throw _privateConstructorUsedError;
   double get rating => throw _privateConstructorUsedError;
+  @JsonKey(includeToJson: false)
+  List<Option> get options => throw _privateConstructorUsedError;
+  @JsonKey(includeToJson: false)
   double get price => throw _privateConstructorUsedError;
+  @JsonKey(includeToJson: false)
   int get quantity => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -42,16 +51,18 @@ abstract class $ProductCopyWith<$Res> {
       _$ProductCopyWithImpl<$Res, Product>;
   @useResult
   $Res call(
-      {int? id,
+      {@JsonKey(includeToJson: false) int? id,
       String name,
-      int category_id,
-      String short_description,
+      @JsonKey(name: "category_id") int categoryId,
+      @JsonKey(name: "short_description") String shortDescription,
       String description,
-      List<String> img_paths_url,
-      List<Variant>? variants,
+      @JsonKey(name: "img_paths_url", includeToJson: false)
+      List<String> imgPathUrls,
+      @JsonKey(includeToJson: false) List<Variant> variants,
       double rating,
-      double price,
-      int quantity});
+      @JsonKey(includeToJson: false) List<Option> options,
+      @JsonKey(includeToJson: false) double price,
+      @JsonKey(includeToJson: false) int quantity});
 }
 
 /// @nodoc
@@ -69,12 +80,13 @@ class _$ProductCopyWithImpl<$Res, $Val extends Product>
   $Res call({
     Object? id = freezed,
     Object? name = null,
-    Object? category_id = null,
-    Object? short_description = null,
+    Object? categoryId = null,
+    Object? shortDescription = null,
     Object? description = null,
-    Object? img_paths_url = null,
-    Object? variants = freezed,
+    Object? imgPathUrls = null,
+    Object? variants = null,
     Object? rating = null,
+    Object? options = null,
     Object? price = null,
     Object? quantity = null,
   }) {
@@ -87,30 +99,34 @@ class _$ProductCopyWithImpl<$Res, $Val extends Product>
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
               as String,
-      category_id: null == category_id
-          ? _value.category_id
-          : category_id // ignore: cast_nullable_to_non_nullable
+      categoryId: null == categoryId
+          ? _value.categoryId
+          : categoryId // ignore: cast_nullable_to_non_nullable
               as int,
-      short_description: null == short_description
-          ? _value.short_description
-          : short_description // ignore: cast_nullable_to_non_nullable
+      shortDescription: null == shortDescription
+          ? _value.shortDescription
+          : shortDescription // ignore: cast_nullable_to_non_nullable
               as String,
       description: null == description
           ? _value.description
           : description // ignore: cast_nullable_to_non_nullable
               as String,
-      img_paths_url: null == img_paths_url
-          ? _value.img_paths_url
-          : img_paths_url // ignore: cast_nullable_to_non_nullable
+      imgPathUrls: null == imgPathUrls
+          ? _value.imgPathUrls
+          : imgPathUrls // ignore: cast_nullable_to_non_nullable
               as List<String>,
-      variants: freezed == variants
+      variants: null == variants
           ? _value.variants
           : variants // ignore: cast_nullable_to_non_nullable
-              as List<Variant>?,
+              as List<Variant>,
       rating: null == rating
           ? _value.rating
           : rating // ignore: cast_nullable_to_non_nullable
               as double,
+      options: null == options
+          ? _value.options
+          : options // ignore: cast_nullable_to_non_nullable
+              as List<Option>,
       price: null == price
           ? _value.price
           : price // ignore: cast_nullable_to_non_nullable
@@ -131,16 +147,18 @@ abstract class _$$ProductImplCopyWith<$Res> implements $ProductCopyWith<$Res> {
   @override
   @useResult
   $Res call(
-      {int? id,
+      {@JsonKey(includeToJson: false) int? id,
       String name,
-      int category_id,
-      String short_description,
+      @JsonKey(name: "category_id") int categoryId,
+      @JsonKey(name: "short_description") String shortDescription,
       String description,
-      List<String> img_paths_url,
-      List<Variant>? variants,
+      @JsonKey(name: "img_paths_url", includeToJson: false)
+      List<String> imgPathUrls,
+      @JsonKey(includeToJson: false) List<Variant> variants,
       double rating,
-      double price,
-      int quantity});
+      @JsonKey(includeToJson: false) List<Option> options,
+      @JsonKey(includeToJson: false) double price,
+      @JsonKey(includeToJson: false) int quantity});
 }
 
 /// @nodoc
@@ -156,12 +174,13 @@ class __$$ProductImplCopyWithImpl<$Res>
   $Res call({
     Object? id = freezed,
     Object? name = null,
-    Object? category_id = null,
-    Object? short_description = null,
+    Object? categoryId = null,
+    Object? shortDescription = null,
     Object? description = null,
-    Object? img_paths_url = null,
-    Object? variants = freezed,
+    Object? imgPathUrls = null,
+    Object? variants = null,
     Object? rating = null,
+    Object? options = null,
     Object? price = null,
     Object? quantity = null,
   }) {
@@ -174,30 +193,34 @@ class __$$ProductImplCopyWithImpl<$Res>
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
               as String,
-      category_id: null == category_id
-          ? _value.category_id
-          : category_id // ignore: cast_nullable_to_non_nullable
+      categoryId: null == categoryId
+          ? _value.categoryId
+          : categoryId // ignore: cast_nullable_to_non_nullable
               as int,
-      short_description: null == short_description
-          ? _value.short_description
-          : short_description // ignore: cast_nullable_to_non_nullable
+      shortDescription: null == shortDescription
+          ? _value.shortDescription
+          : shortDescription // ignore: cast_nullable_to_non_nullable
               as String,
       description: null == description
           ? _value.description
           : description // ignore: cast_nullable_to_non_nullable
               as String,
-      img_paths_url: null == img_paths_url
-          ? _value._img_paths_url
-          : img_paths_url // ignore: cast_nullable_to_non_nullable
+      imgPathUrls: null == imgPathUrls
+          ? _value.imgPathUrls
+          : imgPathUrls // ignore: cast_nullable_to_non_nullable
               as List<String>,
-      variants: freezed == variants
-          ? _value._variants
+      variants: null == variants
+          ? _value.variants
           : variants // ignore: cast_nullable_to_non_nullable
-              as List<Variant>?,
+              as List<Variant>,
       rating: null == rating
           ? _value.rating
           : rating // ignore: cast_nullable_to_non_nullable
               as double,
+      options: null == options
+          ? _value.options
+          : options // ignore: cast_nullable_to_non_nullable
+              as List<Option>,
       price: null == price
           ? _value.price
           : price // ignore: cast_nullable_to_non_nullable
@@ -214,70 +237,59 @@ class __$$ProductImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$ProductImpl with DiagnosticableTreeMixin implements _Product {
   _$ProductImpl(
-      {this.id = null,
+      {@JsonKey(includeToJson: false) this.id,
       this.name = "",
-      this.category_id = -1,
-      this.short_description = "",
+      @JsonKey(name: "category_id") this.categoryId = -1,
+      @JsonKey(name: "short_description") this.shortDescription = "",
       this.description = "",
-      final List<String> img_paths_url = const <String>[],
-      final List<Variant>? variants = null,
+      @JsonKey(name: "img_paths_url", includeToJson: false)
+      this.imgPathUrls = const <String>[],
+      @JsonKey(includeToJson: false) this.variants = const [],
       this.rating = 0.0,
-      this.price = 0.0,
-      this.quantity = 1})
-      : _img_paths_url = img_paths_url,
-        _variants = variants;
+      @JsonKey(includeToJson: false) this.options = const [],
+      @JsonKey(includeToJson: false) this.price = 0.0,
+      @JsonKey(includeToJson: false) this.quantity = 0});
 
   factory _$ProductImpl.fromJson(Map<String, dynamic> json) =>
       _$$ProductImplFromJson(json);
 
   @override
-  @JsonKey()
+  @JsonKey(includeToJson: false)
   final int? id;
   @override
   @JsonKey()
   final String name;
   @override
-  @JsonKey()
-  final int category_id;
+  @JsonKey(name: "category_id")
+  final int categoryId;
   @override
-  @JsonKey()
-  final String short_description;
+  @JsonKey(name: "short_description")
+  final String shortDescription;
   @override
   @JsonKey()
   final String description;
-  final List<String> _img_paths_url;
   @override
-  @JsonKey()
-  List<String> get img_paths_url {
-    if (_img_paths_url is EqualUnmodifiableListView) return _img_paths_url;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_img_paths_url);
-  }
-
-  final List<Variant>? _variants;
+  @JsonKey(name: "img_paths_url", includeToJson: false)
+  final List<String> imgPathUrls;
   @override
-  @JsonKey()
-  List<Variant>? get variants {
-    final value = _variants;
-    if (value == null) return null;
-    if (_variants is EqualUnmodifiableListView) return _variants;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(value);
-  }
-
+  @JsonKey(includeToJson: false)
+  final List<Variant> variants;
   @override
   @JsonKey()
   final double rating;
   @override
-  @JsonKey()
+  @JsonKey(includeToJson: false)
+  final List<Option> options;
+  @override
+  @JsonKey(includeToJson: false)
   final double price;
   @override
-  @JsonKey()
+  @JsonKey(includeToJson: false)
   final int quantity;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'Product(id: $id, name: $name, category_id: $category_id, short_description: $short_description, description: $description, img_paths_url: $img_paths_url, variants: $variants, rating: $rating, price: $price, quantity: $quantity)';
+    return 'Product(id: $id, name: $name, categoryId: $categoryId, shortDescription: $shortDescription, description: $description, imgPathUrls: $imgPathUrls, variants: $variants, rating: $rating, options: $options, price: $price, quantity: $quantity)';
   }
 
   @override
@@ -287,12 +299,13 @@ class _$ProductImpl with DiagnosticableTreeMixin implements _Product {
       ..add(DiagnosticsProperty('type', 'Product'))
       ..add(DiagnosticsProperty('id', id))
       ..add(DiagnosticsProperty('name', name))
-      ..add(DiagnosticsProperty('category_id', category_id))
-      ..add(DiagnosticsProperty('short_description', short_description))
+      ..add(DiagnosticsProperty('categoryId', categoryId))
+      ..add(DiagnosticsProperty('shortDescription', shortDescription))
       ..add(DiagnosticsProperty('description', description))
-      ..add(DiagnosticsProperty('img_paths_url', img_paths_url))
+      ..add(DiagnosticsProperty('imgPathUrls', imgPathUrls))
       ..add(DiagnosticsProperty('variants', variants))
       ..add(DiagnosticsProperty('rating', rating))
+      ..add(DiagnosticsProperty('options', options))
       ..add(DiagnosticsProperty('price', price))
       ..add(DiagnosticsProperty('quantity', quantity));
   }
@@ -304,16 +317,17 @@ class _$ProductImpl with DiagnosticableTreeMixin implements _Product {
             other is _$ProductImpl &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.name, name) || other.name == name) &&
-            (identical(other.category_id, category_id) ||
-                other.category_id == category_id) &&
-            (identical(other.short_description, short_description) ||
-                other.short_description == short_description) &&
+            (identical(other.categoryId, categoryId) ||
+                other.categoryId == categoryId) &&
+            (identical(other.shortDescription, shortDescription) ||
+                other.shortDescription == shortDescription) &&
             (identical(other.description, description) ||
                 other.description == description) &&
             const DeepCollectionEquality()
-                .equals(other._img_paths_url, _img_paths_url) &&
-            const DeepCollectionEquality().equals(other._variants, _variants) &&
+                .equals(other.imgPathUrls, imgPathUrls) &&
+            const DeepCollectionEquality().equals(other.variants, variants) &&
             (identical(other.rating, rating) || other.rating == rating) &&
+            const DeepCollectionEquality().equals(other.options, options) &&
             (identical(other.price, price) || other.price == price) &&
             (identical(other.quantity, quantity) ||
                 other.quantity == quantity));
@@ -325,12 +339,13 @@ class _$ProductImpl with DiagnosticableTreeMixin implements _Product {
       runtimeType,
       id,
       name,
-      category_id,
-      short_description,
+      categoryId,
+      shortDescription,
       description,
-      const DeepCollectionEquality().hash(_img_paths_url),
-      const DeepCollectionEquality().hash(_variants),
+      const DeepCollectionEquality().hash(imgPathUrls),
+      const DeepCollectionEquality().hash(variants),
       rating,
+      const DeepCollectionEquality().hash(options),
       price,
       quantity);
 
@@ -350,38 +365,50 @@ class _$ProductImpl with DiagnosticableTreeMixin implements _Product {
 
 abstract class _Product implements Product {
   factory _Product(
-      {final int? id,
+      {@JsonKey(includeToJson: false) final int? id,
       final String name,
-      final int category_id,
-      final String short_description,
+      @JsonKey(name: "category_id") final int categoryId,
+      @JsonKey(name: "short_description") final String shortDescription,
       final String description,
-      final List<String> img_paths_url,
-      final List<Variant>? variants,
+      @JsonKey(name: "img_paths_url", includeToJson: false)
+      final List<String> imgPathUrls,
+      @JsonKey(includeToJson: false) final List<Variant> variants,
       final double rating,
-      final double price,
-      final int quantity}) = _$ProductImpl;
+      @JsonKey(includeToJson: false) final List<Option> options,
+      @JsonKey(includeToJson: false) final double price,
+      @JsonKey(includeToJson: false) final int quantity}) = _$ProductImpl;
 
   factory _Product.fromJson(Map<String, dynamic> json) = _$ProductImpl.fromJson;
 
   @override
+  @JsonKey(includeToJson: false)
   int? get id;
   @override
   String get name;
   @override
-  int get category_id;
+  @JsonKey(name: "category_id")
+  int get categoryId;
   @override
-  String get short_description;
+  @JsonKey(name: "short_description")
+  String get shortDescription;
   @override
   String get description;
   @override
-  List<String> get img_paths_url;
+  @JsonKey(name: "img_paths_url", includeToJson: false)
+  List<String> get imgPathUrls;
   @override
-  List<Variant>? get variants;
+  @JsonKey(includeToJson: false)
+  List<Variant> get variants;
   @override
   double get rating;
   @override
+  @JsonKey(includeToJson: false)
+  List<Option> get options;
+  @override
+  @JsonKey(includeToJson: false)
   double get price;
   @override
+  @JsonKey(includeToJson: false)
   int get quantity;
   @override
   @JsonKey(ignore: true)

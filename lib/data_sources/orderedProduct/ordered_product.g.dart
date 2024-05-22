@@ -8,7 +8,7 @@ part of 'ordered_product.dart';
 
 _$OrderedProductImpl _$$OrderedProductImplFromJson(Map<String, dynamic> json) =>
     _$OrderedProductImpl(
-      id: (json['id'] as num).toInt(),
+      id: (json['id'] as num?)?.toInt(),
       variantId: (json['variant_id'] as num).toInt(),
       quantity: (json['quantity'] as num).toInt(),
       price: (json['price'] as num).toDouble(),
@@ -17,8 +17,6 @@ _$OrderedProductImpl _$$OrderedProductImplFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$$OrderedProductImplToJson(
         _$OrderedProductImpl instance) =>
     <String, dynamic>{
-      'id': instance.id,
       'variant_id': instance.variantId,
       'quantity': instance.quantity,
-      'price': instance.price,
     };

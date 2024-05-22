@@ -18,7 +18,7 @@ class UserRepository {
         .then((value) =>
             (value.data as List).map((e) => User.fromJson(e)).toList())
         .catchError((error) {
-      debugPrint(error.response.toString());
+      debugPrint(error.toString());
       return <User>[];
     });
     list.addAll(
@@ -42,6 +42,25 @@ class UserRepository {
       debugPrint(error.response.toString());
       return null;
     });
+    return response;
+  }
+
+  static Future<User?> getUserByUid(String uid) async {
+    final response = await dio
+        .request(EndPoint.findUserByUid(uid),
+            options: Options(method: "GET", headers: headers))
+        .then((value) {
+      debugPrint("Value: ${value.data}");
+      User.fromJson(value.data);
+    }).catchError((error) {
+      debugPrint(error.toString());
+      return null;
+    });
+    if (!list.containsKey(response.id)) {
+      list.addEntries(<int, User>{response.id!: response}.entries);
+    } else {
+      list.update(response.id!, (value) => response);
+    }
     return response;
   }
 }

@@ -1,4 +1,5 @@
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/material.dart';
 import 'package:precious/data_sources/login_repository.dart';
 
 abstract class LoginPageContract {
@@ -16,7 +17,10 @@ class LoginPresenter {
     await _repos
         .login(email, password)
         .then((_) => _viewContract.onLoginSuccess())
-        .catchError((e) => _viewContract.onLoginFailed(e));
+        .catchError((e) {
+      debugPrint(e.toString());
+      _viewContract.onLoginFailed(e);
+    });
   }
 
   Future<void> loginWithGoogle() => _repos

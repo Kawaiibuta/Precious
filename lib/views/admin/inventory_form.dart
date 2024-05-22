@@ -1,19 +1,17 @@
 import 'dart:io';
 
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:easy_image_viewer/easy_image_viewer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:percent_indicator/circular_percent_indicator.dart';
+import 'package:precious/data_sources/option/option.dart';
+import 'package:precious/data_sources/option/optionValue/option_value.dart';
 import 'package:precious/data_sources/product/product.dart';
-import 'package:precious/data_sources/product_category/product_category.dart';
-import 'package:precious/data_sources/variant/variant.dart';
-import 'package:precious/presenters/category_presenter.dart';
-import 'package:precious/presenters/product_presenter.dart';
-import 'package:precious/views/item_detail_page.dart';
+import 'package:precious/main.dart';
+import 'package:precious/presenters/inventory_form_presenter.dart';
+import 'package:precious/resources/app_export.dart';
 
 class InventoryForm extends StatefulWidget {
   const InventoryForm({super.key, this.product});
@@ -23,33 +21,20 @@ class InventoryForm extends StatefulWidget {
   _InventoryFormState createState() => _InventoryFormState();
 }
 
-class _InventoryFormState extends State<InventoryForm> {
-  late Future<List<ProductCategory>> futureCategoryList;
+class _InventoryFormState extends State<InventoryForm>
+    implements InventoryFormContract {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final categoryPresenter = ProductCategoryPresenter();
-  final productPresenter = ProductPresenter();
-  int? selectedCategory;
-  List<String> currentImageList = [];
-  var product = Product(variants: []);
-  var variantList = <Variant>[];
-  List<XFile> imageList = [];
   final nameController = TextEditingController();
   final shortDesController = TextEditingController();
   final desController = TextEditingController();
   final priceController = TextEditingController();
-  var addable = false;
+  var loading = false;
+  late InventoryFormPresenter _presenter;
   @override
   void initState() {
     super.initState();
-    if (widget.product != null) {
-      product = widget.product!;
-      nameController.text = product.name;
-      shortDesController.text = product.short_description;
-      desController.text = product.description;
-      priceController.text = product.price.toString();
-      selectedCategory = product.category_id;
-    }
-    futureCategoryList = categoryPresenter.getAll();
+    _presenter = InventoryFormPresenter(this, item: widget.product);
+    WidgetsBinding.instance.addPostFrameCallback((_) => _presenter.init());
   }
 
   @override
@@ -76,7 +61,7 @@ class _InventoryFormState extends State<InventoryForm> {
                       color: Colors.black),
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(top: 5.0, bottom: 5.0),
+                  padding: EdgeInsets.symmetric(horizontal: 5.h),
                   child: TextFormField(
                     controller: nameController,
                     style: const TextStyle(color: Colors.black),
@@ -116,55 +101,51 @@ class _InventoryFormState extends State<InventoryForm> {
                     ),
                   ),
                 ),
-                FutureBuilder(
-                    future: futureCategoryList,
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting ||
-                          !snapshot.hasData) return const SizedBox.shrink();
-                      final categoriesList = snapshot.data!;
-                      // categoriesList.removeAt(0);
-                      return Wrap(
-                        children: [
-                          Align(
-                            alignment: Alignment.center,
-                            child: Text("Categories:",
-                                style: GoogleFonts.openSans(
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.w700,
-                                    fontSize: 16)),
-                          ),
-                          ...categoriesList.map((e) => Padding(
-                                padding: const EdgeInsets.only(
-                                    left: 2.0, right: 2.0),
-                                child: ButtonTheme(
-                                  // minWidth: 50,
-                                  height: 10,
-                                  child: OutlinedButton(
-                                      onPressed: () {
-                                        setState(() {
-                                          selectedCategory = e.id;
-                                        });
-                                      },
-                                      style: ButtonStyle(
-                                          backgroundColor:
-                                              MaterialStateProperty.all(
-                                                  e.id == selectedCategory
-                                                      ? Colors.black
-                                                      : Colors.transparent)),
-                                      child: Text(
-                                        e.name,
-                                        style: TextStyle(
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.bold,
-                                            color: e.id == selectedCategory
+                if (loading)
+                  const SizedBox.shrink()
+                else
+                  Wrap(
+                    children: [
+                      Align(
+                        alignment: Alignment.center,
+                        child: Text("Categories:",
+                            style: GoogleFonts.openSans(
+                                color: Colors.black,
+                                fontWeight: FontWeight.w700,
+                                fontSize: 16)),
+                      ),
+                      ..._presenter.categoryList.map((e) => Padding(
+                            padding:
+                                const EdgeInsets.only(left: 2.0, right: 2.0),
+                            child: ButtonTheme(
+                              // minWidth: 50,
+                              height: 10,
+                              child: OutlinedButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      _presenter.selectedCategory = e.id;
+                                    });
+                                  },
+                                  style: ButtonStyle(
+                                      backgroundColor:
+                                          MaterialStateProperty.all(e.id ==
+                                                  _presenter.selectedCategory
+                                              ? Colors.black
+                                              : Colors.transparent)),
+                                  child: Text(
+                                    e.name,
+                                    style: TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.bold,
+                                        color:
+                                            e.id == _presenter.selectedCategory
                                                 ? Colors.white
                                                 : Colors.black),
-                                      )),
-                                ),
-                              ))
-                        ],
-                      );
-                    }),
+                                  )),
+                            ),
+                          ))
+                    ],
+                  ),
                 Padding(
                   padding: const EdgeInsets.only(top: 5.0, bottom: 5.0),
                   child: TextField(
@@ -197,7 +178,7 @@ class _InventoryFormState extends State<InventoryForm> {
                 ),
                 Wrap(
                   children: [
-                    ...imageList.map((e) {
+                    ..._presenter.imageList.map((e) {
                       return InkWell(
                         child: Container(
                           width: 100,
@@ -220,22 +201,41 @@ class _InventoryFormState extends State<InventoryForm> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text("Variants:",
+                    Text("Options:",
                         style: GoogleFonts.openSans(
                             color: Colors.black,
                             fontWeight: FontWeight.w700,
                             fontSize: 16)),
                     IconButton(
                       onPressed: () {
-                        _handleAddVariant();
+                        _handleAddOption();
                       },
                       icon: const Icon(Icons.add),
                     )
                   ],
                 ),
-                ...variantList.map(
-                  (e) => buildVariantCard(e, context),
+                ..._presenter.product.options.map(
+                  (e) => buildOptionCard(e, context),
                 ),
+                // Row(
+                //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //   children: [
+                //     Text("Variant:",
+                //         style: GoogleFonts.openSans(
+                //             color: Colors.black,
+                //             fontWeight: FontWeight.w700,
+                //             fontSize: 16)),
+                //     IconButton(
+                //       onPressed: () {
+                //         _handleAddVariant();
+                //       },
+                //       icon: const Icon(Icons.add),
+                //     )
+                //   ],
+                // ),
+                // ..._presenter.product.variants!.map(
+                //   (e) => buildVariantCard(e, context),
+                // ),
                 TextButton(
                   onPressed: () {
                     _handleOnChange();
@@ -249,7 +249,7 @@ class _InventoryFormState extends State<InventoryForm> {
                         color: Colors.white,
                         fontWeight: FontWeight.bold),
                   ),
-                )
+                ),
               ],
             ),
           ),
@@ -258,75 +258,50 @@ class _InventoryFormState extends State<InventoryForm> {
     );
   }
 
-  void _handleAutoID() {}
-
   void _handleSelectImage() {
     final ImagePicker picker = ImagePicker();
     picker.pickMultiImage().then((value) => setState(() {
           debugPrint(value.toString());
-          imageList = imageList + value;
+          _presenter.imageList = _presenter.imageList + value;
         }));
   }
 
-  void _handleExtendImage(XFile e) async {}
-
   Future<bool> _handleOnChange() async {
-    debugPrint("asda");
-    if (selectedCategory == null) {
+    //Validate the  before adding to the presenter to crate/update product
+    //Check missing field
+    //Check imageList
+    //Check selected category
+    if (_presenter.selectedCategory == null) {
       Fluttertoast.showToast(msg: "Please select a category");
       return false;
     }
-    if (imageList.isEmpty) {
-      Fluttertoast.showToast(msg: "Atleast 1 image is needed");
+    if (_presenter.imageList.isEmpty) {
+      Fluttertoast.showToast(msg: "At least 1 image is needed");
       return false;
     }
     if (!_formKey.currentState!.validate()) {
       Fluttertoast.showToast(msg: "Some required fields are missing");
       return false;
     }
-    final temp = Product(
+    _presenter.item = _presenter.product.copyWith(
         name: nameController.text,
-        category_id: selectedCategory!,
-        short_description: shortDesController.text,
-        description: desController.text);
-    final createProductResult =
-        await productPresenter.add(temp, imageList).then((value) {
-      if (value == null) {
-        Fluttertoast.showToast(msg: "Some unexpected error has happened");
-      } else {
-        Fluttertoast.showToast(msg: "Your product have been created");
-        Navigator.of(context).push(MaterialPageRoute(
-          builder: (context) => ItemDetailPage(id: value.id!),
-        ));
-      }
-
-      return value;
-    }).catchError((e) {
-      Fluttertoast.showToast(msg: e.toString());
-      return null;
-    });
-    if (createProductResult != null) {
-      var futureList = <Future<Variant?>>[];
-      for (var variant in variantList) {
-        futureList
-            .add(productPresenter.addVariant(createProductResult.id!, variant));
-      }
-      await Future.wait(futureList).catchError((error) {
-        debugPrint(error.toString());
-        return <Variant?>[];
-      });
+        shortDescription: shortDesController.text,
+        description: desController.text,
+        categoryId: _presenter.selectedCategory ?? 0);
+    if (widget.product == null) {
+      _presenter.add();
+    } else {
+      _presenter.update();
     }
-    return createProductResult == null;
+    return true;
   }
 
-  void _handleAddVariant({Variant? variant}) {
-    var price = .0;
-    var quantity = 0;
-    var variantImageList = <String>[];
-    if (variant != null) {
-      price = variant.price;
-      quantity = variant.quantity;
-      variantImageList.addAll(variant.img_paths_url);
+  void _handleAddOption({Option? option}) {
+    List<OptionValue> optionValue = <OptionValue>[];
+    var name = '';
+    if (option != null) {
+      optionValue = option.values;
+      name = option.name;
     }
     showDialog(
       context: context,
@@ -335,107 +310,112 @@ class _InventoryFormState extends State<InventoryForm> {
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(
-                "Variant",
-                style: GoogleFonts.openSans(
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20),
-              ),
-              TextFormField(
-                style: const TextStyle(color: Colors.black),
-                initialValue: variant == null ? null : price.toString(),
-                keyboardType: TextInputType.number,
-                onChanged: (value) {
-                  price = double.parse(value);
-                },
-                decoration: const InputDecoration(
-                  hintText: 'Price',
-                ),
-              ),
-              TextFormField(
-                style: const TextStyle(color: Colors.black),
-                keyboardType: TextInputType.number,
-                initialValue: variant == null ? null : quantity.toString(),
-                onChanged: (value) {
-                  quantity = int.parse(value);
-                },
-                decoration: const InputDecoration(
-                  hintText: 'Quantity',
-                ),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text("Images:",
-                      style: GoogleFonts.openSans(
-                          color: Colors.black,
-                          fontWeight: FontWeight.w700,
-                          fontSize: 16)),
-                  IconButton(
-                    onPressed: () async {
-                      variantImageList.addAll(
-                          (await _handleVariantSelectImage())
-                              .map((e) => e.path));
-                      setState(() {});
-                    },
-                    icon: const Icon(Icons.add),
-                  )
-                ],
-              ),
-              Wrap(
-                children: [
-                  ...variantImageList.map((e) {
-                    return InkWell(
-                        onTap: () {
-                          showImageViewer(
-                              context,
-                              (Uri.parse(e).isAbsolute
-                                  ? CachedNetworkImageProvider(e)
-                                  : FileImage(File(e))) as ImageProvider,
-                              onViewerDismissed: () {});
-                        },
-                        child: Uri.parse(e).isAbsolute
-                            ? CachedNetworkImage(
-                                width: 100,
-                                height: 100,
-                                imageUrl: e,
-                                progressIndicatorBuilder:
-                                    (context, e, progress) =>
-                                        CircularPercentIndicator(
-                                  radius: 30.0,
-                                  lineWidth: 5.0,
-                                  percent: progress.downloaded /
-                                      (progress.totalSize ??
-                                          progress.downloaded),
-                                  progressColor: Colors.black,
+              SizedBox(
+                height: 300.h,
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      Row(
+                        children: [
+                          Text(
+                            "Option",
+                            style: GoogleFonts.openSans(
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20),
+                          ),
+                          SizedBox(
+                            width: 10.0.h,
+                          ),
+                          Flexible(
+                            child: TextFormField(
+                              style: const TextStyle(color: Colors.black),
+                              initialValue:
+                                  option == null ? null : name.toString(),
+                              onChanged: (value) {
+                                name = value;
+                              },
+                              decoration: const InputDecoration(
+                                hintText: 'Name',
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      ...optionValue
+                          .asMap()
+                          .map((key, e) => MapEntry(
+                              key,
+                              Container(
+                                margin: const EdgeInsets.only(top: 5.0),
+                                child: TextFormField(
+                                  style: const TextStyle(color: Colors.black),
+                                  initialValue: option == null
+                                      ? null
+                                      : e.value.toString(),
+                                  onChanged: (value) {
+                                    optionValue[key] = e.copyWith(value: value);
+                                  },
+                                  decoration: InputDecoration(
+                                    hintText: 'Enter your value here',
+                                    focusedBorder: const OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color: Colors.black, width: 1.0),
+                                    ),
+                                    suffixIcon: IconButton(
+                                      onPressed: () => setState(() {
+                                        debugPrint(optionValue.toString());
+                                        optionValue.removeAt(key);
+                                      }),
+                                      icon: const Icon(Icons.clear),
+                                    ),
+                                    enabledBorder: const OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color: Colors.black, width: 1.0),
+                                    ),
+                                  ),
                                 ),
-                              )
-                            : Image.file(width: 100, height: 100, File(e)));
-                  })
-                ],
+                              )))
+                          .values,
+                      IconButton(
+                        onPressed: () {
+                          setState(() {
+                            optionValue.add(OptionValue(value: ""));
+                          });
+                        },
+                        icon: const Icon(Icons.add),
+                      ),
+                    ],
+                  ),
+                ),
               ),
-              TextButton(
-                onPressed: () {
-                  if (variantImageList.isEmpty) {
-                    Fluttertoast.showToast(msg: "At least 1 image is needed.");
-                    return;
-                  }
-                  if (quantity <= 0) {
-                    Fluttertoast.showToast(
-                        msg: "Quantity must be an integer and not less than 1");
-                    return;
-                  }
-                  Navigator.of(context).pop(true);
-                },
-                style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all(Colors.black)),
-                child: Text(
-                  "Add variant",
-                  style: GoogleFonts.openSans(
-                      fontSize: 16,
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold),
+              Container(
+                margin: const EdgeInsets.only(top: 10.0),
+                child: TextButton(
+                  onPressed: () {
+                    if (name.isEmpty) {
+                      Fluttertoast.showToast(
+                          msg: "Please fill out all field in the form.");
+                      return;
+                    }
+                    if (optionValue
+                        .where((element) => element.value.isEmpty)
+                        .isNotEmpty) {
+                      Fluttertoast.showToast(
+                          msg: "All the option value must have a value.");
+                      return;
+                    }
+                    Navigator.of(context).pop(true);
+                  },
+                  style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all(Colors.black)),
+                  child: Text(
+                    "Update",
+                    style: GoogleFonts.openSans(
+                        fontSize: 16,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold),
+                  ),
                 ),
               ),
             ],
@@ -444,32 +424,21 @@ class _InventoryFormState extends State<InventoryForm> {
       ),
     ).then((value) {
       if (value != null && value) {
-        debugPrint(quantity.toString());
         setState(() {
-          if (variant == null) {
-            variantList.add(Variant(
-                price: price,
-                quantity: quantity,
-                img_paths_url: variantImageList));
+          if (option == null) {
+            _presenter.product.options
+                .add(Option(name: name, values: optionValue));
             return;
           }
-          final index = variantList.indexOf(variant);
-          final result = variant.copyWith(
-              price: price,
-              quantity: quantity,
-              img_paths_url: variantImageList);
-          variantList[index] = result;
+          final index = _presenter.product.options.indexOf(option);
+          final result = option.copyWith(name: name, values: optionValue);
+          _presenter.product.options[index] = result;
         });
       }
     });
   }
 
-  Future<List<XFile>> _handleVariantSelectImage() async {
-    final ImagePicker picker = ImagePicker();
-    return await picker.pickMultiImage();
-  }
-
-  Widget buildVariantCard(Variant variant, BuildContext context) {
+  buildOptionCard(Option e, BuildContext context) {
     return Container(
       decoration: BoxDecoration(
           border: Border.all(), borderRadius: BorderRadius.circular(10.0)),
@@ -482,15 +451,17 @@ class _InventoryFormState extends State<InventoryForm> {
             children: [
               Row(
                 children: [
-                  Text(variant.id == null ? "N/A" : variant.id.toString()),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  Column(
+                  Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      Text("Price: ${variant.price}"),
-                      Text("Quantity: ${variant.quantity}")
+                      Text(
+                        "Name: ",
+                        style: GoogleFonts.openSans(
+                            fontWeight: FontWeight.bold, fontSize: 20.h),
+                      ),
+                      Text(e.name,
+                          style: GoogleFonts.openSans(
+                              fontWeight: FontWeight.w400, fontSize: 20.h))
                     ],
                   ),
                 ],
@@ -499,13 +470,13 @@ class _InventoryFormState extends State<InventoryForm> {
                 children: [
                   IconButton(
                       onPressed: () {
-                        _handleAddVariant(variant: variant);
+                        _handleAddOption(option: e);
                       },
                       icon: const Icon(Icons.edit)),
                   IconButton(
                       onPressed: () {
                         setState(() {
-                          variantList.remove(variant);
+                          _presenter.product.options.remove(e);
                         });
                       },
                       icon: const Icon(Icons.delete)),
@@ -514,35 +485,85 @@ class _InventoryFormState extends State<InventoryForm> {
             ],
           ),
           Wrap(
-            children: variant.img_paths_url
-                .map((e) => InkWell(
-                    onTap: () {
-                      showImageViewer(
-                          context,
-                          (Uri.parse(e).isAbsolute
-                              ? CachedNetworkImageProvider(e)
-                              : FileImage(File(e))) as ImageProvider,
-                          onViewerDismissed: () {});
-                    },
-                    child: Uri.parse(e).isAbsolute
-                        ? CachedNetworkImage(
-                            width: 50,
-                            height: 50,
-                            imageUrl: e,
-                            progressIndicatorBuilder: (context, e, progress) =>
-                                CircularPercentIndicator(
-                              radius: 30.0,
-                              lineWidth: 5.0,
-                              percent: progress.downloaded /
-                                  (progress.totalSize ?? progress.downloaded),
-                              progressColor: Colors.black,
-                            ),
-                          )
-                        : Image.file(width: 50, height: 50, File(e))))
+            children: e.values
+                .map((e) => Padding(
+                      padding: EdgeInsets.only(right: 8.0.h),
+                      child: TextButton(
+                        onPressed: () {},
+                        style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all(
+                                Colors.grey.shade200)),
+                        child: Text(
+                          e.value,
+                        ),
+                      ),
+                    ))
                 .toList(),
           )
         ],
       ),
     );
+  }
+
+  @override
+  void onAddFail() {
+    // TODO: implement onAddFail
+  }
+
+  @override
+  void onAddSuccess() {
+    // TODO: implement onAddSuccess
+  }
+
+  @override
+  void onStartAsyncTask() {
+    showDialog(
+        context: NavigationService.navigatorKey.currentContext!,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return const SimpleDialog(
+            elevation: 0.0,
+            backgroundColor: Colors.transparent,
+            children: <Widget>[
+              Center(
+                child: CircularProgressIndicator(),
+              )
+            ],
+          );
+        });
+  }
+
+  @override
+  void onEndAsyncTask() {
+    Get.back();
+  }
+
+  @override
+  void onInitFail() {
+    // TODO: implement onInitFail
+  }
+
+  @override
+  void onInitSuccess() {
+    // TODO: implement onInitSuccess
+  }
+
+  @override
+  void onRefreshFail() {
+    // TODO: implement onRefreshFail
+  }
+
+  @override
+  void onRefreshSuccess() {
+    // TODO: implement onRefreshSuccess
+  }
+  @override
+  void onUpdateFail() {
+    // TODO: implement onUpdateFail
+  }
+
+  @override
+  void onUpdateSuccess() {
+    // TODO: implement onUpdateSuccess
   }
 }

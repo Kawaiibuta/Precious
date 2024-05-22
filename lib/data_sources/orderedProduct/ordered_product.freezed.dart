@@ -20,10 +20,14 @@ OrderedProduct _$OrderedProductFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$OrderedProduct {
-  int get id => throw _privateConstructorUsedError;
+  @JsonKey(includeToJson: false)
+  int? get id => throw _privateConstructorUsedError;
   @JsonKey(name: "variant_id")
   int get variantId => throw _privateConstructorUsedError;
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  Variant? get variant => throw _privateConstructorUsedError;
   int get quantity => throw _privateConstructorUsedError;
+  @JsonKey(includeToJson: false)
   double get price => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -39,10 +43,13 @@ abstract class $OrderedProductCopyWith<$Res> {
       _$OrderedProductCopyWithImpl<$Res, OrderedProduct>;
   @useResult
   $Res call(
-      {int id,
+      {@JsonKey(includeToJson: false) int? id,
       @JsonKey(name: "variant_id") int variantId,
+      @JsonKey(includeFromJson: false, includeToJson: false) Variant? variant,
       int quantity,
-      double price});
+      @JsonKey(includeToJson: false) double price});
+
+  $VariantCopyWith<$Res>? get variant;
 }
 
 /// @nodoc
@@ -58,20 +65,25 @@ class _$OrderedProductCopyWithImpl<$Res, $Val extends OrderedProduct>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? id = null,
+    Object? id = freezed,
     Object? variantId = null,
+    Object? variant = freezed,
     Object? quantity = null,
     Object? price = null,
   }) {
     return _then(_value.copyWith(
-      id: null == id
+      id: freezed == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
-              as int,
+              as int?,
       variantId: null == variantId
           ? _value.variantId
           : variantId // ignore: cast_nullable_to_non_nullable
               as int,
+      variant: freezed == variant
+          ? _value.variant
+          : variant // ignore: cast_nullable_to_non_nullable
+              as Variant?,
       quantity: null == quantity
           ? _value.quantity
           : quantity // ignore: cast_nullable_to_non_nullable
@@ -81,6 +93,18 @@ class _$OrderedProductCopyWithImpl<$Res, $Val extends OrderedProduct>
           : price // ignore: cast_nullable_to_non_nullable
               as double,
     ) as $Val);
+  }
+
+  @override
+  @pragma('vm:prefer-inline')
+  $VariantCopyWith<$Res>? get variant {
+    if (_value.variant == null) {
+      return null;
+    }
+
+    return $VariantCopyWith<$Res>(_value.variant!, (value) {
+      return _then(_value.copyWith(variant: value) as $Val);
+    });
   }
 }
 
@@ -93,10 +117,14 @@ abstract class _$$OrderedProductImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {int id,
+      {@JsonKey(includeToJson: false) int? id,
       @JsonKey(name: "variant_id") int variantId,
+      @JsonKey(includeFromJson: false, includeToJson: false) Variant? variant,
       int quantity,
-      double price});
+      @JsonKey(includeToJson: false) double price});
+
+  @override
+  $VariantCopyWith<$Res>? get variant;
 }
 
 /// @nodoc
@@ -110,20 +138,25 @@ class __$$OrderedProductImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? id = null,
+    Object? id = freezed,
     Object? variantId = null,
+    Object? variant = freezed,
     Object? quantity = null,
     Object? price = null,
   }) {
     return _then(_$OrderedProductImpl(
-      id: null == id
+      id: freezed == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
-              as int,
+              as int?,
       variantId: null == variantId
           ? _value.variantId
           : variantId // ignore: cast_nullable_to_non_nullable
               as int,
+      variant: freezed == variant
+          ? _value.variant
+          : variant // ignore: cast_nullable_to_non_nullable
+              as Variant?,
       quantity: null == quantity
           ? _value.quantity
           : quantity // ignore: cast_nullable_to_non_nullable
@@ -140,27 +173,33 @@ class __$$OrderedProductImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$OrderedProductImpl implements _OrderedProduct {
   _$OrderedProductImpl(
-      {required this.id,
+      {@JsonKey(includeToJson: false) this.id,
       @JsonKey(name: "variant_id") required this.variantId,
+      @JsonKey(includeFromJson: false, includeToJson: false) this.variant,
       required this.quantity,
-      required this.price});
+      @JsonKey(includeToJson: false) required this.price});
 
   factory _$OrderedProductImpl.fromJson(Map<String, dynamic> json) =>
       _$$OrderedProductImplFromJson(json);
 
   @override
-  final int id;
+  @JsonKey(includeToJson: false)
+  final int? id;
   @override
   @JsonKey(name: "variant_id")
   final int variantId;
   @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  final Variant? variant;
+  @override
   final int quantity;
   @override
+  @JsonKey(includeToJson: false)
   final double price;
 
   @override
   String toString() {
-    return 'OrderedProduct(id: $id, variantId: $variantId, quantity: $quantity, price: $price)';
+    return 'OrderedProduct(id: $id, variantId: $variantId, variant: $variant, quantity: $quantity, price: $price)';
   }
 
   @override
@@ -171,6 +210,7 @@ class _$OrderedProductImpl implements _OrderedProduct {
             (identical(other.id, id) || other.id == id) &&
             (identical(other.variantId, variantId) ||
                 other.variantId == variantId) &&
+            (identical(other.variant, variant) || other.variant == variant) &&
             (identical(other.quantity, quantity) ||
                 other.quantity == quantity) &&
             (identical(other.price, price) || other.price == price));
@@ -178,7 +218,8 @@ class _$OrderedProductImpl implements _OrderedProduct {
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, id, variantId, quantity, price);
+  int get hashCode =>
+      Object.hash(runtimeType, id, variantId, variant, quantity, price);
 
   @JsonKey(ignore: true)
   @override
@@ -197,22 +238,30 @@ class _$OrderedProductImpl implements _OrderedProduct {
 
 abstract class _OrderedProduct implements OrderedProduct {
   factory _OrderedProduct(
-      {required final int id,
-      @JsonKey(name: "variant_id") required final int variantId,
-      required final int quantity,
-      required final double price}) = _$OrderedProductImpl;
+          {@JsonKey(includeToJson: false) final int? id,
+          @JsonKey(name: "variant_id") required final int variantId,
+          @JsonKey(includeFromJson: false, includeToJson: false)
+          final Variant? variant,
+          required final int quantity,
+          @JsonKey(includeToJson: false) required final double price}) =
+      _$OrderedProductImpl;
 
   factory _OrderedProduct.fromJson(Map<String, dynamic> json) =
       _$OrderedProductImpl.fromJson;
 
   @override
-  int get id;
+  @JsonKey(includeToJson: false)
+  int? get id;
   @override
   @JsonKey(name: "variant_id")
   int get variantId;
   @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  Variant? get variant;
+  @override
   int get quantity;
   @override
+  @JsonKey(includeToJson: false)
   double get price;
   @override
   @JsonKey(ignore: true)

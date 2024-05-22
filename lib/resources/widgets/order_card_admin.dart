@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
@@ -43,10 +42,11 @@ class _OrderCardAdminState extends State<OrderCardAdmin> {
                     width: 40.v,
                     height: 40.h,
                     clipBehavior: Clip.antiAlias,
-                    decoration: BoxDecoration(shape: BoxShape.circle),
-                    child: widget.order.user != null
-                        ? SvgPicture.network(widget.order.user!.avatar_url)
-                        : Icon(Icons.person)),
+                    decoration: const BoxDecoration(shape: BoxShape.circle),
+                    child: widget.order.user != null &&
+                            widget.order.user!.avatar_url != null
+                        ? SvgPicture.network(widget.order.user!.avatar_url!)
+                        : const Icon(Icons.person)),
                 DefaultTextStyle(
                   style: GoogleFonts.openSans(color: Colors.black),
                   textAlign: TextAlign.left,
@@ -57,10 +57,29 @@ class _OrderCardAdminState extends State<OrderCardAdmin> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
-                          "Hoá đơn của khách hàng ${widget.order.userId} mã số ${widget.order.id!}",
-                          style: TextStyle(
-                              fontWeight: FontWeight.w700, fontSize: 16.h),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              "Hoá đơn mã số ${widget.order.id!}",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.w700, fontSize: 16.h),
+                            ),
+                            Container(
+                                padding: EdgeInsets.symmetric(horizontal: 10.h),
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(200),
+                                    color: widget.order.isPaid
+                                        ? Colors.green.shade200
+                                        : Colors.yellow.shade200),
+                                child: Text(
+                                    widget.order.isPaid
+                                        ? "Đã thanh toán"
+                                        : "Chưa thanh toán",
+                                    style: GoogleFonts.openSans(
+                                        color: Colors.black45,
+                                        fontWeight: FontWeight.w500)))
+                          ],
                         ),
                         Text(
                           DateFormat('yyyy-MM-dd – kk:mm')

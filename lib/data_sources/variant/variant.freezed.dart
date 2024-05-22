@@ -20,10 +20,16 @@ Variant _$VariantFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$Variant {
+  @JsonKey(includeToJson: false)
   int? get id => throw _privateConstructorUsedError;
+  String get name => throw _privateConstructorUsedError;
   double get price => throw _privateConstructorUsedError;
   int get quantity => throw _privateConstructorUsedError;
-  List<String> get img_paths_url => throw _privateConstructorUsedError;
+  @JsonKey(name: "variant_option_values", includeToJson: false)
+  List<VariantOption>? get variantOptionValues =>
+      throw _privateConstructorUsedError;
+  @JsonKey(name: "img_paths_url", includeToJson: false)
+  List<String> get imgPathUrls => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -35,7 +41,15 @@ abstract class $VariantCopyWith<$Res> {
   factory $VariantCopyWith(Variant value, $Res Function(Variant) then) =
       _$VariantCopyWithImpl<$Res, Variant>;
   @useResult
-  $Res call({int? id, double price, int quantity, List<String> img_paths_url});
+  $Res call(
+      {@JsonKey(includeToJson: false) int? id,
+      String name,
+      double price,
+      int quantity,
+      @JsonKey(name: "variant_option_values", includeToJson: false)
+      List<VariantOption>? variantOptionValues,
+      @JsonKey(name: "img_paths_url", includeToJson: false)
+      List<String> imgPathUrls});
 }
 
 /// @nodoc
@@ -52,15 +66,21 @@ class _$VariantCopyWithImpl<$Res, $Val extends Variant>
   @override
   $Res call({
     Object? id = freezed,
+    Object? name = null,
     Object? price = null,
     Object? quantity = null,
-    Object? img_paths_url = null,
+    Object? variantOptionValues = freezed,
+    Object? imgPathUrls = null,
   }) {
     return _then(_value.copyWith(
       id: freezed == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as int?,
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
       price: null == price
           ? _value.price
           : price // ignore: cast_nullable_to_non_nullable
@@ -69,9 +89,13 @@ class _$VariantCopyWithImpl<$Res, $Val extends Variant>
           ? _value.quantity
           : quantity // ignore: cast_nullable_to_non_nullable
               as int,
-      img_paths_url: null == img_paths_url
-          ? _value.img_paths_url
-          : img_paths_url // ignore: cast_nullable_to_non_nullable
+      variantOptionValues: freezed == variantOptionValues
+          ? _value.variantOptionValues
+          : variantOptionValues // ignore: cast_nullable_to_non_nullable
+              as List<VariantOption>?,
+      imgPathUrls: null == imgPathUrls
+          ? _value.imgPathUrls
+          : imgPathUrls // ignore: cast_nullable_to_non_nullable
               as List<String>,
     ) as $Val);
   }
@@ -84,7 +108,15 @@ abstract class _$$VariantImplCopyWith<$Res> implements $VariantCopyWith<$Res> {
       __$$VariantImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({int? id, double price, int quantity, List<String> img_paths_url});
+  $Res call(
+      {@JsonKey(includeToJson: false) int? id,
+      String name,
+      double price,
+      int quantity,
+      @JsonKey(name: "variant_option_values", includeToJson: false)
+      List<VariantOption>? variantOptionValues,
+      @JsonKey(name: "img_paths_url", includeToJson: false)
+      List<String> imgPathUrls});
 }
 
 /// @nodoc
@@ -99,15 +131,21 @@ class __$$VariantImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? id = freezed,
+    Object? name = null,
     Object? price = null,
     Object? quantity = null,
-    Object? img_paths_url = null,
+    Object? variantOptionValues = freezed,
+    Object? imgPathUrls = null,
   }) {
     return _then(_$VariantImpl(
       id: freezed == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as int?,
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
       price: null == price
           ? _value.price
           : price // ignore: cast_nullable_to_non_nullable
@@ -116,9 +154,13 @@ class __$$VariantImplCopyWithImpl<$Res>
           ? _value.quantity
           : quantity // ignore: cast_nullable_to_non_nullable
               as int,
-      img_paths_url: null == img_paths_url
-          ? _value._img_paths_url
-          : img_paths_url // ignore: cast_nullable_to_non_nullable
+      variantOptionValues: freezed == variantOptionValues
+          ? _value._variantOptionValues
+          : variantOptionValues // ignore: cast_nullable_to_non_nullable
+              as List<VariantOption>?,
+      imgPathUrls: null == imgPathUrls
+          ? _value._imgPathUrls
+          : imgPathUrls // ignore: cast_nullable_to_non_nullable
               as List<String>,
     ));
   }
@@ -128,36 +170,55 @@ class __$$VariantImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$VariantImpl with DiagnosticableTreeMixin implements _Variant {
   _$VariantImpl(
-      {this.id = null,
+      {@JsonKey(includeToJson: false) this.id = null,
+      required this.name,
       this.price = 0.0,
       this.quantity = 0,
-      final List<String> img_paths_url = const <String>[]})
-      : _img_paths_url = img_paths_url;
+      @JsonKey(name: "variant_option_values", includeToJson: false)
+      final List<VariantOption>? variantOptionValues,
+      @JsonKey(name: "img_paths_url", includeToJson: false)
+      final List<String> imgPathUrls = const <String>[]})
+      : _variantOptionValues = variantOptionValues,
+        _imgPathUrls = imgPathUrls;
 
   factory _$VariantImpl.fromJson(Map<String, dynamic> json) =>
       _$$VariantImplFromJson(json);
 
   @override
-  @JsonKey()
+  @JsonKey(includeToJson: false)
   final int? id;
+  @override
+  final String name;
   @override
   @JsonKey()
   final double price;
   @override
   @JsonKey()
   final int quantity;
-  final List<String> _img_paths_url;
+  final List<VariantOption>? _variantOptionValues;
   @override
-  @JsonKey()
-  List<String> get img_paths_url {
-    if (_img_paths_url is EqualUnmodifiableListView) return _img_paths_url;
+  @JsonKey(name: "variant_option_values", includeToJson: false)
+  List<VariantOption>? get variantOptionValues {
+    final value = _variantOptionValues;
+    if (value == null) return null;
+    if (_variantOptionValues is EqualUnmodifiableListView)
+      return _variantOptionValues;
     // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_img_paths_url);
+    return EqualUnmodifiableListView(value);
+  }
+
+  final List<String> _imgPathUrls;
+  @override
+  @JsonKey(name: "img_paths_url", includeToJson: false)
+  List<String> get imgPathUrls {
+    if (_imgPathUrls is EqualUnmodifiableListView) return _imgPathUrls;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_imgPathUrls);
   }
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'Variant(id: $id, price: $price, quantity: $quantity, img_paths_url: $img_paths_url)';
+    return 'Variant(id: $id, name: $name, price: $price, quantity: $quantity, variantOptionValues: $variantOptionValues, imgPathUrls: $imgPathUrls)';
   }
 
   @override
@@ -166,9 +227,11 @@ class _$VariantImpl with DiagnosticableTreeMixin implements _Variant {
     properties
       ..add(DiagnosticsProperty('type', 'Variant'))
       ..add(DiagnosticsProperty('id', id))
+      ..add(DiagnosticsProperty('name', name))
       ..add(DiagnosticsProperty('price', price))
       ..add(DiagnosticsProperty('quantity', quantity))
-      ..add(DiagnosticsProperty('img_paths_url', img_paths_url));
+      ..add(DiagnosticsProperty('variantOptionValues', variantOptionValues))
+      ..add(DiagnosticsProperty('imgPathUrls', imgPathUrls));
   }
 
   @override
@@ -177,17 +240,26 @@ class _$VariantImpl with DiagnosticableTreeMixin implements _Variant {
         (other.runtimeType == runtimeType &&
             other is _$VariantImpl &&
             (identical(other.id, id) || other.id == id) &&
+            (identical(other.name, name) || other.name == name) &&
             (identical(other.price, price) || other.price == price) &&
             (identical(other.quantity, quantity) ||
                 other.quantity == quantity) &&
             const DeepCollectionEquality()
-                .equals(other._img_paths_url, _img_paths_url));
+                .equals(other._variantOptionValues, _variantOptionValues) &&
+            const DeepCollectionEquality()
+                .equals(other._imgPathUrls, _imgPathUrls));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, id, price, quantity,
-      const DeepCollectionEquality().hash(_img_paths_url));
+  int get hashCode => Object.hash(
+      runtimeType,
+      id,
+      name,
+      price,
+      quantity,
+      const DeepCollectionEquality().hash(_variantOptionValues),
+      const DeepCollectionEquality().hash(_imgPathUrls));
 
   @JsonKey(ignore: true)
   @override
@@ -205,21 +277,32 @@ class _$VariantImpl with DiagnosticableTreeMixin implements _Variant {
 
 abstract class _Variant implements Variant {
   factory _Variant(
-      {final int? id,
+      {@JsonKey(includeToJson: false) final int? id,
+      required final String name,
       final double price,
       final int quantity,
-      final List<String> img_paths_url}) = _$VariantImpl;
+      @JsonKey(name: "variant_option_values", includeToJson: false)
+      final List<VariantOption>? variantOptionValues,
+      @JsonKey(name: "img_paths_url", includeToJson: false)
+      final List<String> imgPathUrls}) = _$VariantImpl;
 
   factory _Variant.fromJson(Map<String, dynamic> json) = _$VariantImpl.fromJson;
 
   @override
+  @JsonKey(includeToJson: false)
   int? get id;
+  @override
+  String get name;
   @override
   double get price;
   @override
   int get quantity;
   @override
-  List<String> get img_paths_url;
+  @JsonKey(name: "variant_option_values", includeToJson: false)
+  List<VariantOption>? get variantOptionValues;
+  @override
+  @JsonKey(name: "img_paths_url", includeToJson: false)
+  List<String> get imgPathUrls;
   @override
   @JsonKey(ignore: true)
   _$$VariantImplCopyWith<_$VariantImpl> get copyWith =>

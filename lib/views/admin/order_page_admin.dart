@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:precious/data_sources/order/order.dart';
+import 'package:precious/main.dart';
+import 'package:precious/presenters/admin_order_presenter.dart';
 import 'package:precious/presenters/order_presenter.dart';
 import 'package:precious/resources/app_export.dart';
 import 'package:precious/resources/widgets/custom_search_bar.dart';
@@ -15,26 +18,21 @@ class OrderPageAdmin extends StatefulWidget {
   _OrderPageAdminState createState() => _OrderPageAdminState();
 }
 
-class _OrderPageAdminState extends State<OrderPageAdmin> {
-  String? searchString;
-  final OrderPresenter _orderPresenter = OrderPresenter();
-  late Future<List<Order>> futureOrderList;
-  var selectedTab = 0;
-  late List<Order> orderList;
-  var checkedValue = false;
-  var option = false;
+class _OrderPageAdminState extends State<OrderPageAdmin>
+    implements AdminOrderContract {
+  late AdminOrderPresenter _presenter;
   @override
   void initState() {
     super.initState();
-    futureOrderList = _orderPresenter.getAll(detail: true);
+    _presenter = AdminOrderPresenter(this);
+    WidgetsBinding.instance.addPostFrameCallback((_) => _presenter.init());
   }
 
   @override
   Widget build(BuildContext context) {
     return RefreshIndicator(
       onRefresh: () async {
-        futureOrderList = _orderPresenter.getAll(detail: true);
-        setState(() {});
+        _presenter.refresh();
       },
       child: DefaultTabController(
         length: 3,
@@ -46,73 +44,63 @@ class _OrderPageAdminState extends State<OrderPageAdmin> {
               CustomSearchBar(
                 onChange: (p0) {
                   setState(() {
-                    searchString = p0;
+                    _presenter.searchString = p0;
                   });
                 },
               ),
-              FutureBuilder(
-                  future: futureOrderList,
-                  builder: (context, snapshot) {
-                    if (!snapshot.hasData) return const SizedBox.shrink();
-                    if (snapshot.hasData) debugPrint(snapshot.data.toString());
-                    final data = snapshot.data!;
-                    orderList = data;
-                    return SingleChildScrollView(
-                        child:
-                            Column(mainAxisSize: MainAxisSize.min, children: [
-                      TabBar(
-                        indicatorSize: TabBarIndicatorSize.tab,
-                        indicatorWeight: 4,
-                        indicatorColor: Colors.black,
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        onTap: (i) => setState(() {
-                          selectedTab = i;
-                        }),
-                        tabs: const [
-                          Tab(icon: Text('Ngày')),
-                          Tab(icon: Text('Tháng')),
-                          Tab(icon: Text('Năm')),
-                        ],
-                      ),
-                      InkWell(
-                        onTap: () => setState(() {
-                          option = !option;
-                        }),
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 12.h),
-                          child: Row(
-                            children: [
-                              const Text("Options"),
-                              AnimatedRotation(
-                                turns: option ? 0 : 1 / 4,
-                                duration: Durations.long2,
-                                child:
-                                    const Icon(Icons.arrow_drop_down_rounded),
-                              )
-                            ],
-                          ),
-                        ),
-                      ),
-                      AnimatedContainer(
-                        height: option ? 50.h : 0.h,
-                        duration: Durations.long2,
-                        child: CheckboxListTile(
-                          title: const Text("Pending only"),
-                          value: checkedValue,
-                          onChanged: (newValue) {
-                            setState(() {
-                              checkedValue = !checkedValue;
-                            });
-                          },
-                          controlAffinity: ListTileControlAffinity
-                              .leading, //  <-- leading Checkbox
-                        ),
-                      ),
-                      Padding(
-                          padding: EdgeInsets.symmetric(vertical: 10.h),
-                          child: buildOrderList())
-                    ]));
-                  })
+              SingleChildScrollView(
+                  child: Column(mainAxisSize: MainAxisSize.min, children: [
+                TabBar(
+                  indicatorSize: TabBarIndicatorSize.tab,
+                  indicatorWeight: 4,
+                  indicatorColor: Colors.black,
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  onTap: (i) => setState(() {
+                    _presenter.selectedTab = i;
+                  }),
+                  tabs: const [
+                    Tab(icon: Text('Ngày')),
+                    Tab(icon: Text('Tháng')),
+                    Tab(icon: Text('Năm')),
+                  ],
+                ),
+                InkWell(
+                  onTap: () => setState(() {
+                    _presenter.option = !_presenter.option;
+                  }),
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 12.h),
+                    child: Row(
+                      children: [
+                        const Text("Options"),
+                        AnimatedRotation(
+                          turns: _presenter.option ? 0 : 1 / 4,
+                          duration: Durations.long2,
+                          child: const Icon(Icons.arrow_drop_down_rounded),
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+                AnimatedContainer(
+                  height: _presenter.option ? 50.h : 0.h,
+                  duration: Durations.long2,
+                  child: CheckboxListTile(
+                    title: const Text("Pending only"),
+                    value: _presenter.option,
+                    onChanged: (newValue) {
+                      setState(() {
+                        _presenter.checkedValue = !_presenter.checkedValue;
+                      });
+                    },
+                    controlAffinity: ListTileControlAffinity
+                        .leading, //  <-- leading Checkbox
+                  ),
+                ),
+                Padding(
+                    padding: EdgeInsets.symmetric(vertical: 10.h),
+                    child: buildOrderList())
+              ]))
             ])),
       ),
     );
@@ -120,7 +108,7 @@ class _OrderPageAdminState extends State<OrderPageAdmin> {
 
   Widget buildOrderList() {
     final seperatorList = buildSeperatorList();
-    final list = filterStatus(checkedValue ? "PENDING" : null);
+    final list = filterStatus(_presenter.checkedValue ? "PENDING" : null);
     var seperatorNumber = 0;
     return ListView.builder(
         shrinkWrap: true,
@@ -153,13 +141,15 @@ class _OrderPageAdminState extends State<OrderPageAdmin> {
   }
 
   List<Order> filterStatus(String? status) {
-    if (status == null) return orderList;
-    return orderList.where((element) => element.status == status).toList();
+    if (status == null) return _presenter.orderList;
+    return _presenter.orderList
+        .where((element) => element.status == status)
+        .toList();
   }
 
   Map<int, String> buildSeperatorList() {
     var result = <int, String>{};
-    switch (selectedTab) {
+    switch (_presenter.selectedTab) {
       case 0:
         result.addEntries(<int, String>{-1: "Today"}.entries);
         var current = DateTime.now().copyWith(
@@ -167,10 +157,10 @@ class _OrderPageAdminState extends State<OrderPageAdmin> {
           minute: 60,
           second: 60,
         );
-        for (var order in orderList) {
+        for (var order in _presenter.orderList) {
           if (current.difference(order.createAt!) > const Duration(days: 1)) {
             result.addEntries(<int, String>{
-              orderList.indexOf(order) - 1:
+              _presenter.orderList.indexOf(order) - 1:
                   DateFormat('dd/MM/yyyy').format(order.createAt!)
             }.entries);
 
@@ -190,10 +180,10 @@ class _OrderPageAdminState extends State<OrderPageAdmin> {
             DateTime.now().copyWith(month: DateTime.now().month + 1, day: 0);
         var duration =
             Duration(days: DateTime(current.year, current.month + 1, 0).day);
-        for (var order in orderList) {
+        for (var order in _presenter.orderList) {
           if (current.difference(order.createAt!) > duration) {
             result.addEntries(<int, String>{
-              orderList.indexOf(order) - 1:
+              _presenter.orderList.indexOf(order) - 1:
                   DateFormat('dd/MM/yyyy').format(order.createAt!)
             }.entries);
             current = order.createAt!
@@ -209,10 +199,10 @@ class _OrderPageAdminState extends State<OrderPageAdmin> {
         }.entries);
         var current =
             DateTime.now().copyWith(year: DateTime.now().year + 1, day: 0);
-        for (var order in orderList) {
+        for (var order in _presenter.orderList) {
           if (current.difference(order.createAt!) > const Duration(days: 365)) {
             result.addEntries(<int, String>{
-              orderList.indexOf(order) - 1:
+              _presenter.orderList.indexOf(order) - 1:
                   DateFormat('yyyy').format(order.createAt!)
             }.entries);
             current =
@@ -223,5 +213,46 @@ class _OrderPageAdminState extends State<OrderPageAdmin> {
       default:
     }
     return result;
+  }
+
+  @override
+  void onDeleteFail() {
+    // TODO: implement onDeleteFail
+  }
+
+  @override
+  void onDeleteSuccess() {
+    // TODO: implement onDeleteSuccess
+  }
+
+  @override
+  void onEndAsyncTask() {
+    Get.back();
+  }
+
+  @override
+  void onInitSuccess() {}
+
+  @override
+  void onRefreshSuccess() {
+    // TODO: implement onRefreshSuccess
+  }
+
+  @override
+  void onStartAsyncTask() {
+    showDialog(
+        context: NavigationService.navigatorKey.currentContext!,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return const SimpleDialog(
+            elevation: 0.0,
+            backgroundColor: Colors.transparent,
+            children: <Widget>[
+              Center(
+                child: CircularProgressIndicator(),
+              )
+            ],
+          );
+        });
   }
 }

@@ -20,15 +20,24 @@ Order _$OrderFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$Order {
+  @JsonKey(includeToJson: false)
   int? get id => throw _privateConstructorUsedError;
   @JsonKey(name: "user_id")
-  int? get userId => throw _privateConstructorUsedError;
+  int get userId => throw _privateConstructorUsedError;
+  @JsonKey(name: "is_paid", includeToJson: false)
+  bool get isPaid => throw _privateConstructorUsedError;
+  @JsonKey(includeToJson: false)
   User? get user => throw _privateConstructorUsedError;
+  @JsonKey(includeToJson: false)
   String get status => throw _privateConstructorUsedError;
-  @JsonKey(name: "created_at", fromJson: _sendDateTimeFromJson)
+  @JsonKey(
+      name: "created_at", fromJson: _sendDateTimeFromJson, includeToJson: false)
   DateTime? get createAt => throw _privateConstructorUsedError;
-  @JsonKey(name: "total_price")
+  @JsonKey(name: "total_price", includeToJson: false)
   double get totalPrice => throw _privateConstructorUsedError;
+  String get address => throw _privateConstructorUsedError;
+  @JsonKey(name: "phone_number")
+  String get phoneNumber => throw _privateConstructorUsedError;
   List<OrderedProduct> get items => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -42,13 +51,19 @@ abstract class $OrderCopyWith<$Res> {
       _$OrderCopyWithImpl<$Res, Order>;
   @useResult
   $Res call(
-      {int? id,
-      @JsonKey(name: "user_id") int? userId,
-      User? user,
-      String status,
-      @JsonKey(name: "created_at", fromJson: _sendDateTimeFromJson)
+      {@JsonKey(includeToJson: false) int? id,
+      @JsonKey(name: "user_id") int userId,
+      @JsonKey(name: "is_paid", includeToJson: false) bool isPaid,
+      @JsonKey(includeToJson: false) User? user,
+      @JsonKey(includeToJson: false) String status,
+      @JsonKey(
+          name: "created_at",
+          fromJson: _sendDateTimeFromJson,
+          includeToJson: false)
       DateTime? createAt,
-      @JsonKey(name: "total_price") double totalPrice,
+      @JsonKey(name: "total_price", includeToJson: false) double totalPrice,
+      String address,
+      @JsonKey(name: "phone_number") String phoneNumber,
       List<OrderedProduct> items});
 
   $UserCopyWith<$Res>? get user;
@@ -68,11 +83,14 @@ class _$OrderCopyWithImpl<$Res, $Val extends Order>
   @override
   $Res call({
     Object? id = freezed,
-    Object? userId = freezed,
+    Object? userId = null,
+    Object? isPaid = null,
     Object? user = freezed,
     Object? status = null,
     Object? createAt = freezed,
     Object? totalPrice = null,
+    Object? address = null,
+    Object? phoneNumber = null,
     Object? items = null,
   }) {
     return _then(_value.copyWith(
@@ -80,10 +98,14 @@ class _$OrderCopyWithImpl<$Res, $Val extends Order>
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as int?,
-      userId: freezed == userId
+      userId: null == userId
           ? _value.userId
           : userId // ignore: cast_nullable_to_non_nullable
-              as int?,
+              as int,
+      isPaid: null == isPaid
+          ? _value.isPaid
+          : isPaid // ignore: cast_nullable_to_non_nullable
+              as bool,
       user: freezed == user
           ? _value.user
           : user // ignore: cast_nullable_to_non_nullable
@@ -100,6 +122,14 @@ class _$OrderCopyWithImpl<$Res, $Val extends Order>
           ? _value.totalPrice
           : totalPrice // ignore: cast_nullable_to_non_nullable
               as double,
+      address: null == address
+          ? _value.address
+          : address // ignore: cast_nullable_to_non_nullable
+              as String,
+      phoneNumber: null == phoneNumber
+          ? _value.phoneNumber
+          : phoneNumber // ignore: cast_nullable_to_non_nullable
+              as String,
       items: null == items
           ? _value.items
           : items // ignore: cast_nullable_to_non_nullable
@@ -128,13 +158,19 @@ abstract class _$$OrderImplCopyWith<$Res> implements $OrderCopyWith<$Res> {
   @override
   @useResult
   $Res call(
-      {int? id,
-      @JsonKey(name: "user_id") int? userId,
-      User? user,
-      String status,
-      @JsonKey(name: "created_at", fromJson: _sendDateTimeFromJson)
+      {@JsonKey(includeToJson: false) int? id,
+      @JsonKey(name: "user_id") int userId,
+      @JsonKey(name: "is_paid", includeToJson: false) bool isPaid,
+      @JsonKey(includeToJson: false) User? user,
+      @JsonKey(includeToJson: false) String status,
+      @JsonKey(
+          name: "created_at",
+          fromJson: _sendDateTimeFromJson,
+          includeToJson: false)
       DateTime? createAt,
-      @JsonKey(name: "total_price") double totalPrice,
+      @JsonKey(name: "total_price", includeToJson: false) double totalPrice,
+      String address,
+      @JsonKey(name: "phone_number") String phoneNumber,
       List<OrderedProduct> items});
 
   @override
@@ -153,11 +189,14 @@ class __$$OrderImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? id = freezed,
-    Object? userId = freezed,
+    Object? userId = null,
+    Object? isPaid = null,
     Object? user = freezed,
     Object? status = null,
     Object? createAt = freezed,
     Object? totalPrice = null,
+    Object? address = null,
+    Object? phoneNumber = null,
     Object? items = null,
   }) {
     return _then(_$OrderImpl(
@@ -165,10 +204,14 @@ class __$$OrderImplCopyWithImpl<$Res>
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as int?,
-      userId: freezed == userId
+      userId: null == userId
           ? _value.userId
           : userId // ignore: cast_nullable_to_non_nullable
-              as int?,
+              as int,
+      isPaid: null == isPaid
+          ? _value.isPaid
+          : isPaid // ignore: cast_nullable_to_non_nullable
+              as bool,
       user: freezed == user
           ? _value.user
           : user // ignore: cast_nullable_to_non_nullable
@@ -185,8 +228,16 @@ class __$$OrderImplCopyWithImpl<$Res>
           ? _value.totalPrice
           : totalPrice // ignore: cast_nullable_to_non_nullable
               as double,
+      address: null == address
+          ? _value.address
+          : address // ignore: cast_nullable_to_non_nullable
+              as String,
+      phoneNumber: null == phoneNumber
+          ? _value.phoneNumber
+          : phoneNumber // ignore: cast_nullable_to_non_nullable
+              as String,
       items: null == items
-          ? _value._items
+          ? _value.items
           : items // ignore: cast_nullable_to_non_nullable
               as List<OrderedProduct>,
     ));
@@ -197,48 +248,59 @@ class __$$OrderImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$OrderImpl with DiagnosticableTreeMixin implements _Order {
   const _$OrderImpl(
-      {this.id = null,
-      @JsonKey(name: "user_id") this.userId = null,
-      this.user = null,
-      required this.status,
-      @JsonKey(name: "created_at", fromJson: _sendDateTimeFromJson)
-      this.createAt = null,
-      @JsonKey(name: "total_price") required this.totalPrice,
-      final List<OrderedProduct> items = const []})
-      : _items = items;
+      {@JsonKey(includeToJson: false) this.id = null,
+      @JsonKey(name: "user_id") required this.userId,
+      @JsonKey(name: "is_paid", includeToJson: false) required this.isPaid,
+      @JsonKey(includeToJson: false) this.user,
+      @JsonKey(includeToJson: false) required this.status,
+      @JsonKey(
+          name: "created_at",
+          fromJson: _sendDateTimeFromJson,
+          includeToJson: false)
+      required this.createAt,
+      @JsonKey(name: "total_price", includeToJson: false)
+      required this.totalPrice,
+      required this.address,
+      @JsonKey(name: "phone_number") required this.phoneNumber,
+      this.items = const []});
 
   factory _$OrderImpl.fromJson(Map<String, dynamic> json) =>
       _$$OrderImplFromJson(json);
 
   @override
-  @JsonKey()
+  @JsonKey(includeToJson: false)
   final int? id;
   @override
   @JsonKey(name: "user_id")
-  final int? userId;
+  final int userId;
   @override
-  @JsonKey()
+  @JsonKey(name: "is_paid", includeToJson: false)
+  final bool isPaid;
+  @override
+  @JsonKey(includeToJson: false)
   final User? user;
   @override
+  @JsonKey(includeToJson: false)
   final String status;
   @override
-  @JsonKey(name: "created_at", fromJson: _sendDateTimeFromJson)
+  @JsonKey(
+      name: "created_at", fromJson: _sendDateTimeFromJson, includeToJson: false)
   final DateTime? createAt;
   @override
-  @JsonKey(name: "total_price")
+  @JsonKey(name: "total_price", includeToJson: false)
   final double totalPrice;
-  final List<OrderedProduct> _items;
+  @override
+  final String address;
+  @override
+  @JsonKey(name: "phone_number")
+  final String phoneNumber;
   @override
   @JsonKey()
-  List<OrderedProduct> get items {
-    if (_items is EqualUnmodifiableListView) return _items;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_items);
-  }
+  final List<OrderedProduct> items;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'Order(id: $id, userId: $userId, user: $user, status: $status, createAt: $createAt, totalPrice: $totalPrice, items: $items)';
+    return 'Order(id: $id, userId: $userId, isPaid: $isPaid, user: $user, status: $status, createAt: $createAt, totalPrice: $totalPrice, address: $address, phoneNumber: $phoneNumber, items: $items)';
   }
 
   @override
@@ -248,10 +310,13 @@ class _$OrderImpl with DiagnosticableTreeMixin implements _Order {
       ..add(DiagnosticsProperty('type', 'Order'))
       ..add(DiagnosticsProperty('id', id))
       ..add(DiagnosticsProperty('userId', userId))
+      ..add(DiagnosticsProperty('isPaid', isPaid))
       ..add(DiagnosticsProperty('user', user))
       ..add(DiagnosticsProperty('status', status))
       ..add(DiagnosticsProperty('createAt', createAt))
       ..add(DiagnosticsProperty('totalPrice', totalPrice))
+      ..add(DiagnosticsProperty('address', address))
+      ..add(DiagnosticsProperty('phoneNumber', phoneNumber))
       ..add(DiagnosticsProperty('items', items));
   }
 
@@ -262,19 +327,33 @@ class _$OrderImpl with DiagnosticableTreeMixin implements _Order {
             other is _$OrderImpl &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.userId, userId) || other.userId == userId) &&
+            (identical(other.isPaid, isPaid) || other.isPaid == isPaid) &&
             (identical(other.user, user) || other.user == user) &&
             (identical(other.status, status) || other.status == status) &&
             (identical(other.createAt, createAt) ||
                 other.createAt == createAt) &&
             (identical(other.totalPrice, totalPrice) ||
                 other.totalPrice == totalPrice) &&
-            const DeepCollectionEquality().equals(other._items, _items));
+            (identical(other.address, address) || other.address == address) &&
+            (identical(other.phoneNumber, phoneNumber) ||
+                other.phoneNumber == phoneNumber) &&
+            const DeepCollectionEquality().equals(other.items, items));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, id, userId, user, status,
-      createAt, totalPrice, const DeepCollectionEquality().hash(_items));
+  int get hashCode => Object.hash(
+      runtimeType,
+      id,
+      userId,
+      isPaid,
+      user,
+      status,
+      createAt,
+      totalPrice,
+      address,
+      phoneNumber,
+      const DeepCollectionEquality().hash(items));
 
   @JsonKey(ignore: true)
   @override
@@ -292,32 +371,52 @@ class _$OrderImpl with DiagnosticableTreeMixin implements _Order {
 
 abstract class _Order implements Order {
   const factory _Order(
-      {final int? id,
-      @JsonKey(name: "user_id") final int? userId,
-      final User? user,
-      required final String status,
-      @JsonKey(name: "created_at", fromJson: _sendDateTimeFromJson)
-      final DateTime? createAt,
-      @JsonKey(name: "total_price") required final double totalPrice,
+      {@JsonKey(includeToJson: false) final int? id,
+      @JsonKey(name: "user_id") required final int userId,
+      @JsonKey(name: "is_paid", includeToJson: false)
+      required final bool isPaid,
+      @JsonKey(includeToJson: false) final User? user,
+      @JsonKey(includeToJson: false) required final String status,
+      @JsonKey(
+          name: "created_at",
+          fromJson: _sendDateTimeFromJson,
+          includeToJson: false)
+      required final DateTime? createAt,
+      @JsonKey(name: "total_price", includeToJson: false)
+      required final double totalPrice,
+      required final String address,
+      @JsonKey(name: "phone_number") required final String phoneNumber,
       final List<OrderedProduct> items}) = _$OrderImpl;
 
   factory _Order.fromJson(Map<String, dynamic> json) = _$OrderImpl.fromJson;
 
   @override
+  @JsonKey(includeToJson: false)
   int? get id;
   @override
   @JsonKey(name: "user_id")
-  int? get userId;
+  int get userId;
   @override
+  @JsonKey(name: "is_paid", includeToJson: false)
+  bool get isPaid;
+  @override
+  @JsonKey(includeToJson: false)
   User? get user;
   @override
+  @JsonKey(includeToJson: false)
   String get status;
   @override
-  @JsonKey(name: "created_at", fromJson: _sendDateTimeFromJson)
+  @JsonKey(
+      name: "created_at", fromJson: _sendDateTimeFromJson, includeToJson: false)
   DateTime? get createAt;
   @override
-  @JsonKey(name: "total_price")
+  @JsonKey(name: "total_price", includeToJson: false)
   double get totalPrice;
+  @override
+  String get address;
+  @override
+  @JsonKey(name: "phone_number")
+  String get phoneNumber;
   @override
   List<OrderedProduct> get items;
   @override
