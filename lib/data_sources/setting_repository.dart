@@ -10,7 +10,7 @@ class SettingRepository {
     return prefs.getBool('firstRun') ?? true;
   }
 
-  void removeFirstRun() async {
+  Future<void> removeFirstRun() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setBool('firstRun', false);
   }

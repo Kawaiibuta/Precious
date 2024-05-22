@@ -1,3 +1,4 @@
+import 'package:app_links/app_links.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -6,11 +7,13 @@ import 'package:precious/presenters/setting_presenter.dart';
 import 'package:precious/resources/routes/routes.dart';
 import 'package:precious/resources/themes/app_theme.dart';
 import 'package:precious/resources/utils/firebase_options.dart';
-import 'package:precious/views/admin/home_page_admin.dart';
 import 'package:flutter/services.dart';
+import 'package:precious/resources/widgets/create_order_page.dart';
 import 'package:precious/views/home_page.dart';
 import 'package:precious/views/login_or_sign_up_page.dart';
 import 'package:precious/views/start_page.dart';
+
+final _appLinks = AppLinks();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -18,7 +21,6 @@ void main() async {
   var settings = SettingPresenter();
   await settings.initialize();
   await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
-
   runApp(MyApp(settings));
 }
 
@@ -39,6 +41,9 @@ class _MyAppState extends State<MyApp> implements AppContract {
   @override
   void initState() {
     super.initState();
+    _appLinks.uriLinkStream.listen((uri) {
+      Navigator.of(context).pushNamed(CreateOrderPage.name);
+    });
     _themeMode = widget._settingPresenter.themeMode;
     _locale = widget._settingPresenter.locale;
     widget._settingPresenter.appContract = this;

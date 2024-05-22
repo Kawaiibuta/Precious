@@ -10,6 +10,7 @@ import 'package:precious/views/setting_page.dart';
 import 'package:precious/views/sign_up_page.dart';
 import 'package:precious/views/sign_up_success_page.dart';
 import 'package:precious/views/start_page.dart';
+import 'package:precious/views/user_detail_page.dart';
 
 class MyRoutes {
   final SettingPresenter _settingPresenter;
@@ -24,6 +25,7 @@ class MyRoutes {
         LoginOrSignUpPage.name: (_) => const LoginOrSignUpPage(),
         SignUpSuccessPage.name: (_) => const SignUpSuccessPage(),
         LandingPage.name: (_) => const LandingPage(),
+        UserDetailPage.name: (_) => const UserDetailPage(),
         HomePage.name: (_) => const HomePage(),
         HomePageAdmin.name: (_) => const HomePageAdmin(),
       };

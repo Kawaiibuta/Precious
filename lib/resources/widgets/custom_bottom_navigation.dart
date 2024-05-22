@@ -40,7 +40,7 @@ class _CustomBottomNavigationState extends State<CustomBottomNavigation> {
                           .copyWith(
                               color: Theme.of(context)
                                   .colorScheme
-                                  .onSecondaryContainer),
+                                  .onPrimaryContainer),
                       selected: selectedIndex == index,
                       showTitleSelected: true,
                       selectedIconColor: Colors.white,

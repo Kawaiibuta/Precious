@@ -4,6 +4,7 @@ import 'package:precious/models/user/user.dart';
 import 'package:precious/presenters/login_presenter.dart';
 import 'package:precious/resources/app_export.dart';
 import 'package:precious/resources/widgets/custom_elevated_button.dart';
+import 'package:precious/views/admin/home_page_admin.dart';
 import 'package:precious/views/home_page.dart';
 
 class LoginPage extends StatefulWidget {
@@ -205,7 +206,13 @@ class _LoginPageState extends State<LoginPage> implements LoginPageContract {
 
   @override
   void onLoginSuccess(User user) {
-    Navigator.of(context).pushNamedAndRemoveUntil(HomePage.name, (_) => false);
+    if (user.userRole == 'USER') {
+      Navigator.of(context)
+          .pushNamedAndRemoveUntil(HomePage.name, (_) => false);
+    } else {
+      Navigator.of(context)
+          .pushNamedAndRemoveUntil(HomePageAdmin.name, (_) => false);
+    }
   }
 
   void callLoadingScreen() {

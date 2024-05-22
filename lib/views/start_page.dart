@@ -1,5 +1,6 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:precious/presenters/setting_presenter.dart';
 import 'package:precious/resources/app_export.dart';
 import 'package:precious/resources/widgets/start_image_clip_path.dart';
 import 'package:precious/views/login_or_sign_up_page.dart';
@@ -92,6 +93,7 @@ class _StartPageState extends State<StartPage>
                         iconSize: 60.h,
                         onPressed: () {
                           if (currentPageIndex == pageCount - 1) {
+                            _updateFirstRun();
                             Navigator.of(context)
                                 .pushReplacementNamed(LoginOrSignUpPage.name);
                           }
@@ -145,5 +147,9 @@ class _StartPageState extends State<StartPage>
                     .copyWith(color: Colors.black54))),
       ],
     );
+  }
+
+  void _updateFirstRun() {
+    SettingPresenter().removeFirstRun();
   }
 }

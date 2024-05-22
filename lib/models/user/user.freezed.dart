@@ -22,12 +22,16 @@ User _$UserFromJson(Map<String, dynamic> json) {
 mixin _$User {
   int get id => throw _privateConstructorUsedError;
   String get uid => throw _privateConstructorUsedError;
+  String? get name => throw _privateConstructorUsedError;
   @JsonKey(name: 'avatar_img_path')
   String get avatarImgPath => throw _privateConstructorUsedError;
   num? get gender => throw _privateConstructorUsedError;
   String? get email => throw _privateConstructorUsedError;
   int? get age => throw _privateConstructorUsedError;
   Cart? get cart => throw _privateConstructorUsedError;
+  @JsonKey(name: 'phone_number')
+  String get phoneNumber => throw _privateConstructorUsedError;
+  String get userRole => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -42,11 +46,14 @@ abstract class $UserCopyWith<$Res> {
   $Res call(
       {int id,
       String uid,
+      String? name,
       @JsonKey(name: 'avatar_img_path') String avatarImgPath,
       num? gender,
       String? email,
       int? age,
-      Cart? cart});
+      Cart? cart,
+      @JsonKey(name: 'phone_number') String phoneNumber,
+      String userRole});
 
   $CartCopyWith<$Res>? get cart;
 }
@@ -66,11 +73,14 @@ class _$UserCopyWithImpl<$Res, $Val extends User>
   $Res call({
     Object? id = null,
     Object? uid = null,
+    Object? name = freezed,
     Object? avatarImgPath = null,
     Object? gender = freezed,
     Object? email = freezed,
     Object? age = freezed,
     Object? cart = freezed,
+    Object? phoneNumber = null,
+    Object? userRole = null,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -81,6 +91,10 @@ class _$UserCopyWithImpl<$Res, $Val extends User>
           ? _value.uid
           : uid // ignore: cast_nullable_to_non_nullable
               as String,
+      name: freezed == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String?,
       avatarImgPath: null == avatarImgPath
           ? _value.avatarImgPath
           : avatarImgPath // ignore: cast_nullable_to_non_nullable
@@ -101,6 +115,14 @@ class _$UserCopyWithImpl<$Res, $Val extends User>
           ? _value.cart
           : cart // ignore: cast_nullable_to_non_nullable
               as Cart?,
+      phoneNumber: null == phoneNumber
+          ? _value.phoneNumber
+          : phoneNumber // ignore: cast_nullable_to_non_nullable
+              as String,
+      userRole: null == userRole
+          ? _value.userRole
+          : userRole // ignore: cast_nullable_to_non_nullable
+              as String,
     ) as $Val);
   }
 
@@ -127,11 +149,14 @@ abstract class _$$UserImplCopyWith<$Res> implements $UserCopyWith<$Res> {
   $Res call(
       {int id,
       String uid,
+      String? name,
       @JsonKey(name: 'avatar_img_path') String avatarImgPath,
       num? gender,
       String? email,
       int? age,
-      Cart? cart});
+      Cart? cart,
+      @JsonKey(name: 'phone_number') String phoneNumber,
+      String userRole});
 
   @override
   $CartCopyWith<$Res>? get cart;
@@ -149,11 +174,14 @@ class __$$UserImplCopyWithImpl<$Res>
   $Res call({
     Object? id = null,
     Object? uid = null,
+    Object? name = freezed,
     Object? avatarImgPath = null,
     Object? gender = freezed,
     Object? email = freezed,
     Object? age = freezed,
     Object? cart = freezed,
+    Object? phoneNumber = null,
+    Object? userRole = null,
   }) {
     return _then(_$UserImpl(
       id: null == id
@@ -164,6 +192,10 @@ class __$$UserImplCopyWithImpl<$Res>
           ? _value.uid
           : uid // ignore: cast_nullable_to_non_nullable
               as String,
+      name: freezed == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String?,
       avatarImgPath: null == avatarImgPath
           ? _value.avatarImgPath
           : avatarImgPath // ignore: cast_nullable_to_non_nullable
@@ -184,6 +216,14 @@ class __$$UserImplCopyWithImpl<$Res>
           ? _value.cart
           : cart // ignore: cast_nullable_to_non_nullable
               as Cart?,
+      phoneNumber: null == phoneNumber
+          ? _value.phoneNumber
+          : phoneNumber // ignore: cast_nullable_to_non_nullable
+              as String,
+      userRole: null == userRole
+          ? _value.userRole
+          : userRole // ignore: cast_nullable_to_non_nullable
+              as String,
     ));
   }
 }
@@ -194,11 +234,14 @@ class _$UserImpl with DiagnosticableTreeMixin implements _User {
   const _$UserImpl(
       {required this.id,
       required this.uid,
+      this.name,
       @JsonKey(name: 'avatar_img_path') required this.avatarImgPath,
       required this.gender,
       required this.email,
       required this.age,
-      required this.cart});
+      required this.cart,
+      @JsonKey(name: 'phone_number') required this.phoneNumber,
+      required this.userRole});
 
   factory _$UserImpl.fromJson(Map<String, dynamic> json) =>
       _$$UserImplFromJson(json);
@@ -207,6 +250,8 @@ class _$UserImpl with DiagnosticableTreeMixin implements _User {
   final int id;
   @override
   final String uid;
+  @override
+  final String? name;
   @override
   @JsonKey(name: 'avatar_img_path')
   final String avatarImgPath;
@@ -218,10 +263,15 @@ class _$UserImpl with DiagnosticableTreeMixin implements _User {
   final int? age;
   @override
   final Cart? cart;
+  @override
+  @JsonKey(name: 'phone_number')
+  final String phoneNumber;
+  @override
+  final String userRole;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'User(id: $id, uid: $uid, avatarImgPath: $avatarImgPath, gender: $gender, email: $email, age: $age, cart: $cart)';
+    return 'User(id: $id, uid: $uid, name: $name, avatarImgPath: $avatarImgPath, gender: $gender, email: $email, age: $age, cart: $cart, phoneNumber: $phoneNumber, userRole: $userRole)';
   }
 
   @override
@@ -231,11 +281,14 @@ class _$UserImpl with DiagnosticableTreeMixin implements _User {
       ..add(DiagnosticsProperty('type', 'User'))
       ..add(DiagnosticsProperty('id', id))
       ..add(DiagnosticsProperty('uid', uid))
+      ..add(DiagnosticsProperty('name', name))
       ..add(DiagnosticsProperty('avatarImgPath', avatarImgPath))
       ..add(DiagnosticsProperty('gender', gender))
       ..add(DiagnosticsProperty('email', email))
       ..add(DiagnosticsProperty('age', age))
-      ..add(DiagnosticsProperty('cart', cart));
+      ..add(DiagnosticsProperty('cart', cart))
+      ..add(DiagnosticsProperty('phoneNumber', phoneNumber))
+      ..add(DiagnosticsProperty('userRole', userRole));
   }
 
   @override
@@ -245,18 +298,23 @@ class _$UserImpl with DiagnosticableTreeMixin implements _User {
             other is _$UserImpl &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.uid, uid) || other.uid == uid) &&
+            (identical(other.name, name) || other.name == name) &&
             (identical(other.avatarImgPath, avatarImgPath) ||
                 other.avatarImgPath == avatarImgPath) &&
             (identical(other.gender, gender) || other.gender == gender) &&
             (identical(other.email, email) || other.email == email) &&
             (identical(other.age, age) || other.age == age) &&
-            (identical(other.cart, cart) || other.cart == cart));
+            (identical(other.cart, cart) || other.cart == cart) &&
+            (identical(other.phoneNumber, phoneNumber) ||
+                other.phoneNumber == phoneNumber) &&
+            (identical(other.userRole, userRole) ||
+                other.userRole == userRole));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(
-      runtimeType, id, uid, avatarImgPath, gender, email, age, cart);
+  int get hashCode => Object.hash(runtimeType, id, uid, name, avatarImgPath,
+      gender, email, age, cart, phoneNumber, userRole);
 
   @JsonKey(ignore: true)
   @override
@@ -276,11 +334,14 @@ abstract class _User implements User {
   const factory _User(
       {required final int id,
       required final String uid,
+      final String? name,
       @JsonKey(name: 'avatar_img_path') required final String avatarImgPath,
       required final num? gender,
       required final String? email,
       required final int? age,
-      required final Cart? cart}) = _$UserImpl;
+      required final Cart? cart,
+      @JsonKey(name: 'phone_number') required final String phoneNumber,
+      required final String userRole}) = _$UserImpl;
 
   factory _User.fromJson(Map<String, dynamic> json) = _$UserImpl.fromJson;
 
@@ -288,6 +349,8 @@ abstract class _User implements User {
   int get id;
   @override
   String get uid;
+  @override
+  String? get name;
   @override
   @JsonKey(name: 'avatar_img_path')
   String get avatarImgPath;
@@ -299,6 +362,11 @@ abstract class _User implements User {
   int? get age;
   @override
   Cart? get cart;
+  @override
+  @JsonKey(name: 'phone_number')
+  String get phoneNumber;
+  @override
+  String get userRole;
   @override
   @JsonKey(ignore: true)
   _$$UserImplCopyWith<_$UserImpl> get copyWith =>

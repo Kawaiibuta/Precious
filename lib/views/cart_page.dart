@@ -3,11 +3,13 @@ import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:precious/models/cart/cart.dart';
 import 'package:precious/presenters/cart_presenter.dart';
 import 'package:precious/resources/app_export.dart';
 import 'package:precious/resources/widgets/cart_item.dart';
 import 'package:precious/models/cart_item/cart_item.dart' as model;
+import 'package:precious/views/check_out_page.dart';
 import 'package:precious/views/item_detail_page.dart';
 
 class CartPage extends StatefulWidget {
@@ -18,9 +20,11 @@ class CartPage extends StatefulWidget {
 }
 
 class _CartPageState extends State<CartPage> implements CartPageContract {
-  List<model.CartItem>? cartList;
+  Cart? _cart;
 
   late CartPagePresenter _presenter;
+
+  final _numberFormat = NumberFormat.compact(locale: 'vi');
 
   var selectedQuantity = 1;
 
@@ -33,7 +37,7 @@ class _CartPageState extends State<CartPage> implements CartPageContract {
 
   @override
   Widget build(BuildContext context) {
-    if (cartList == null) {
+    if (_cart == null) {
       return Center(
           child: CircularProgressIndicator(
         color: Theme.of(context).colorScheme.primary,
@@ -71,10 +75,9 @@ class _CartPageState extends State<CartPage> implements CartPageContract {
                     icon: const Icon(Icons.deselect))
               ],
             ),
-            cartList == null || cartList!.isEmpty
+            _cart == null || _cart!.items.isEmpty
                 ? Padding(
-                    padding:
-                        EdgeInsets.only(top: 340.v),
+                    padding: EdgeInsets.only(top: 340.v),
                     child: Text(
                       AppLocalizations.of(context)!.empty_cart_msg,
                       textAlign: TextAlign.center,
@@ -98,7 +101,7 @@ class _CartPageState extends State<CartPage> implements CartPageContract {
                             ))
                       ],
                     ),
-                    for (var cartItem in cartList!)
+                    for (var cartItem in _cart!.items)
                       Padding(
                         padding: EdgeInsets.only(bottom: 5.v),
                         child: CartItem(
@@ -119,16 +122,10 @@ class _CartPageState extends State<CartPage> implements CartPageContract {
                         children: [
                           Text(
                               AppLocalizations.of(context)!
-                                  .total_buy_item_text(cartList!.length),
+                                  .total_buy_item_text(_cart!.items.length),
                               style: Theme.of(context).textTheme.bodyMedium),
                           Text(
-                              AppLocalizations.of(context)!.currency_value(
-                                  cartList!.fold<double>(
-                                      0,
-                                      (previousValue, element) =>
-                                          previousValue +
-                                          element.variant.price *
-                                              element.quantity)),
+                              '${_numberFormat.format(_cart!.items.fold<double>(0, (previousValue, element) => previousValue + element.variant.price * element.quantity))} đ',
                               style: Theme.of(context).textTheme.headlineSmall)
                         ],
                       ),
@@ -163,7 +160,7 @@ class _CartPageState extends State<CartPage> implements CartPageContract {
 
   @override
   void onGetCartComplete(Cart cart) {
-    setState(() => cartList = cart.items);
+    setState(() => _cart = cart);
   }
 
   @override
@@ -187,7 +184,10 @@ class _CartPageState extends State<CartPage> implements CartPageContract {
   }
 
   void _checkOut() {
-    if (cartList != null && cartList!.isNotEmpty) {}
+    if (_cart != null && _cart!.items.isNotEmpty) {
+      Navigator.of(context)
+          .push(MaterialPageRoute(builder: (_) => CheckOutPage(_cart!)));
+    }
   }
 
   void _callQuantityChange(model.CartItem cartItem, double quantity) {

@@ -61,4 +61,8 @@ class SettingPresenter {
   Future<void> getLocale() async {
     await _repos.getLocale().then((value) => locale = value);
   }
+
+  void removeFirstRun() async {
+    await _repos.removeFirstRun();
+  }
 }
