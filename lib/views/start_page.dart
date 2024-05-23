@@ -1,9 +1,9 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:precious/presenters/setting_presenter.dart';
+import 'package:precious/resources/app_export.dart';
 import 'package:precious/resources/widgets/start_image_clip_path.dart';
 import 'package:precious/views/login_or_sign_up_page.dart';
-import 'package:precious/views/login_page.dart';
 
 class StartPage extends StatefulWidget {
   static const name = "/start";
@@ -24,6 +24,12 @@ class _StartPageState extends State<StartPage>
 
   final pageCount = 3;
 
+  final imagePathList = [
+    'assets/images/necklace.jpg',
+    'assets/images/necklace.jpg',
+    'assets/images/necklace.jpg',
+  ];
+
   bool hasRun = false;
 
   int currentPageIndex = 0;
@@ -38,11 +44,12 @@ class _StartPageState extends State<StartPage>
     return SafeArea(
       child: Scaffold(
         body: Container(
-          margin: const EdgeInsets.all(16.0),
-          child: Column(
+          margin: EdgeInsets.all(16.h),
+          child: Flex(
+            direction: Axis.vertical,
             children: [
               SizedBox(
-                height: 690,
+                height: 670.v,
                 child: PageView(
                   controller: _pageController,
                   physics: const NeverScrollableScrollPhysics(),
@@ -55,55 +62,56 @@ class _StartPageState extends State<StartPage>
                   }),
                 ),
               ),
-              const SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  SizedBox(
-                    width: 72,
-                    child: CarouselSlider(
-                        carouselController: _controller,
-                        options: CarouselOptions(
-                          height: 8,
-                          initialPage: (pageCount / 2).floor(),
-                          viewportFraction: 1 / pageCount,
-                          autoPlay: false,
-                          scrollPhysics: const NeverScrollableScrollPhysics(),
-                        ),
-                        items: [
-                          for (int i = 0; i < pageCount; i++)
-                            Container(
-                              width: i == 0 ? 32 : 8,
-                              height: 8,
-                              padding: const EdgeInsets.all(4),
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(4.0),
-                                  color: i == 0 ? Colors.black : Colors.grey),
-                            )
-                        ]),
-                  ),
-                  IconButton(
-                      iconSize: 60.0,
-                      onPressed: () {
-                        if (currentPageIndex == pageCount - 1) {
-                          Navigator.of(context)
-                              .pushReplacementNamed(LoginOrSignUpPage.name);
-                        }
-                        currentPageIndex++;
-                        _pageController
-                            .nextPage(
-                                duration: pageAnimDuration,
-                                curve: Curves.linear)
-                            .then((_) => setState(() {}));
-                        _controller.previousPage(
-                            duration: pageAnimDuration,
-                            curve: Curves.decelerate);
-                      },
-                      icon: Icon(currentPageIndex >= pageCount - 1
-                          ? Icons.check_circle
-                          : Icons.arrow_circle_right_rounded))
-                ],
+              Expanded(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    SizedBox(
+                      width: 72,
+                      child: CarouselSlider(
+                          carouselController: _controller,
+                          options: CarouselOptions(
+                            height: 8,
+                            initialPage: (pageCount / 2).floor(),
+                            viewportFraction: 1 / pageCount,
+                            autoPlay: false,
+                            scrollPhysics: const NeverScrollableScrollPhysics(),
+                          ),
+                          items: [
+                            for (int i = 0; i < pageCount; i++)
+                              Container(
+                                width: i == 0 ? 32 : 8,
+                                height: 8,
+                                padding: const EdgeInsets.all(4),
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(4.0),
+                                    color: i == 0 ? Colors.black : Colors.grey),
+                              )
+                          ]),
+                    ),
+                    IconButton(
+                        iconSize: 60.h,
+                        onPressed: () {
+                          if (currentPageIndex == pageCount - 1) {
+                            _updateFirstRun();
+                            Navigator.of(context)
+                                .pushReplacementNamed(LoginOrSignUpPage.name);
+                          }
+                          currentPageIndex++;
+                          _pageController
+                              .nextPage(
+                                  duration: pageAnimDuration,
+                                  curve: Curves.linear)
+                              .then((_) => setState(() {}));
+                          _controller.previousPage(
+                              duration: pageAnimDuration,
+                              curve: Curves.decelerate);
+                        },
+                        icon: Icon(currentPageIndex >= pageCount - 1
+                            ? Icons.check_circle
+                            : Icons.arrow_circle_right_rounded))
+                  ],
+                ),
               )
             ],
           ),
@@ -139,5 +147,9 @@ class _StartPageState extends State<StartPage>
                     .copyWith(color: Colors.black54))),
       ],
     );
+  }
+
+  void _updateFirstRun() {
+    SettingPresenter().removeFirstRun();
   }
 }

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:precious/data_sources/bottom_navigation_route.dart';
+import 'package:flutter/services.dart';
+import 'package:precious/resources/widgets/bottom_navigation_route.dart';
+import 'package:precious/resources/app_export.dart';
 import 'package:precious/resources/widgets/custom_bottom_navigation.dart';
 import 'package:precious/views/cart_page.dart';
 import 'package:precious/views/landing_page.dart';
@@ -8,6 +10,7 @@ import 'package:precious/views/search_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
+
   static const name = '/homePage';
 
   @override
@@ -20,17 +23,29 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+        // Update titles with the current localization
     routes = [
       {
-        "title": "Home",
+        "title": AppLocalizations.of(context)!.home_bottom_title,
         "icon": Icons.home,
-        "route": LandingPage(
-          changePage: _handleChangePage,
-        )
       },
-      {"title": "Search", "icon": Icons.search, "route": SearchPage()},
-      {"title": "Cart", "icon": Icons.shopping_cart, "route": CartPage()},
-      {"title": "Profile", "icon": Icons.person, "route": ProfilePage()},
+      {
+        "title": AppLocalizations.of(context)!.search_bottom_title,
+        "icon": Icons.search,
+      },
+      {
+        "title": AppLocalizations.of(context)!.cart_bottom_title,
+        "icon": Icons.shopping_cart, 
+      },
+      {
+        "title": AppLocalizations.of(context)!.profile_bottom_title,
+        "icon": Icons.person,
+      },
     ];
   }
 
@@ -40,14 +55,16 @@ class _HomePageState extends State<HomePage> {
         .map((e) => BottomNavigationRoute(
             icon: e['icon'] as IconData, title: e['title'] as String))
         .toList();
-    return Scaffold(
-      bottomNavigationBar: CustomBottomNavigation(
-        routes: bottomRoute,
-        onIndexChange: (value) => _handleIndexChange(value),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.only(left: 10.0, right: 10.0),
-        child: Center(child: routes[selected]['route'] as Widget),
+    return SafeArea(
+      child: Scaffold(
+        bottomNavigationBar: CustomBottomNavigation(
+          routes: bottomRoute,
+          onIndexChange: (value) => _handleIndexChange(value),
+        ),
+        body: Padding(
+          padding: const EdgeInsets.only(left: 10.0, right: 10.0),
+          child: Center(child: getRoute()),
+        ),
       ),
     );
   }
@@ -63,4 +80,12 @@ class _HomePageState extends State<HomePage> {
       selected = i;
     });
   }
+
+  // Initialized selected page only
+  Widget getRoute() => switch (selected) {
+    0 => LandingPage(changePage: _handleChangePage),
+    1 => const SearchPage(),
+    2 => const CartPage(),
+    _ => const ProfilePage()
+  };
 }

@@ -1,15 +1,26 @@
+import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:precious/data_sources/user_repository.dart';
+import 'package:precious/resources/endpoints.dart';
+import 'package:precious/resources/utils/dio_utils.dart';
+import 'package:precious/models/user/user.dart' as model;
 
 class LoginRepository {
-  Future<void> login(String email, String password) async {
+  Future<model.User> login(String email, String password) async {
     var auth = FirebaseAuth.instance;
-    await auth.signInWithEmailAndPassword(email: email, password: password);
+    var credential =
+        await auth.signInWithEmailAndPassword(email: email, password: password);
+    return await UserRepository().getUser();
   }
 
-  Future<void> loginWithGoogle() async {
+  Future<model.User> loginWithGoogle() async {
     var googleSignIn = GoogleSignIn();
 
+    // // Logout the user to force the user to choose an account
+    if (await googleSignIn.isSignedIn()) {
+      await googleSignIn.signOut();
+    }
     // Trigger the authentication flow
     var googleUser = await googleSignIn.signIn();
 
@@ -24,15 +35,19 @@ class LoginRepository {
       );
 
       // Sign in using the credential
-      await FirebaseAuth.instance.signInWithCredential(credential);
+      var userCredential =
+          await FirebaseAuth.instance.signInWithCredential(credential);
 
-      await FirebaseAuth.instance.currentUser!
-          .updateDisplayName(googleUser.displayName);
-      await FirebaseAuth.instance.currentUser!
-          .updatePhotoURL(googleUser.photoUrl);
+      // Send id token to the server API
+      return await UserRepository().getUser();
     } else {
       // Throw an exception notify that sign up process was aborted
       throw FirebaseAuthException(code: 'sign-up-abort');
     }
+  }
+
+  Future<void> logOut() async {
+    await GoogleSignIn().signOut();
+    await FirebaseAuth.instance.signOut();
   }
 }

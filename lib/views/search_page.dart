@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:precious/data_sources/product/product.dart';
-import 'package:precious/data_sources/product_category/product_category.dart';
+import 'package:precious/models/product/product.dart';
+import 'package:precious/models/product_category/product_category.dart';
 import 'package:precious/presenters/category_presenter.dart';
 import 'package:precious/presenters/product_presenter.dart';
 import 'package:precious/presenters/type_presenter.dart';
-import 'package:precious/data_sources/type/type.dart';
+import 'package:precious/models/type/type.dart';
 import 'package:precious/resources/widgets/custom_search_bar.dart';
 import 'package:precious/resources/widgets/product_card.dart';
 

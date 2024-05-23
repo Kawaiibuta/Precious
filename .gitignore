@@ -1,6 +1,7 @@
 # See https://www.dartlang.org/guides/libraries/private-files
 
 # Files and directories created by pub
+.idea/
 .dart_tool/
 .packages
 build/
@@ -13,6 +14,9 @@ doc/api/
 
 # dotenv environment variables file
 .env*
+
+# vscode config folder
+.vscode/
 
 # Avoid committing generated Javascript files:
 *.dart.js

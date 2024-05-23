@@ -2,8 +2,8 @@ import 'dart:math';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:precious/data_sources/product/product.dart';
-import 'package:precious/data_sources/variant/variant.dart';
+import 'package:precious/models/product/product.dart';
+import 'package:precious/models/variant/variant.dart';
 import 'package:precious/presenters/product_presenter.dart';
 
 class ProductCardAdmin extends StatefulWidget {

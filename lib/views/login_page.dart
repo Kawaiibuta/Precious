@@ -1,8 +1,11 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:precious/models/user/user.dart';
 import 'package:precious/presenters/login_presenter.dart';
 import 'package:precious/resources/app_export.dart';
 import 'package:precious/resources/widgets/custom_elevated_button.dart';
+import 'package:precious/views/admin/home_page_admin.dart';
+import 'package:precious/views/home_page.dart';
 
 class LoginPage extends StatefulWidget {
   static const name = '/login';
@@ -120,7 +123,7 @@ class _LoginPageState extends State<LoginPage> implements LoginPageContract {
                         text: AppLocalizations.of(context)!.login,
                         buttonStyle: ElevatedButton.styleFrom(
                             backgroundColor: Colors.black),
-                        buttonTextStyle: AppTheme.textTheme.labelLarge,
+                        buttonTextStyle: Theme.of(context).textTheme.labelLarge,
                         onPressed: _loginWithPassword),
                     SizedBox(height: 8.v),
                     Row(
@@ -152,7 +155,9 @@ class _LoginPageState extends State<LoginPage> implements LoginPageContract {
                           width: 32.h, height: 32.v, fit: BoxFit.cover),
                       buttonStyle: ElevatedButton.styleFrom(
                           backgroundColor: Colors.white),
-                      buttonTextStyle: AppTheme.textTheme.labelLarge!
+                      buttonTextStyle: Theme.of(context)
+                          .textTheme
+                          .labelLarge!
                           .copyWith(color: Colors.black),
                       onPressed: _loginWithGoogle,
                     ),
@@ -166,34 +171,55 @@ class _LoginPageState extends State<LoginPage> implements LoginPageContract {
     );
   }
 
-  void _loginWithPassword() =>
-      _presenter.login(_emailController.text, _passwordController.text);
+  void _loginWithPassword() {
+    callLoadingScreen();
+    _presenter.login(_emailController.text, _passwordController.text);
+  }
 
-  void _loginWithGoogle() => _presenter.loginWithGoogle();
+  void _loginWithGoogle() {
+    callLoadingScreen();
+    _presenter.loginWithGoogle();
+  }
 
   @override
   void onLoginFailed(FirebaseException e) {
+    Navigator.of(context).pop();
+    debugPrint('${e.message}\n${e.stackTrace}');
     switch (e.code) {
-      case 'user-disabled':
+      case 'wrong-password':
+      case 'invalid-email':
+      case 'user-not-found':
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text(
-                AppLocalizations.of(context)!.unexpected_error_msg(e.code))));
+            content: Text(AppLocalizations.of(context)!
+                .email_or_password_incorrect_msg)));
         break;
       case 'network-request-failed':
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: Text(AppLocalizations.of(context)!.network_issue_msg)));
       default:
-        setState(() {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text(AppLocalizations.of(context)!
-                  .email_or_password_incorrect_msg)));
-        });
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(
+                AppLocalizations.of(context)!.unexpected_error_msg(e.code))));
         break;
     }
   }
 
   @override
-  void onLoginSuccess() {
-    // TODO: implement onLoginSuccess
+  void onLoginSuccess(User user) {
+    if (user.userRole == 'USER') {
+      Navigator.of(context)
+          .pushNamedAndRemoveUntil(HomePage.name, (_) => false);
+    } else {
+      Navigator.of(context)
+          .pushNamedAndRemoveUntil(HomePageAdmin.name, (_) => false);
+    }
+  }
+
+  void callLoadingScreen() {
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (_) => const Center(
+            child: CircularProgressIndicator(color: Colors.white)));
   }
 }

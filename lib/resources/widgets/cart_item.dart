@@ -1,7 +1,6 @@
 import 'package:customizable_counter/customizable_counter.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:precious/resources/app_export.dart';
 
 class CartItem extends StatefulWidget {
@@ -19,8 +18,8 @@ class CartItem extends StatefulWidget {
   final String name;
   final double quantity;
   final double maxQuantity;
-  final Function? onQuantityChange;
-  final Function? onTap;
+  final void Function(double)? onQuantityChange;
+  final void Function()? onTap;
   final bool selected;
   @override
   _CartItemState createState() => _CartItemState();
@@ -30,16 +29,14 @@ class _CartItemState extends State<CartItem> {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () {
-        if (widget.onTap != null) widget.onTap!();
-      },
+      onTap: widget.onTap?.call,
       child: Container(
         decoration: BoxDecoration(
             border: widget.selected ? Border.all() : null,
-            borderRadius: BorderRadius.circular(3.0 + 10.0)),
+            borderRadius: BorderRadius.circular(13.h)),
         clipBehavior: Clip.antiAlias,
         child: AnimatedPadding(
-          duration: Duration(milliseconds: 200),
+          duration: const Duration(milliseconds: 200),
           padding: EdgeInsets.all(widget.selected ? 3.0 : 1.0),
           child: Container(
               height: 100,
@@ -57,14 +54,15 @@ class _CartItemState extends State<CartItem> {
                   left: 8.0,
                   child: CustomizableCounter(
                     borderColor: Colors.white,
-                    incrementIcon: Icon(Icons.add),
-                    decrementIcon: Icon(Icons.remove),
+                    incrementIcon: const Icon(Icons.add),
+                    decrementIcon: const Icon(Icons.remove),
                     borderRadius: 500,
                     backgroundColor: Colors.white,
                     showButtonText: false,
                     count: widget.quantity,
                     maxCount: widget.maxQuantity,
-                    onCountChange: _handleOnIncremenet,
+                    minCount: 1,
+                    onCountChange: _handleOnIncrement,
                   ),
                 ),
                 Positioned(
@@ -86,10 +84,10 @@ class _CartItemState extends State<CartItem> {
                     right: 8.0,
                     child: Text(
                       widget.name,
-                      style: GoogleFonts.openSans(
-                          fontWeight: FontWeight.w700,
-                          fontSize: 30,
-                          color: Colors.white),
+                      style: Theme.of(context)
+                          .textTheme
+                          .headlineMedium!
+                          .copyWith(color: Colors.grey),
                     ))
               ])),
         ),
@@ -97,8 +95,11 @@ class _CartItemState extends State<CartItem> {
     );
   }
 
-  void _handleOnIncremenet(double c) {
-    if (c == widget.maxQuantity)
+  void _handleOnIncrement(double c) {
+    if (c == widget.maxQuantity) {
       Fluttertoast.showToast(msg: AppLocalizations.of(context)!.limit_buy);
+      return;
+    }
+    widget.onQuantityChange?.call(c);
   }
 }
