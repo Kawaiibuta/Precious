@@ -13,6 +13,14 @@ abstract class AdminProductContract implements PageContract {
   void onRefreshSuccess();
   @override
   void onDeleteSuccess();
+
+  void onGetMoreItemFail();
+
+  void onStartGetMoreItem();
+
+  void onGetMoreItemSuccess();
+
+  void onEndGetMoreItem();
 }
 
 enum ProductSortOption { priceAsc, priceDesc, nameAsc, nameDesc }
@@ -98,6 +106,8 @@ class AdminProductPresenter implements PagePresenter {
     final response = await ProductRepository.delete(id);
     if (response) {
       _adminProductContract.onDeleteSuccess();
+      selected.clear();
+      multipleSelection = false;
     } else {
       _adminProductContract.onDeleteFail();
     }
@@ -111,5 +121,19 @@ class AdminProductPresenter implements PagePresenter {
 
   void deselect(int i) {
     selected.remove(i);
+  }
+
+  void getMoreItem() {
+    try {
+      if (ProductRepository.maximum) return;
+      _adminProductContract.onStartGetMoreItem();
+      ProductRepository.getAll(more: true);
+      _adminProductContract.onGetMoreItemSuccess();
+    } catch (error) {
+      debugPrint(error.toString());
+      _adminProductContract.onGetMoreItemFail();
+    } finally {
+      _adminProductContract.onEndGetMoreItem();
+    }
   }
 }

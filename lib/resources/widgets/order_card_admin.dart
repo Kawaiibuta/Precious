@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:precious/models/order/order.dart';
@@ -6,33 +7,33 @@ import 'package:precious/resources/app_export.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:precious/views/admin/order_detail_admin.dart';
 
-class OrderCardAdmin extends StatefulWidget {
+//   @override
+//   _OrderCardAdminState createState() => _OrderCardAdminState();
+// }
+
+class OrderCardAdmin extends StatelessWidget {
   const OrderCardAdmin(
       {super.key,
       this.backgroundColor = Colors.transparent,
       required this.order,
-      this.icon = Icons.money});
+      this.icon = Icons.money,
+      this.onBack});
   final Color backgroundColor;
   final Order order;
   final IconData icon;
-  @override
-  _OrderCardAdminState createState() => _OrderCardAdminState();
-}
-
-class _OrderCardAdminState extends State<OrderCardAdmin> {
+  final Function? onBack;
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) => OrderDetailAdmin(
-                  order: widget.order,
-                )));
+        Get.to(OrderDetailAdmin(order: order))?.then((value) {
+          if (onBack != null) onBack!();
+        });
       },
       child: Container(
         height: 100.h,
         padding: EdgeInsets.all(3.0.h),
-        decoration: BoxDecoration(color: widget.backgroundColor),
+        decoration: BoxDecoration(color: backgroundColor),
         child: Stack(
           children: [
             Row(
@@ -43,9 +44,8 @@ class _OrderCardAdminState extends State<OrderCardAdmin> {
                     height: 40.h,
                     clipBehavior: Clip.antiAlias,
                     decoration: const BoxDecoration(shape: BoxShape.circle),
-                    child: widget.order.user != null &&
-                            widget.order.user!.avatar_url != null
-                        ? SvgPicture.network(widget.order.user!.avatar_url!)
+                    child: order.user != null && order.user!.avatar_url != null
+                        ? SvgPicture.network(order.user!.avatar_url!)
                         : const Icon(Icons.person)),
                 DefaultTextStyle(
                   style: GoogleFonts.openSans(color: Colors.black),
@@ -61,21 +61,19 @@ class _OrderCardAdminState extends State<OrderCardAdmin> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              "Hoá đơn mã số ${widget.order.id!}",
+                              "Order with id: ${order.id!}",
                               style: TextStyle(
                                   fontWeight: FontWeight.w700, fontSize: 16.h),
                             ),
                             Container(
                                 padding: EdgeInsets.symmetric(horizontal: 10.h),
+                                margin: EdgeInsets.only(left: 10.h),
                                 decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(200),
-                                    color: widget.order.isPaid
+                                    color: order.isPaid
                                         ? Colors.green.shade200
                                         : Colors.yellow.shade200),
-                                child: Text(
-                                    widget.order.isPaid
-                                        ? "Đã thanh toán"
-                                        : "Chưa thanh toán",
+                                child: Text(order.isPaid ? "Paid" : "Unpaid",
                                     style: GoogleFonts.openSans(
                                         color: Colors.black45,
                                         fontWeight: FontWeight.w500)))
@@ -83,11 +81,11 @@ class _OrderCardAdminState extends State<OrderCardAdmin> {
                         ),
                         Text(
                           DateFormat('yyyy-MM-dd – kk:mm')
-                              .format(widget.order.createAt!),
+                              .format(order.createAt!),
                           style: TextStyle(fontSize: 12.h, color: Colors.grey),
                         ),
                         Text(
-                          "Tình trạng: ${widget.order.status}",
+                          "Tình trạng: ${order.status}",
                           style: TextStyle(fontSize: 12.h, color: Colors.grey),
                         )
                       ],
@@ -99,7 +97,7 @@ class _OrderCardAdminState extends State<OrderCardAdmin> {
             Align(
               alignment: Alignment.bottomRight,
               child: Text(
-                "${widget.order.totalPrice}",
+                "${order.totalPrice}",
                 style: GoogleFonts.openSans(
                     fontSize: 18.h, fontWeight: FontWeight.w600),
               ),

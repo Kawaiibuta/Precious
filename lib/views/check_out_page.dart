@@ -4,7 +4,6 @@ import 'package:intl/intl.dart';
 import 'package:precious/resources/app_export.dart';
 import 'package:precious/models/cart/cart.dart';
 import 'package:precious/resources/widgets/custom_elevated_button.dart';
-import 'package:precious/resources/widgets/product_card_large.dart';
 import 'package:precious/resources/widgets/round_container_box.dart';
 
 class CheckOutPage extends StatefulWidget {

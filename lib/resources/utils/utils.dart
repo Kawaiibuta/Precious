@@ -23,7 +23,6 @@ Variant getVariant(Product product, List<OptionValue> optionList) {
               .map((index) =>
                   variant.variantOptionValues![index].optionValue ==
                   optionList[index])
-              .toList()
               .reduce((value, element) => value && element))
       .toList();
   if (result.isNotEmpty) {

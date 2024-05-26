@@ -1,10 +1,11 @@
+import 'dart:ffi';
 import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
@@ -14,6 +15,7 @@ import 'package:precious/data_sources/product_repository.dart';
 import 'package:precious/models/variant/variant.dart';
 import 'package:precious/main.dart';
 import 'package:precious/resources/app_export.dart';
+import 'package:precious/resources/utils/dio_utils.dart';
 import 'package:precious/resources/utils/utils.dart';
 
 class VariantDialog extends StatefulWidget {
@@ -31,7 +33,7 @@ class _VariantDialogState extends State<VariantDialog> {
   final nameController = TextEditingController();
   final priceController = TextEditingController();
   final quantityController = TextEditingController();
-
+  List<String> modifiedVariantImageList = [];
   @override
   void initState() {
     super.initState();
@@ -41,6 +43,12 @@ class _VariantDialogState extends State<VariantDialog> {
         .toList();
     optionList = widget.product.options.map((e) => e.values[0]).toList();
     variant = getVariant(widget.product, optionList);
+    if (variant != null) {
+      nameController.text = variant!.name;
+      priceController.text = variant!.price.toString();
+      quantityController.text = variant!.quantity.toString();
+      modifiedVariantImageList = variant!.imgPathUrls;
+    }
   }
 
   @override
@@ -52,10 +60,14 @@ class _VariantDialogState extends State<VariantDialog> {
           const Text("Variant"),
           IconButton(
               onPressed: () {
-                nameController.text = "";
-                priceController.text = "";
-                quantityController.text = "";
+                variant = getVariant(widget.product, optionList);
                 imageList.clear();
+                if (variant != null) {
+                  nameController.text = variant!.name;
+                  priceController.text = variant!.price.toString();
+                  quantityController.text = variant!.quantity.toString();
+                  modifiedVariantImageList = variant!.imgPathUrls;
+                }
               },
               icon: const Icon(Icons.restore))
         ],
@@ -91,6 +103,8 @@ class _VariantDialogState extends State<VariantDialog> {
                                         variant!.price.toString();
                                     quantityController.text =
                                         variant!.quantity.toString();
+                                    modifiedVariantImageList =
+                                        variant!.imgPathUrls;
                                   }
                                 }
                               });
@@ -161,8 +175,11 @@ class _VariantDialogState extends State<VariantDialog> {
                 Wrap(
                   children: [
                     if (variant != null)
-                      ...variant!.imgPathUrls.map((e) {
+                      ...modifiedVariantImageList.map((e) {
                         return InkWell(
+                          onTap: () => setState(() {
+                            modifiedVariantImageList.remove(e);
+                          }),
                           child: Container(
                             width: 100,
                             height: 100,
@@ -181,6 +198,9 @@ class _VariantDialogState extends State<VariantDialog> {
                       }),
                     ...imageList.map((e) {
                       return InkWell(
+                        onTap: () => setState(() {
+                          imageList.remove(e);
+                        }),
                         child: Container(
                           width: 100,
                           height: 100,
@@ -261,6 +281,15 @@ class _VariantDialogState extends State<VariantDialog> {
         price: double.parse(priceController.text),
         quantity: int.parse(quantityController.text));
     var imageMap = <String, Uint8List>{};
+    for (var image in modifiedVariantImageList) {
+      final response = await dio.get(image,
+          options: Options(responseType: ResponseType.bytes));
+      if (response.statusCode == 200) {
+        imageMap.addEntries(<String, Uint8List>{
+          image.split("/").last: response.data as Uint8List
+        }.entries);
+      }
+    }
     for (var image in imageList) {
       imageMap.addEntries(
           <String, Uint8List>{image.name: await image.readAsBytes()}.entries);
@@ -268,12 +297,11 @@ class _VariantDialogState extends State<VariantDialog> {
     ProductRepository.addVariant(widget.product.id!, newVariant, imageMap)
         .then((value) {
       if (value != null) {
-        Fluttertoast.showToast(msg: "Successfully update variant");
-        Get.back();
-        Get.back();
+        Navigator.of(context).popUntil((route) => route.isFirst);
       } else {
-        Fluttertoast.showToast(
-            msg: "Some error has ocurred. Please wait a moment and try again.");
+        Get.snackbar("Update variant",
+            "Some error has ocurred. Please wait a moment and try again.",
+            backgroundColor: Colors.white);
       }
     });
   }

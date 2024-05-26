@@ -23,7 +23,7 @@ class _OrderPageAdminState extends State<OrderPageAdmin>
   @override
   void initState() {
     super.initState();
-    _presenter = AdminOrderPresenter(this);
+    _presenter = Get.put(AdminOrderPresenter(this));
     WidgetsBinding.instance.addPostFrameCallback((_) => _presenter.init());
   }
 
@@ -40,7 +40,7 @@ class _OrderPageAdminState extends State<OrderPageAdmin>
               top: 20.0,
             ),
             child: SingleChildScrollView(
-              physics: ScrollPhysics(),
+              physics: const ScrollPhysics(),
               child: Column(children: [
                 CustomSearchBar(
                   onChange: (p0) {
@@ -138,7 +138,10 @@ class _OrderPageAdminState extends State<OrderPageAdmin>
           index -= seperatorNumber;
           return Padding(
             padding: EdgeInsets.symmetric(horizontal: 5.h),
-            child: OrderCardAdmin(order: list[index]),
+            child: OrderCardAdmin(
+              order: list[index],
+              onBack: () => setState(() {}),
+            ),
           );
         },
         itemCount: list.length + seperatorList.length);

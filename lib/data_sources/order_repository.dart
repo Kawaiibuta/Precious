@@ -97,16 +97,26 @@ class OrderRepository {
   }
 
   static Future<Order?> update(int id, OrderStatus status) async {
-    final data = json.encode({"status": status.toString()});
-    final response = await dio
-        .request(EndPoint.orderDetail(id),
-            options: Options(method: "PATCH", headers: headers), data: data)
-        .then((value) => Order.fromJson(value.data))
-        .catchError((error) {
-      debugPrint(error);
+    final data = json.encode({"status": status.toString().substring(12)});
+    final response = await dio.request(EndPoint.orderDetail(id),
+        options: Options(method: "PATCH", headers: headers), data: data);
+    if (response.statusCode == 200) {
+      return await getOne(id);
+    } else {
+      debugPrint(response.data.toString());
       return null;
-    });
-    list.update(id, (value) => response);
-    return response;
+    }
+  }
+
+  static Future<Order?> updatePaid(int id, bool bool) async {
+    final data = json.encode({"is_paid": bool});
+    final response = await dio.request(EndPoint.orderDetail(id),
+        options: Options(method: "PATCH", headers: headers), data: data);
+    if (response.statusCode == 200) {
+      return await getOne(id);
+    } else {
+      debugPrint(response.data.toString());
+      return null;
+    }
   }
 }

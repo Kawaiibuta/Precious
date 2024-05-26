@@ -7,25 +7,33 @@ import 'package:precious/models/product/product.dart';
 import 'package:precious/models/variant/variant.dart';
 import 'package:precious/resources/endpoints.dart';
 import 'package:precious/resources/utils/dio_utils.dart';
+import 'package:http_parser/http_parser.dart';
 
 class ProductRepository {
   static Map<int, Product> list = {};
   static const quantityForEach = 20;
+  static bool maximum = false;
+
   static Future<List<Product>> getAll(
-      {int start = 0,
+      {bool more = false,
       int quantity = quantityForEach,
       int type = -1,
       bool reset = false}) async {
-    if (start <= 0) start = list.length + 1;
     debugPrint(EndPoint.productWithParam(
-        start: start, quantity: quantity, type: type));
+        start: more ? list.length + 1 : 1,
+        quantity: (more || list.isEmpty) ? quantityForEach : list.length,
+        type: type));
+    if (maximum) return list.values.toList();
     final result = await dio
         .request(
             EndPoint.productWithParam(
-                start: start, quantity: quantity, type: type),
+                start: more ? list.length + 1 : 1,
+                quantity:
+                    (more || list.isEmpty) ? quantityForEach : list.length,
+                type: type),
             options: Options(
               method: 'GET',
-              headers: headers as Map<String, dynamic>,
+              headers: headers,
             ))
         .then((value) => (value.data as List).map((e) {
               return Product.fromJson(e as Map<String, dynamic>);
@@ -34,14 +42,23 @@ class ProductRepository {
       debugPrint(e.toString());
       return <Product>[];
     });
-    for (var element in result) {
-      list.addEntries(<int, Product>{element.id!: element}.entries);
+    if (result.isEmpty) {
+      maximum = true;
     }
+    for (var element in result) {
+      if (list.containsKey(element.id)) {
+        list.update(element.id!, (value) => element);
+      } else {
+        if (element.id! == 1) debugPrint("Product id 1: $element");
+        list.addEntries(<int, Product>{element.id!: element}.entries);
+      }
+    }
+    debugPrint("List after getAll: ${list.keys.toString()}");
     return result;
   }
 
   static Future<Product?> getOne(int id, {detail = true}) async {
-    if ((list.containsKey(id) && list[id]!.options.isNotEmpty) || !detail) {
+    if ((list.containsKey(id) && list[id]!.variants.isNotEmpty) || !detail) {
       return list[id];
     }
 
@@ -148,11 +165,14 @@ class ProductRepository {
     var data = FormData.fromMap({
       ...map,
       "product_id": productId,
-      "img[]": images
-          .map((key, value) =>
-              MapEntry(key, MultipartFile.fromBytes(value, filename: key)))
-          .values
     });
+    for (var file in images.keys) {
+      data.files.addAll([
+        MapEntry(
+            "img[]", MultipartFile.fromBytes(images[file]!, filename: file)),
+      ]);
+    }
+    debugPrint(data.fields.toString());
     final response = await dio
         .request(EndPoint.productVariant(value.id!),
             options: Options(
@@ -165,8 +185,13 @@ class ProductRepository {
       return Variant.fromJson(value.data);
     }).catchError((error) {
       debugPrint(error.response.toString());
+      return Variant(name: "name", productId: productId);
     });
-    list[productId]!.variants.add(response);
+    if (response.id != null) {
+      final result = await getOne(productId);
+      if (result != null) list.update(productId, (value) => result);
+    }
+
     return response;
   }
 

@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:precious/models/order/order.dart';
 import 'package:precious/data_sources/order_repository.dart';
@@ -18,7 +19,7 @@ class OrderDetailAdmin extends StatefulWidget {
 
 class _OrderDetailAdminState extends State<OrderDetailAdmin>
     implements OrderDetailContract {
-  late OrderDetailPresenter _presenter;
+  OrderDetailPresenter? _presenter;
 
   bool loading = true;
   bool error = false;
@@ -26,7 +27,7 @@ class _OrderDetailAdminState extends State<OrderDetailAdmin>
   void initState() {
     super.initState();
     _presenter = OrderDetailPresenter(widget.order, contract: this);
-    _presenter.init();
+    _presenter!.init();
   }
 
   @override
@@ -40,7 +41,7 @@ class _OrderDetailAdminState extends State<OrderDetailAdmin>
         ),
       ),
       body: SafeArea(
-        child: loading || error
+        child: _presenter == null || loading || error
             ? Center(
                 child: error
                     ? const Text("Some error has happened.")
@@ -73,7 +74,7 @@ class _OrderDetailAdminState extends State<OrderDetailAdmin>
                                         Padding(
                                           padding: const EdgeInsets.all(8.0),
                                           child: Text(
-                                            "+${widget.order.totalPrice}",
+                                            "+${_presenter!.order.totalPrice}",
                                             style: GoogleFonts.openSans(
                                                 fontSize: 30.0.h,
                                                 fontWeight: FontWeight.bold),
@@ -95,13 +96,11 @@ class _OrderDetailAdminState extends State<OrderDetailAdmin>
                                                     borderRadius:
                                                         BorderRadius.circular(
                                                             200),
-                                                    color: widget
-                                                                .order.status ==
-                                                            "PENDING"
-                                                        ? Colors.green.shade200
-                                                        : Colors.red.shade200),
-                                                child:
-                                                    Text(widget.order.status)),
+                                                    color: getStatusColor(
+                                                        _presenter!
+                                                            .order.status)),
+                                                child: Text(
+                                                    _presenter!.order.status)),
                                           ]),
                                     ),
                                     Padding(
@@ -111,7 +110,7 @@ class _OrderDetailAdminState extends State<OrderDetailAdmin>
                                               MainAxisAlignment.spaceBetween,
                                           children: [
                                             const Text("Thời gian"),
-                                            Text(widget.order.createAt
+                                            Text(_presenter!.order.createAt
                                                 .toString()),
                                           ]),
                                     ),
@@ -122,7 +121,8 @@ class _OrderDetailAdminState extends State<OrderDetailAdmin>
                                               MainAxisAlignment.spaceBetween,
                                           children: [
                                             const Text("Mã đơn hàng"),
-                                            Text((widget.order.id).toString()),
+                                            Text((_presenter!.order.id)
+                                                .toString()),
                                           ]),
                                     ),
                                     Padding(
@@ -132,7 +132,7 @@ class _OrderDetailAdminState extends State<OrderDetailAdmin>
                                               MainAxisAlignment.spaceBetween,
                                           children: [
                                             const Text("Số lượng sản phầm"),
-                                            Text(widget.order.items
+                                            Text(_presenter!.order.items
                                                 .map((e) => e.quantity)
                                                 .reduce((value, element) =>
                                                     value + element)
@@ -142,7 +142,7 @@ class _OrderDetailAdminState extends State<OrderDetailAdmin>
                                   ],
                                 ),
                               ),
-                              if (!widget.order.isPaid)
+                              if (!_presenter!.order.isPaid)
                                 Container(
                                   height: 50.h,
                                   width: double.infinity,
@@ -181,17 +181,17 @@ class _OrderDetailAdminState extends State<OrderDetailAdmin>
                                         decoration: const BoxDecoration(
                                             shape: BoxShape.circle),
                                         clipBehavior: Clip.antiAlias,
-                                        child: _presenter.user != null &&
-                                                _presenter.user!.avatar_url !=
+                                        child: _presenter!.user != null &&
+                                                _presenter!.user!.avatar_url !=
                                                     null
                                             ? SvgPicture.network(
-                                                _presenter.user!.avatar_url!)
+                                                _presenter!.user!.avatar_url!)
                                             : const Icon(Icons.person),
                                       ),
                                       Padding(
                                         padding: const EdgeInsets.all(8.0),
                                         child: Text(
-                                          _presenter.user!.id.toString(),
+                                          _presenter!.user!.id.toString(),
                                           style: GoogleFonts.openSans(
                                               fontSize: 30.0.h,
                                               fontWeight: FontWeight.bold),
@@ -207,8 +207,9 @@ class _OrderDetailAdminState extends State<OrderDetailAdmin>
                                           MainAxisAlignment.spaceBetween,
                                       children: [
                                         const Text("Tuổi"),
-                                        Text((_presenter.user!.age ?? "Unknown")
-                                            .toString()),
+                                        Text(
+                                            (_presenter!.user!.age ?? "Unknown")
+                                                .toString()),
                                       ]),
                                 ),
                                 Padding(
@@ -218,7 +219,7 @@ class _OrderDetailAdminState extends State<OrderDetailAdmin>
                                           MainAxisAlignment.spaceBetween,
                                       children: [
                                         const Text("Email"),
-                                        Text((_presenter.user!.email ??
+                                        Text((_presenter!.user!.email ??
                                                 "Unknown")
                                             .toString()),
                                       ]),
@@ -228,7 +229,9 @@ class _OrderDetailAdminState extends State<OrderDetailAdmin>
                                   width: double.infinity,
                                   color: Colors.black,
                                   child: TextButton(
-                                    onPressed: () {},
+                                    onPressed: () {
+                                      _presenter!.contactUser();
+                                    },
                                     child: Text(
                                       "Contact",
                                       style: GoogleFonts.openSans(
@@ -297,15 +300,19 @@ class _OrderDetailAdminState extends State<OrderDetailAdmin>
                       )
                     ],
                   ),
-                  if (widget.order.status == OrderStatus.PENDING.toString() ||
-                      widget.order.status == OrderStatus.PROCESSING.toString())
+                  if (_presenter!.order.status == "PENDING" ||
+                      _presenter!.order.status == "PROCESSING")
                     Padding(
                       padding: EdgeInsets.only(bottom: 20.h),
                       child: Align(
                         alignment: Alignment.bottomCenter,
                         child: OutlinedButton(
                           onPressed: () {
-                            _presenter.update(OrderStatus.PROCESSING);
+                            if (_presenter!.order.status == "PENDING") {
+                              _presenter!.update(OrderStatus.PROCESSING);
+                            } else {
+                              _presenter!.update(OrderStatus.COMPLETED);
+                            }
                           },
                           style: ButtonStyle(
                             backgroundColor:
@@ -316,7 +323,7 @@ class _OrderDetailAdminState extends State<OrderDetailAdmin>
                                         BorderRadius.circular(10.0.h))),
                           ),
                           child: Text(
-                            "Accept order",
+                            "${_presenter!.order.status == "PENDING" ? "Accept" : "Complete"} order",
                             style: GoogleFonts.openSans(
                                 fontSize: 16.h,
                                 color: Colors.white,
@@ -334,7 +341,7 @@ class _OrderDetailAdminState extends State<OrderDetailAdmin>
   Future<List<Widget>> buildOrderedItem() async {
     final productPresenter = ProductPresenter();
     var result = <Widget>[];
-    for (var item in widget.order.items) {
+    for (var item in _presenter!.order.items) {
       final product = await productPresenter.getOne(item.id!, detail: true);
       result.add(Row(
         mainAxisAlignment: MainAxisAlignment.start,
@@ -393,19 +400,43 @@ class _OrderDetailAdminState extends State<OrderDetailAdmin>
         context: context,
         builder: (context) => AlertDialog(
               title: const Text("Payment"),
+              backgroundColor: Colors.white,
               content: Column(
                 mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   TextButton.icon(
-                      onPressed: () {},
-                      icon: const ImageIcon(AssetImage(
-                          "assets/images/momo-primary-logo/MoMo Primary Logo/png/momo_icon_square_pinkbg_RGB.png")),
-                      label: const Text("Thanh toán qua momo."))
+                      onPressed: () {
+                        OrderRepository.pay(
+                                _presenter!.order.id!, PaymentMethod.cash)
+                            .then((value) => launchUrl(Uri.parse(value)));
+                      },
+                      icon: Image.asset(
+                        "assets/images/momo.png",
+                        width: 50.h,
+                        height: 50.h,
+                      ),
+                      label: Padding(
+                        padding: EdgeInsets.only(left: 8.h),
+                        child: const Text("Pay through Momo."),
+                      )),
+                  TextButton.icon(
+                      onPressed: () {
+                        _presenter!.updateIsPaid(true);
+                        Get.back();
+                      },
+                      icon: Image.asset(
+                        "assets/images/payed_icon.png",
+                        width: 50.h,
+                        height: 50.h,
+                      ),
+                      label: Padding(
+                        padding: EdgeInsets.only(left: 8.h),
+                        child: const Text("Already paid."),
+                      ))
                 ],
               ),
             ));
-    OrderRepository.pay(widget.order.id!, PaymentMethod.cash)
-        .then((value) => launchUrl(Uri.parse(value)));
   }
 
   @override
@@ -434,13 +465,23 @@ class _OrderDetailAdminState extends State<OrderDetailAdmin>
 
   @override
   onUpdateFail() {
-    // TODO: implement onUpdateFail
-    throw UnimplementedError();
+    Get.snackbar("ERROR", "An error has happened.");
   }
 
   @override
   onUpdateSuccess() {
-    // TODO: implement onUpdateSuccess
-    throw UnimplementedError();
+    Get.snackbar("Done updating order", "Successfully update order.");
+  }
+
+  getStatusColor(String status) {
+    if (status == "PENDING") return Colors.blueGrey.shade300;
+    if (status == "PROCESSING") return Colors.yellow.shade400;
+    if (status == "COMPLETED") return Colors.green.shade400;
+    return Colors.red.shade300;
+  }
+
+  @override
+  void onContactFail() {
+    Get.snackbar("Error", "Cannot contact to the user");
   }
 }

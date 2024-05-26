@@ -11,9 +11,7 @@ class ProductPresenter {
       return productList.values.toList();
     }
     debugPrint("get Product");
-    final result = await ProductRepository.getAll(
-            start: productList.length + 1, quantity: quantityForEach)
-        .then((e) {
+    final result = await ProductRepository.getAll().then((e) {
       for (var element in e) {
         productList.addEntries(<int, Product>{element.id!: element}.entries);
       }

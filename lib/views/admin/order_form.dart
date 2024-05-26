@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 
 import 'package:google_fonts/google_fonts.dart';
@@ -17,7 +16,6 @@ import 'package:precious/data_sources/product_repository.dart';
 import 'package:precious/models/user/user.dart';
 import 'package:precious/data_sources/user_repository.dart';
 import 'package:precious/models/variant/variant.dart';
-import 'package:precious/main.dart';
 import 'package:precious/presenters/order_form_presenter.dart';
 import 'package:precious/resources/app_export.dart';
 import 'package:precious/resources/utils/utils.dart';
@@ -418,7 +416,8 @@ class _OrderFormState extends State<OrderForm> implements OrderFormContract {
 
   @override
   onInitFail() {
-    Fluttertoast.showToast(msg: "Some error has happened.");
+    Get.snackbar("Error", "Some error has happened.",
+        backgroundColor: Colors.white);
     Get.back();
   }
 
@@ -429,7 +428,8 @@ class _OrderFormState extends State<OrderForm> implements OrderFormContract {
 
   @override
   onResetFail() {
-    Fluttertoast.showToast(msg: "Some error has happened.");
+    Get.snackbar("Error", "Some error has happened.",
+        backgroundColor: Colors.white);
     Get.back();
   }
 
@@ -440,20 +440,7 @@ class _OrderFormState extends State<OrderForm> implements OrderFormContract {
 
   @override
   onStartAsyncFunction() {
-    showDialog(
-        context: NavigationService.navigatorKey.currentContext!,
-        barrierDismissible: false,
-        builder: (BuildContext context) {
-          return const SimpleDialog(
-            elevation: 0.0,
-            backgroundColor: Colors.transparent,
-            children: <Widget>[
-              Center(
-                child: CircularProgressIndicator(),
-              )
-            ],
-          );
-        });
+    Get.dialog(const Center(child: CircularProgressIndicator()));
   }
 
   void _handleShowAddProductDialog() {
@@ -556,8 +543,9 @@ class _OrderFormState extends State<OrderForm> implements OrderFormContract {
 
   @override
   onMissingField() {
-    Fluttertoast.showToast(
-        msg: "Some fields are not filled or filled incorrectly.");
+    Get.snackbar(
+        "Fill the form", "Some fields are not filled or filled incorrectly.",
+        backgroundColor: Colors.white);
   }
 }
 

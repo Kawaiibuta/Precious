@@ -1,7 +1,8 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:precious/data_sources/auth_repository.dart';
 import 'package:precious/models/user/user.dart' as model;
 import 'package:precious/resources/endpoints.dart';
 import 'package:precious/resources/utils/dio_utils.dart';
@@ -83,5 +84,16 @@ class UserRepository {
       throw FirebaseAuthException(
           code: '${response.statusCode}: ${response.statusMessage}');
     }
+  }
+
+  static Future<model.User?> update(int id, Map<String, Object?> map) async {
+    final data = json.encode(map);
+    final response = await dio.request(EndPoint.user + id.toString(),
+        options: Options(method: "PUT"), data: data);
+    if (response.statusCode == 200) {
+      return await getOne(id);
+    }
+    debugPrint(response.data.toString());
+    return null;
   }
 }

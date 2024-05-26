@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:precious/data_sources/product_repository.dart';
 import 'package:precious/presenters/admin_product_presenter.dart';
 import 'package:precious/presenters/category_presenter.dart';
+import 'package:precious/resources/app_export.dart';
 import 'package:precious/resources/widgets/custom_search_bar.dart';
 import 'package:precious/resources/widgets/product_card_admin.dart';
+import 'package:precious/resources/widgets/variant_dialog.dart';
 
 class ProductPageAdmin extends StatefulWidget {
   const ProductPageAdmin({super.key, this.openFloatingButton});
@@ -19,11 +22,25 @@ class _ProductPageAdminState extends State<ProductPageAdmin>
   late AdminProductPresenter _presenter;
   var loading = false;
   var reverse = false;
+  var loadingMore = false;
+
+  final ScrollController _scrollController = ScrollController();
+
   @override
   void initState() {
     super.initState();
     _presenter = Get.put(AdminProductPresenter(this));
-    WidgetsBinding.instance.addPostFrameCallback((_) => _presenter.init());
+    _scrollController.addListener(() {
+      debugPrint(
+          "Pixel ${_scrollController.position.maxScrollExtent - _scrollController.position.pixels}");
+      if (_scrollController.position.maxScrollExtent -
+                  _scrollController.position.pixels <=
+              200.h &&
+          !loadingMore) {
+        _presenter.getMoreItem();
+      }
+    });
+    _presenter.init();
   }
 
   @override
@@ -81,16 +98,6 @@ class _ProductPageAdminState extends State<ProductPageAdmin>
                         )),
                     IconButton(
                         onPressed: () {
-                          // setState(() {
-                          //   if (_presenter.sortOption ==
-                          //       ProductSortOption.nameAsc) {
-                          //     _presenter.sortOption =
-                          //         ProductSortOption.nameDesc;
-                          //   } else {
-                          //     _presenter.sortOption = ProductSortOption.nameAsc;
-                          //   }
-                          // });
-                          // _presenter.refresh();
                           setState(() {
                             reverse = !reverse;
                           });
@@ -111,23 +118,38 @@ class _ProductPageAdminState extends State<ProductPageAdmin>
             else
               Expanded(
                 child: ListView.builder(
+                  controller: _scrollController,
                   reverse: reverse,
                   scrollDirection: Axis.vertical,
                   itemCount: _presenter.productList.length,
                   itemBuilder: (context, index) => Container(
                     margin: const EdgeInsets.only(top: 5.0, bottom: 3.0),
-                    child: ProductCardAdmin(
-                      multiSelect: _presenter.multipleSelection,
-                      onLongTap: (i) => setState(() {
-                        _presenter.multipleSelection = true;
-                      }),
-                      product: _presenter.productList[index],
-                      onSelected: (int i) {
-                        _handleSelect(i);
-                      },
-                      onDisSelected: (int i) {
-                        _handleSelect(i);
-                      },
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        ProductCardAdmin(
+                          multiSelect: _presenter.multipleSelection,
+                          onLongTap: (i) => setState(() {
+                            _presenter.multipleSelection = true;
+                          }),
+                          product: _presenter.productList[index],
+                          onSelected: (int i) {
+                            _handleSelect(i);
+                          },
+                          onDisSelected: (int i) {
+                            _handleSelect(i);
+                          },
+                        ),
+                        if (ProductRepository.maximum &&
+                            index == (_presenter.productList.length - 1))
+                          Center(
+                              child: IconButton(
+                                  onPressed: () {
+                                    _scrollController.position
+                                        .moveTo(0, duration: Durations.medium4);
+                                  },
+                                  icon: const Icon(Icons.arrow_circle_up)))
+                      ],
                     ),
                   ),
                 ),
@@ -284,16 +306,15 @@ class _ProductPageAdminState extends State<ProductPageAdmin>
 
   @override
   void onDeleteFail() {
-    // TODO: implement onDeleteFail
+    Get.snackbar("Error", "Cannot delete the product.");
   }
 
   @override
-  void onDeleteSuccess() {
-    // TODO: implement onDeleteSuccess
-  }
+  void onDeleteSuccess() {}
 
   @override
   void onEndAsyncTask() {
+    if (!mounted) return;
     setState(() {
       loading = false;
     });
@@ -301,8 +322,30 @@ class _ProductPageAdminState extends State<ProductPageAdmin>
 
   @override
   void onStartAsyncTask() {
+    if (!mounted) return;
     setState(() {
       loading = true;
+    });
+  }
+
+  @override
+  void onEndGetMoreItem() {
+    if (!mounted) return;
+    setState(() {
+      loadingMore = false;
+    });
+  }
+
+  @override
+  void onGetMoreItemFail() {}
+
+  @override
+  void onGetMoreItemSuccess() {}
+
+  @override
+  void onStartGetMoreItem() {
+    setState(() {
+      loadingMore = true;
     });
   }
 }

@@ -35,5 +35,6 @@ class AdminOrderPresenter extends PagePresenter {
     OrderRepository.reset();
     await Future.wait([OrderRepository.getAll()]);
     _contract.onEndAsyncTask();
+    _contract.onRefreshSuccess();
   }
 }

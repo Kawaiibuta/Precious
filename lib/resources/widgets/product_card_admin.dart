@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:precious/models/option/option.dart';
 import 'package:precious/models/option/optionValue/option_value.dart';
@@ -10,6 +11,7 @@ import 'package:precious/data_sources/product_repository.dart';
 import 'package:precious/models/variant/variant.dart';
 import 'package:precious/resources/app_export.dart';
 import 'package:precious/resources/utils/utils.dart';
+import 'package:precious/resources/widgets/variant_dialog.dart';
 
 const variantSize = 50;
 
@@ -29,6 +31,7 @@ class ProductCardAdmin extends StatefulWidget {
   final Function? onSelected;
   final Function? onDisSelected;
   final bool multiSelect;
+
   @override
   _ProductCardAdminState createState() => _ProductCardAdminState();
 }
@@ -40,7 +43,7 @@ class _ProductCardAdminState extends State<ProductCardAdmin> {
   var price = 0.0;
   var image = <String>[];
   late Product product;
-  late List<OptionValue> optionList;
+  List<OptionValue> optionList = [];
   Variant? variant;
   @override
   void initState() {
@@ -57,21 +60,21 @@ class _ProductCardAdminState extends State<ProductCardAdmin> {
       onTap: () async {
         debugPrint(widget.multiSelect.toString());
         if (!detailSelected) {
-          await ProductRepository.getOne(product.id!).then((value) {
-            product = value!;
+          ProductRepository.getOne(product.id!, detail: true).then((value) {
+            setState(() {
+              product = value!;
+              if (product.options.isNotEmpty) {
+                optionList = product.options
+                    .where((element) => element.values.isNotEmpty)
+                    .map((e) => e.values[0])
+                    .toList();
+                variant = getVariant(product, optionList);
+              }
+            });
           });
         }
         debugPrint(product.toString());
         setState(() {
-          if (!detailSelected) {
-            if (product.options.isNotEmpty) {
-              optionList = widget.product.options
-                  .where((element) => element.values.isNotEmpty)
-                  .map((e) => e.values[0])
-                  .toList();
-              variant = getVariant(product, optionList);
-            }
-          }
           detailSelected = !detailSelected;
           if (widget.onSelected != null && detailSelected) {
             widget.onSelected!(product.id);
@@ -229,7 +232,13 @@ class _ProductCardAdminState extends State<ProductCardAdmin> {
                                         ],
                                       ),
                                       ...widget.product.options
-                                          .map((e) => buildOptionCard(e))
+                                          .map((e) => buildOptionCard(e)),
+                                      TextButton(
+                                        onPressed: () {
+                                          _handleEditItem();
+                                        },
+                                        child: const Text("Edit variant"),
+                                      )
                                     ],
                                   )
                                 : const SizedBox.shrink(),
@@ -240,6 +249,19 @@ class _ProductCardAdminState extends State<ProductCardAdmin> {
               ),
       ),
     );
+  }
+
+  Future<void> _handleEditItem() async {
+    Product? response = await ProductRepository.getOne(product.id!);
+    if (response != null) {
+      await Get.dialog(VariantDialog(product: response));
+      final result = await ProductRepository.getOne(product.id!);
+      if (result != null) {
+        setState(() {
+          product = result;
+        });
+      }
+    }
   }
 
   buildOptionCard(Option option) {
@@ -256,9 +278,13 @@ class _ProductCardAdminState extends State<ProductCardAdmin> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      Text(option.name,
-                          style: GoogleFonts.openSans(
-                              fontWeight: FontWeight.w400, fontSize: 20.h))
+                      Text(
+                        "${option.name}:",
+                        style: TextStyle(
+                            color: Colors.black.withOpacity(0.5),
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600),
+                      )
                     ],
                   ),
                 ],

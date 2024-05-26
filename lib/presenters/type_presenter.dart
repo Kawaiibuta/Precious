@@ -41,9 +41,7 @@ class TypePresenter {
     if (typeList.containsKey(type)) {
       if (typeList[type]!.products.isEmpty || more) {
         final product = await ProductRepository.getAll(
-            start: typeList[type]!.products.length + 1,
-            quantity: quantityForEach,
-            type: type);
+            quantity: quantityForEach, type: type);
         typeList[type]!.products.addAll(product);
         return product;
       }

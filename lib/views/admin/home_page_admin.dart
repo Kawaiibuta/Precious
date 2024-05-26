@@ -1,14 +1,17 @@
 import 'dart:async';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:precious/models/product/product.dart';
 import 'package:precious/data_sources/product_repository.dart';
+import 'package:precious/presenters/admiin_statistic_presenter.dart';
+import 'package:precious/presenters/admin_order_presenter.dart';
 import 'package:precious/presenters/admin_product_presenter.dart';
+import 'package:precious/presenters/admin_user_presenter.dart';
 import 'package:precious/presenters/home_page_presenter.dart';
 import 'package:precious/presenters/page_presenter.dart';
 import 'package:precious/resources/widgets/variant_dialog.dart';
@@ -16,6 +19,7 @@ import 'package:precious/views/admin/inventory_form.dart';
 import 'package:precious/views/admin/order_form.dart';
 import 'package:precious/views/admin/order_page_admin.dart';
 import 'package:precious/views/admin/product_page_admin.dart';
+import 'package:precious/views/admin/statistic_page_admin.dart';
 import 'package:precious/views/admin/user_page_admin.dart';
 import 'package:sidebarx/sidebarx.dart';
 
@@ -133,64 +137,75 @@ class _HomePageAdminState extends State<HomePageAdmin>
               ),
             );
           },
-          items: drawerItemList
-              .map((e) => SidebarXItem(
-                  icon: e["icon"] as IconData,
-                  label: e['name'] as String,
-                  onTap: () => setState(() {
-                        controller.setExtended(false);
-                        // _presenter.selected.clear();
-                        controller.selectIndex(drawerItemList.indexOf(e));
-                      })))
-              .toList(),
+          items: [
+            ...drawerItemList.map((e) => SidebarXItem(
+                icon: e["icon"] as IconData,
+                label: e['name'] as String,
+                onTap: () => setState(() {
+                      controller.setExtended(false);
+                      controller.selectIndex(drawerItemList.indexOf(e));
+                      floatingButtonStreamController.sink
+                          .add(getInitialFloatingButtonOption());
+                    }))),
+            SidebarXItem(
+                icon: Icons.exit_to_app,
+                label: "Log out",
+                onTap: () => {FirebaseAuth.instance.signOut()})
+          ],
         ),
         floatingActionButton: StreamBuilder<List<int>>(
             stream: floatingButtonStreamController.stream as Stream<List<int>>,
             builder: (context, snapshot) {
-              var openList = (snapshot.data ?? []).toList();
-              return Stack(
-                children: [
-                  ...floatingButtonList.reversed
-                      .toList()
-                      .asMap()
-                      .map((key, value) => MapEntry(
-                          key,
-                          AnimatedPositioned(
-                              duration: const Duration(milliseconds: 900),
-                              curve: Curves.easeOut,
-                              bottom: openList.isNotEmpty &&
-                                      key != 0 &&
-                                      openList.contains(key)
-                                  ? key * 65
-                                  : 0,
-                              right: 10.0,
-                              child: Container(
-                                width: 60,
-                                height: 60,
-                                child: FloatingActionButton(
-                                  backgroundColor: Colors.black,
-                                  onPressed: () {
-                                    switch (value['name']) {
-                                      case "add":
-                                        Navigator.of(context).pushNamed(
-                                            "${(drawerItemList[controller.selectedIndex]['name'] as String).toLowerCase()}_form");
-                                        break;
-                                      case "delete":
-                                        _handleDeleteItem();
-                                      case "edit":
-                                        _handleEditItem();
-                                      default:
-                                    }
-                                  },
-                                  child: Icon(
-                                    value["icon"] as IconData,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ))))
-                      .values
-                ],
-              );
+              var openList =
+                  (snapshot.data ?? getInitialFloatingButtonOption()).toList();
+              debugPrint("OpenList: ${openList.toString()}");
+              return openList.isEmpty
+                  ? const SizedBox.shrink()
+                  : Stack(
+                      children: [
+                        ...floatingButtonList.reversed
+                            .toList()
+                            .asMap()
+                            .map((key, value) => MapEntry(
+                                key,
+                                AnimatedPositioned(
+                                    duration: const Duration(milliseconds: 900),
+                                    curve: Curves.easeOut,
+                                    bottom:
+                                        openList.contains(key) ? key * 65 : 0,
+                                    right: 10.0,
+                                    child: SizedBox(
+                                      width: 60,
+                                      height: 60,
+                                      child: FloatingActionButton(
+                                        backgroundColor: Colors.black,
+                                        onPressed: () {
+                                          switch (value['name']) {
+                                            case "add":
+                                              Navigator.of(context)
+                                                  .pushNamed(
+                                                      "${(drawerItemList[controller.selectedIndex]['name'] as String).toLowerCase()}_form")
+                                                  .then((value) =>
+                                                      _getPresenter(controller
+                                                              .selectedIndex)
+                                                          .refresh());
+                                              break;
+                                            case "delete":
+                                              _handleDeleteItem();
+                                            case "edit":
+                                              _handleEditItem();
+                                            default:
+                                          }
+                                        },
+                                        child: Icon(
+                                          value["icon"] as IconData,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ))))
+                            .values
+                      ],
+                    );
             }));
   }
 
@@ -258,9 +273,8 @@ class _HomePageAdminState extends State<HomePageAdmin>
                                   .map((e) => currentPresenter.delete(e))
                                   .toList();
                               final result = await Future.wait(futureResult);
-                              Fluttertoast.showToast(
-                                  msg:
-                                      "${result.where((element) => element == true).length} have been removed successfully");
+                              Get.snackbar("Remove items",
+                                  "${result.where((element) => element == true).length} have been removed successfully");
                               Navigator.of(context).pop();
                             },
                             style: ButtonStyle(
@@ -275,6 +289,13 @@ class _HomePageAdminState extends State<HomePageAdmin>
             )).then((value) => Navigator.of(context).setState(() {}));
   }
 
+  List<int> getInitialFloatingButtonOption() =>
+      switch (controller.selectedIndex) {
+        0 => [0],
+        1 => [],
+        2 => [0],
+        _ => [],
+      };
   Widget getRoute() => switch (controller.selectedIndex) {
         0 => ProductPageAdmin(
             openFloatingButton: (List<int> e) =>
@@ -282,18 +303,13 @@ class _HomePageAdminState extends State<HomePageAdmin>
           ),
         1 => const UserPageAdmin(),
         2 => const OrderPageAdmin(),
-        _ => const OrderPageAdmin()
-      };
-
-  StatefulWidget getWidget(int index) => switch (index) {
-        0 => ProductPageAdmin(
-            openFloatingButton: (List<int> e) =>
-                floatingButtonStreamController.sink.add(e)),
-        _ => const ProductPageAdmin(),
+        _ => const StatisticPageAdmin()
       };
   PagePresenter _getPresenter(int index) => switch (index) {
         0 => Get.find<AdminProductPresenter>(),
-        _ => Get.find<AdminProductPresenter>(),
+        1 => Get.find<AdminUserPresenter>(),
+        2 => Get.find<AdminOrderPresenter>(),
+        _ => Get.find<AdminStatisticPresenter>(),
       };
 
   Widget getAddForm() => switch (controller.selectedIndex) {
@@ -304,19 +320,14 @@ class _HomePageAdminState extends State<HomePageAdmin>
       };
 
   @override
-  Future<void> onInitSuccess() {
-    // TODO: implement onInitSuccess
-    throw UnimplementedError();
-  }
+  Future<void> onInitSuccess() async {}
 
   Future<void> _handleEditItem() async {
     Product? response = await ProductRepository.getOne(
         (_getPresenter(controller.selectedIndex) as AdminProductPresenter)
             .selected[0]);
     if (response != null) {
-      showDialog(
-          context: context,
-          builder: (context) => VariantDialog(product: response));
+      Get.dialog(VariantDialog(product: response));
     }
   }
 }
