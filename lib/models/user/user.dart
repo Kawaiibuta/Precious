@@ -16,6 +16,6 @@ class User with _$User {
       @JsonKey(name: "phone_number") String? phoneNumber,
       required String userRole,
       @Default([]) List<String> addresses,
-      @JsonKey(name: "avatar_img_path_url") String? avatar_url}) = _User;
+      @JsonKey(name: "avatar_img_path_url") String? avatarUrl}) = _User;
   factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
 }

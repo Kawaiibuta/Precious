@@ -89,10 +89,10 @@ class _OrderFormState extends State<OrderForm> implements OrderFormContract {
                                               shape: BoxShape.circle),
                                           clipBehavior: Clip.antiAlias,
                                           child: _presenter.user != null &&
-                                                  _presenter.user!.avatar_url !=
+                                                  _presenter.user!.avatarUrl !=
                                                       null
                                               ? SvgPicture.network(
-                                                  _presenter.user!.avatar_url!)
+                                                  _presenter.user!.avatarUrl!)
                                               : const Icon(Icons.person)),
                                       Padding(
                                         padding: const EdgeInsets.all(8.0),
@@ -367,9 +367,9 @@ class _OrderFormState extends State<OrderForm> implements OrderFormContract {
                                   decoration: const BoxDecoration(
                                       shape: BoxShape.circle),
                                   clipBehavior: Clip.antiAlias,
-                                  child: userList[index].avatar_url != null
+                                  child: userList[index].avatarUrl != null
                                       ? SvgPicture.network(
-                                          userList[index].avatar_url!)
+                                          userList[index].avatarUrl!)
                                       : const Icon(Icons.person),
                                 ),
                                 Column(

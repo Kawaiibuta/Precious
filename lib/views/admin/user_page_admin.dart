@@ -138,8 +138,8 @@ class UserCardAdmin extends StatelessWidget {
                     margin: EdgeInsets.only(right: 10.h),
                     decoration: const BoxDecoration(shape: BoxShape.circle),
                     clipBehavior: Clip.antiAlias,
-                    child: user.avatar_url != null
-                        ? SvgPicture.network(user.avatar_url!)
+                    child: user.avatarUrl != null
+                        ? SvgPicture.network(user.avatarUrl!)
                         : Icon(
                             Icons.person,
                             size: 50.h,

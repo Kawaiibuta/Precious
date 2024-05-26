@@ -31,7 +31,7 @@ mixin _$User {
   String get userRole => throw _privateConstructorUsedError;
   List<String> get addresses => throw _privateConstructorUsedError;
   @JsonKey(name: "avatar_img_path_url")
-  String? get avatar_url => throw _privateConstructorUsedError;
+  String? get avatarUrl => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -53,7 +53,7 @@ abstract class $UserCopyWith<$Res> {
       @JsonKey(name: "phone_number") String? phoneNumber,
       String userRole,
       List<String> addresses,
-      @JsonKey(name: "avatar_img_path_url") String? avatar_url});
+      @JsonKey(name: "avatar_img_path_url") String? avatarUrl});
 }
 
 /// @nodoc
@@ -78,7 +78,7 @@ class _$UserCopyWithImpl<$Res, $Val extends User>
     Object? phoneNumber = freezed,
     Object? userRole = null,
     Object? addresses = null,
-    Object? avatar_url = freezed,
+    Object? avatarUrl = freezed,
   }) {
     return _then(_value.copyWith(
       id: freezed == id
@@ -117,9 +117,9 @@ class _$UserCopyWithImpl<$Res, $Val extends User>
           ? _value.addresses
           : addresses // ignore: cast_nullable_to_non_nullable
               as List<String>,
-      avatar_url: freezed == avatar_url
-          ? _value.avatar_url
-          : avatar_url // ignore: cast_nullable_to_non_nullable
+      avatarUrl: freezed == avatarUrl
+          ? _value.avatarUrl
+          : avatarUrl // ignore: cast_nullable_to_non_nullable
               as String?,
     ) as $Val);
   }
@@ -142,7 +142,7 @@ abstract class _$$UserImplCopyWith<$Res> implements $UserCopyWith<$Res> {
       @JsonKey(name: "phone_number") String? phoneNumber,
       String userRole,
       List<String> addresses,
-      @JsonKey(name: "avatar_img_path_url") String? avatar_url});
+      @JsonKey(name: "avatar_img_path_url") String? avatarUrl});
 }
 
 /// @nodoc
@@ -164,7 +164,7 @@ class __$$UserImplCopyWithImpl<$Res>
     Object? phoneNumber = freezed,
     Object? userRole = null,
     Object? addresses = null,
-    Object? avatar_url = freezed,
+    Object? avatarUrl = freezed,
   }) {
     return _then(_$UserImpl(
       id: freezed == id
@@ -203,9 +203,9 @@ class __$$UserImplCopyWithImpl<$Res>
           ? _value._addresses
           : addresses // ignore: cast_nullable_to_non_nullable
               as List<String>,
-      avatar_url: freezed == avatar_url
-          ? _value.avatar_url
-          : avatar_url // ignore: cast_nullable_to_non_nullable
+      avatarUrl: freezed == avatarUrl
+          ? _value.avatarUrl
+          : avatarUrl // ignore: cast_nullable_to_non_nullable
               as String?,
     ));
   }
@@ -224,7 +224,7 @@ class _$UserImpl with DiagnosticableTreeMixin implements _User {
       @JsonKey(name: "phone_number") this.phoneNumber,
       required this.userRole,
       final List<String> addresses = const [],
-      @JsonKey(name: "avatar_img_path_url") this.avatar_url})
+      @JsonKey(name: "avatar_img_path_url") this.avatarUrl})
       : _addresses = addresses;
 
   factory _$UserImpl.fromJson(Map<String, dynamic> json) =>
@@ -259,11 +259,11 @@ class _$UserImpl with DiagnosticableTreeMixin implements _User {
 
   @override
   @JsonKey(name: "avatar_img_path_url")
-  final String? avatar_url;
+  final String? avatarUrl;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'User(id: $id, name: $name, uid: $uid, gender: $gender, email: $email, age: $age, phoneNumber: $phoneNumber, userRole: $userRole, addresses: $addresses, avatar_url: $avatar_url)';
+    return 'User(id: $id, name: $name, uid: $uid, gender: $gender, email: $email, age: $age, phoneNumber: $phoneNumber, userRole: $userRole, addresses: $addresses, avatarUrl: $avatarUrl)';
   }
 
   @override
@@ -280,7 +280,7 @@ class _$UserImpl with DiagnosticableTreeMixin implements _User {
       ..add(DiagnosticsProperty('phoneNumber', phoneNumber))
       ..add(DiagnosticsProperty('userRole', userRole))
       ..add(DiagnosticsProperty('addresses', addresses))
-      ..add(DiagnosticsProperty('avatar_url', avatar_url));
+      ..add(DiagnosticsProperty('avatarUrl', avatarUrl));
   }
 
   @override
@@ -300,8 +300,8 @@ class _$UserImpl with DiagnosticableTreeMixin implements _User {
                 other.userRole == userRole) &&
             const DeepCollectionEquality()
                 .equals(other._addresses, _addresses) &&
-            (identical(other.avatar_url, avatar_url) ||
-                other.avatar_url == avatar_url));
+            (identical(other.avatarUrl, avatarUrl) ||
+                other.avatarUrl == avatarUrl));
   }
 
   @JsonKey(ignore: true)
@@ -317,7 +317,7 @@ class _$UserImpl with DiagnosticableTreeMixin implements _User {
       phoneNumber,
       userRole,
       const DeepCollectionEquality().hash(_addresses),
-      avatar_url);
+      avatarUrl);
 
   @JsonKey(ignore: true)
   @override
@@ -344,7 +344,7 @@ abstract class _User implements User {
           @JsonKey(name: "phone_number") final String? phoneNumber,
           required final String userRole,
           final List<String> addresses,
-          @JsonKey(name: "avatar_img_path_url") final String? avatar_url}) =
+          @JsonKey(name: "avatar_img_path_url") final String? avatarUrl}) =
       _$UserImpl;
 
   factory _User.fromJson(Map<String, dynamic> json) = _$UserImpl.fromJson;
@@ -370,7 +370,7 @@ abstract class _User implements User {
   List<String> get addresses;
   @override
   @JsonKey(name: "avatar_img_path_url")
-  String? get avatar_url;
+  String? get avatarUrl;
   @override
   @JsonKey(ignore: true)
   _$$UserImplCopyWith<_$UserImpl> get copyWith =>

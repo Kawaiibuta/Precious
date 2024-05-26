@@ -4,21 +4,20 @@ import 'package:precious/data_sources/product_repository.dart';
 
 class ProductPresenter {
   static Map<int, Product> productList = {};
-  static const quantityForEach = 20;
+  static const quantityForEach = 10;
 
-  Future<List<Product>> getAll({bool more = false}) async {
+  Future<List<Product>> getAll({bool more = false, int? categoryId}) async {
     if (productList.values.isNotEmpty && more == false) {
       return productList.values.toList();
     }
     debugPrint("get Product");
-    final result = await ProductRepository.getAll().then((e) {
+    final result = await ProductRepository.getAll(
+            more: true, quantity: quantityForEach, categoryId: categoryId)
+        .then((e) {
       for (var element in e) {
         productList.addEntries(<int, Product>{element.id!: element}.entries);
       }
       return e;
-    }).catchError((e) {
-      debugPrint(e.toString());
-      return <Product>[];
     });
 
     return result;
@@ -42,7 +41,6 @@ class ProductPresenter {
     return result;
   }
 
-  @override
   Future<bool> add({item, imageList}) async {
     if (item is Product) {
       return await ProductRepository.add(item, imageList)
@@ -55,7 +53,6 @@ class ProductPresenter {
     return false;
   }
 
-  @override
   Future<bool> delete(List<int> items) async {
     bool item = true;
     items.forEach((element) async {

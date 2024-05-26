@@ -44,8 +44,8 @@ class OrderCardAdmin extends StatelessWidget {
                     height: 40.h,
                     clipBehavior: Clip.antiAlias,
                     decoration: const BoxDecoration(shape: BoxShape.circle),
-                    child: order.user != null && order.user!.avatar_url != null
-                        ? SvgPicture.network(order.user!.avatar_url!)
+                    child: order.user != null && order.user!.avatarUrl != null
+                        ? SvgPicture.network(order.user!.avatarUrl!)
                         : const Icon(Icons.person)),
                 DefaultTextStyle(
                   style: GoogleFonts.openSans(color: Colors.black),

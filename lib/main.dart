@@ -3,10 +3,10 @@ import 'package:app_links/app_links.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:get/get.dart';
 import 'package:precious/data_sources/auth_repository.dart';
 import 'package:precious/presenters/setting_presenter.dart';
+import 'package:precious/resources/app_export.dart';
 import 'package:precious/resources/routes/routes.dart';
 import 'package:precious/resources/utils/firebase_options.dart';
 import 'package:flutter/services.dart';
@@ -33,7 +33,10 @@ class NavigationService {
 }
 
 class AuthenticationWrapper extends StatefulWidget {
-  @override
+  final SettingPresenter _presenter;
+
+  const AuthenticationWrapper(this._presenter, {super.key});
+
   @override
   _AuthenticationWrapperState createState() => _AuthenticationWrapperState();
 }
@@ -46,6 +49,9 @@ class _AuthenticationWrapperState extends State<AuthenticationWrapper> {
         builder: (BuildContext context, AsyncSnapshot<User?> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const SplashScreen();
+          }
+          if (widget._presenter.firstRun) {
+            return const StartPage();
           }
           if (snapshot.hasData) {
             debugPrint(snapshot.data.toString());
@@ -101,14 +107,10 @@ class _MyAppState extends State<MyApp> implements AppContract {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       navigatorKey: NavigationService.navigatorKey,
-      theme: ThemeData(
-          brightness: Brightness.light,
-          inputDecorationTheme: const InputDecorationTheme(
-              labelStyle: TextStyle(color: Colors.black),
-              focusedBorder: UnderlineInputBorder(
-                borderSide:
-                    BorderSide(style: BorderStyle.solid, color: Colors.black),
-              ))),
+      theme: AppTheme.themeLight,
+      darkTheme: AppTheme.themeDark,
+      themeMode: _themeMode,
+      locale: _locale,
       localizationsDelegates: const [
         AppLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,
@@ -118,7 +120,7 @@ class _MyAppState extends State<MyApp> implements AppContract {
       supportedLocales: const [
         Locale('en'),
       ],
-      home: AuthenticationWrapper(),
+      home: AuthenticationWrapper(widget._settingPresenter),
       routes: MyRoutes(widget._settingPresenter).routes,
     );
   }

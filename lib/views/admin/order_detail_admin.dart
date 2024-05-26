@@ -182,10 +182,10 @@ class _OrderDetailAdminState extends State<OrderDetailAdmin>
                                             shape: BoxShape.circle),
                                         clipBehavior: Clip.antiAlias,
                                         child: _presenter!.user != null &&
-                                                _presenter!.user!.avatar_url !=
+                                                _presenter!.user!.avatarUrl !=
                                                     null
                                             ? SvgPicture.network(
-                                                _presenter!.user!.avatar_url!)
+                                                _presenter!.user!.avatarUrl!)
                                             : const Icon(Icons.person),
                                       ),
                                       Padding(

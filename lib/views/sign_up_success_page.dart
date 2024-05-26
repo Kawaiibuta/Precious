@@ -52,6 +52,6 @@ class _SignUpSuccessPageState extends State<SignUpSuccessPage> {
   }
 
   void _goToMainPage() {
-    Navigator.of(context).pushReplacementNamed(HomePageAdmin.name);
+    Navigator.of(context).pushReplacementNamed(HomePage.name);
   }
 }

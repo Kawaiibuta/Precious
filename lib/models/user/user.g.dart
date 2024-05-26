@@ -19,7 +19,7 @@ _$UserImpl _$$UserImplFromJson(Map<String, dynamic> json) => _$UserImpl(
               ?.map((e) => e as String)
               .toList() ??
           const [],
-      avatar_url: json['avatar_img_path_url'] as String?,
+      avatarUrl: json['avatar_img_path_url'] as String?,
     );
 
 Map<String, dynamic> _$$UserImplToJson(_$UserImpl instance) =>
@@ -33,5 +33,5 @@ Map<String, dynamic> _$$UserImplToJson(_$UserImpl instance) =>
       'phone_number': instance.phoneNumber,
       'userRole': instance.userRole,
       'addresses': instance.addresses,
-      'avatar_img_path_url': instance.avatar_url,
+      'avatar_img_path_url': instance.avatarUrl,
     };

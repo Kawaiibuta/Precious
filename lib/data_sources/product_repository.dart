@@ -18,7 +18,8 @@ class ProductRepository {
       {bool more = false,
       int quantity = quantityForEach,
       int type = -1,
-      bool reset = false}) async {
+      bool reset = false,
+      int? categoryId}) async {
     debugPrint(EndPoint.productWithParam(
         start: more ? list.length + 1 : 1,
         quantity: (more || list.isEmpty) ? quantityForEach : list.length,
@@ -30,18 +31,15 @@ class ProductRepository {
                 start: more ? list.length + 1 : 1,
                 quantity:
                     (more || list.isEmpty) ? quantityForEach : list.length,
-                type: type),
+                type: type,
+                categoryId: categoryId),
             options: Options(
               method: 'GET',
               headers: headers,
             ))
         .then((value) => (value.data as List).map((e) {
               return Product.fromJson(e as Map<String, dynamic>);
-            }).toList())
-        .catchError((e) {
-      debugPrint(e.toString());
-      return <Product>[];
-    });
+            }).toList());
     if (result.isEmpty) {
       maximum = true;
     }
@@ -58,9 +56,9 @@ class ProductRepository {
   }
 
   static Future<Product?> getOne(int id, {detail = true}) async {
-    if ((list.containsKey(id) && list[id]!.variants.isNotEmpty) || !detail) {
-      return list[id];
-    }
+    // if ((list.containsKey(id) && list[id]!.options.isNotEmpty) || !detail) {
+    //   return list[id];
+    // }
 
     final result = await dio
         .request(

@@ -1,16 +1,15 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:precious/models/product/product.dart';
 import 'package:precious/models/product_category/product_category.dart';
 import 'package:precious/presenters/category_presenter.dart';
 import 'package:precious/presenters/product_presenter.dart';
 import 'package:precious/models/type/type.dart';
+import 'package:precious/resources/app_export.dart';
 import 'package:precious/resources/widgets/custom_search_bar.dart';
 import 'package:precious/resources/widgets/product_card.dart';
 
 List<Product> filterProductList(List<Product> productList, String searchString,
-    List<ProductCategory> selectedCategories, String sortOption) {
+    List<ProductCategory> selectedCategories, SortOption sortOption) {
   List<Product> filteredProductList = [...productList];
 
   if (searchString.isNotEmpty) {
@@ -25,16 +24,16 @@ List<Product> filterProductList(List<Product> productList, String searchString,
   }
 
   switch (sortOption) {
-    case 'price-asc':
+    case SortOption.priceAsc:
       filteredProductList.sort((a, b) => a.price.compareTo(b.price));
       break;
-    case 'price-desc':
+    case SortOption.priceDesc:
       filteredProductList.sort((a, b) => b.price.compareTo(a.price));
       break;
-    case 'name-asc':
+    case SortOption.nameAsc:
       filteredProductList.sort((a, b) => a.name.compareTo(b.name));
       break;
-    case 'name-desc':
+    case SortOption.nameDesc:
       filteredProductList.sort((a, b) => b.name.compareTo(a.name));
       break;
     default:
@@ -53,7 +52,7 @@ class SearchPage extends StatefulWidget {
 class _SearchPageState extends State<SearchPage> {
   String searchString = "";
   List<ProductCategory> selectedCategories = [];
-  String sortOption = 'none';
+  SortOption sortOption = SortOption.none;
 
   late Future<List<Product>> productListFuture;
   late Future<List<Type>> typeListFuture;
@@ -64,7 +63,7 @@ class _SearchPageState extends State<SearchPage> {
 
   final _controller = ScrollController();
 
-  GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
@@ -72,7 +71,7 @@ class _SearchPageState extends State<SearchPage> {
     productListFuture = productPresenter.getAll();
     categoryListFuture = categoryPresenter.getAll();
 
-    WidgetsBinding.instance!.addPostFrameCallback((duration) {
+    WidgetsBinding.instance.addPostFrameCallback((duration) {
       // Setup the listener.
       _controller.addListener(() {
         if (_controller.position.atEdge) {
@@ -141,28 +140,28 @@ class _SearchPageState extends State<SearchPage> {
                     fontSize: 15,
                     fontWeight: FontWeight.bold,
                     color: Colors.black)),
-            DropdownButton<String>(
+            DropdownButton<SortOption>(
               value: sortOption,
-              items: const [
+              items: [
                 DropdownMenuItem(
-                  value: 'none',
-                  child: Text('None'),
+                  value: SortOption.none,
+                  child: Text(AppLocalizations.of(context)!.none_option),
                 ),
                 DropdownMenuItem(
-                  value: 'price-asc',
-                  child: Text('Price Low to High'),
+                  value: SortOption.priceAsc,
+                  child: Text(AppLocalizations.of(context)!.price_low_to_high_option),
                 ),
                 DropdownMenuItem(
-                  value: 'price-desc',
-                  child: Text('Price High to Low'),
+                  value: SortOption.priceDesc,
+                  child: Text(AppLocalizations.of(context)!.price_high_to_low_option),
                 ),
                 DropdownMenuItem(
-                  value: 'name-asc',
-                  child: Text('Name A-Z'),
+                  value: SortOption.nameAsc,
+                  child: Text(AppLocalizations.of(context)!.name_a_to_z_option),
                 ),
                 DropdownMenuItem(
-                  value: 'name-desc',
-                  child: Text('Name Z-A'),
+                  value: SortOption.nameDesc,
+                  child: Text(AppLocalizations.of(context)!.name_z_to_a_option),
                 ),
               ],
               onChanged: (value) {
@@ -211,4 +210,8 @@ class _SearchPageState extends State<SearchPage> {
       ),
     );
   }
+}
+
+enum SortOption {
+  none, priceAsc, priceDesc, nameAsc, nameDesc
 }

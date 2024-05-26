@@ -85,8 +85,8 @@ class _UserDetailAdminState extends State<UserDetailAdmin> {
                           shape: BoxShape.circle,
                         ),
                         clipBehavior: Clip.antiAlias,
-                        child: widget.user.avatar_url != null
-                            ? SvgPicture.network(widget.user.avatar_url!)
+                        child: widget.user.avatarUrl != null
+                            ? SvgPicture.network(widget.user.avatarUrl!)
                             : Icon(
                                 Icons.person,
                                 size: 50.h,

@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
@@ -6,6 +7,7 @@ import 'package:precious/data_sources/auth_repository.dart';
 import 'package:precious/data_sources/user_repository.dart';
 import 'package:precious/models/cart/cart.dart';
 import 'package:precious/models/cart_item/cart_item.dart';
+import 'package:precious/models/variant/variant.dart';
 import 'package:precious/resources/endpoints.dart';
 import 'package:precious/resources/utils/dio_utils.dart';
 
@@ -40,8 +42,8 @@ class CartRepository {
           ]
         },
         options: Options(method: 'PUT', headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ${AuthRepository.idToken}'
+          ...headers,
+          'Authorization': "Bearer ${AuthRepository.idToken}"
         }));
     if (response.statusCode == 200) {
       if (response.data != null) {
@@ -56,6 +58,31 @@ class CartRepository {
       );
     } else {
       throw HttpException("${response.statusCode} ${response.statusMessage}");
+    }
+  }
+
+  Future<void> add(Variant variant) async {
+    var response = await dio.request(EndPoint.cart,
+        options: Options(
+          method: 'PUT',
+          headers: {
+            ...headers,
+            'Authorization': "Bearer ${AuthRepository.idToken}"
+          },
+        ),
+        data: jsonEncode({
+          "updates": [
+            {
+              "variant_id": variant.id,
+              "quantity": 1,
+            }
+          ]
+        }));
+    if (response.statusCode != 200) {
+      throw DioException.badResponse(
+          statusCode: response.statusCode!,
+          requestOptions: response.requestOptions,
+          response: response);
     }
   }
 }

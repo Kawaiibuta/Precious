@@ -17,15 +17,21 @@
     "sign_up_success_title":"Success!",
     "sign_up_success_body":"You have successfully registered an account.",
     "start_shopping":"Start Shopping",
-    "my_cart":"My Cart",
-    "limit_buy":"The purchase number has reached limit.",
 
     "home_bottom_title":"Home",
     "search_bottom_title":"Search",
     "cart_bottom_title":"Cart",
     "profile_bottom_title":"Profile",
 
+    "none_option":"None",
+    "price_low_to_high_option":"Price Low to High",
+    "price_high_to_low_option":"Price High to Low",
+    "name_a_to_z_option":"Name A-Z",
+    "name_z_to_a_option":"Name Z-A",
+
+    "add_to_cart_btn_title":"Add to Cart",
     "no_variants_msg":"The product has no variants",
+    "add_to_cart_success_msg":"Successfully add to cart",
 
     "my_order_button_title":"My Order",
     "my_favourites_button_title":"My Favourites",
@@ -73,8 +79,13 @@
     "country_title":"Country",
     "payment_title":"Payment",
     "momo_payment_method_title":"Momo",
+    "direct_payment_method_title":"Pay after Deliver",
     "total_price_title": "Total price",
     "place_order_button_title":"Place Order",
+    
+    "order_success_title":"Order Successfully",
+    "order_success_body":"Your order has been added to be delivered",
+    "continue_shopping_btn_title":"Continue Shopping",
 
     "username_empty_msg":"Username must not be empty",
     "email_empty_msg":"Email must not be empty",

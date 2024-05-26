@@ -1,4 +1,4 @@
-import 'package:precious/data_sources/category_reppsitory.dart';
+import 'package:precious/data_sources/category_repository.dart';
 import 'package:precious/models/product_category/product_category.dart';
 import 'package:precious/presenters/base_presenter.dart';
 
@@ -12,13 +12,13 @@ class ProductCategoryPresenter implements Presenter {
       {bool more = false, bool reset = false}) async {
     if (categoryList.values.isNotEmpty) return categoryList.values.toList();
     final result = await ProductCategoryRepository.getAll().then((value) {
+      categoryList.addAll({-1: ProductCategory(id: -1, name: "All product")});
       for (var element in value) {
         categoryList
             .addEntries(<int, ProductCategory>{element.id!: element}.entries);
       }
       return categoryList.values.toList();
     });
-    result.insert(0, ProductCategory(id: -1, name: "All product"));
     return result;
   }
 
