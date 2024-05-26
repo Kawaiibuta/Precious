@@ -1,7 +1,6 @@
 List<String> getLink(String s) {
   List<String> result = [];
-  RegExp exp =
-      RegExp(r'(?:(?:https?|ftp):\/\/)?[\w/\-?=%.]+\.[\w/\-?=%.]+');
+  RegExp exp = RegExp(r'(?:(?:https?|ftp):\/\/)?[\w/\-?=%.]+\.[\w/\-?=%.]+');
   Iterable<RegExpMatch> matches = exp.allMatches(s);
   int index = 0;
   if (matches.isEmpty) result.add(s);

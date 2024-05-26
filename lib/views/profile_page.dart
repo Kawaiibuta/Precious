@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:precious/models/user/user.dart';
 import 'package:precious/presenters/profile_presenter.dart';
 import 'package:precious/resources/app_export.dart';
@@ -8,6 +9,7 @@ import 'package:precious/resources/widgets/setting_button.dart';
 import 'package:precious/views/login_page.dart';
 import 'package:precious/views/setting_page.dart';
 import 'package:precious/views/user_detail_page.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -53,24 +55,41 @@ class _ProfilePageState extends State<ProfilePage>
                           child: Flex(
                             direction: Axis.horizontal,
                             children: [
-                              Image.asset('assets/images/default_profile.png',
-                                  width: 64.h, height: 64.v, fit: BoxFit.cover),
-                              Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(_user.name!,
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .titleMedium!
-                                          .copyWith(
-                                              fontWeight: FontWeight.w800)),
-                                  Text(
-                                    _user.email!,
-                                    style:
-                                        Theme.of(context).textTheme.bodySmall,
-                                  ),
-                                ],
+                              Container(
+                                width: 44.h,
+                                height: 44.v,
+                                margin: EdgeInsets.symmetric(horizontal: 8.h),
+                                child: _user.avatarUrl != null &&
+                                        _user.avatarUrl!.endsWith('.svg')
+                                    ? SvgPicture.network(_user.avatarUrl!,
+                                        width: 64.h,
+                                        height: 64.v,
+                                        fit: BoxFit.cover)
+                                    : Image.network(
+                                        _user.avatarUrl ??
+                                            "https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg",
+                                        width: 64.h,
+                                        height: 64.v,
+                                        fit: BoxFit.cover),
+                              ),
+                              Expanded(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(_user.name!,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .titleMedium!
+                                            .copyWith(
+                                                fontWeight: FontWeight.w800)),
+                                    Text(
+                                      _user.email!,
+                                      style:
+                                          Theme.of(context).textTheme.bodySmall,
+                                    ),
+                                  ],
+                                ),
                               )
                             ],
                           )),

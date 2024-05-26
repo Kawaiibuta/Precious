@@ -8,25 +8,24 @@ part of 'variant.dart';
 
 _$VariantImpl _$$VariantImplFromJson(Map<String, dynamic> json) =>
     _$VariantImpl(
-      id: json['id'] as int? ?? null,
+      id: (json['id'] as num?)?.toInt() ?? null,
+      name: json['name'] as String,
       price: (json['price'] as num?)?.toDouble() ?? 0.0,
-      img_paths_url: (json['img_paths_url'] as List<dynamic>?)
+      quantity: (json['quantity'] as num?)?.toInt() ?? 0,
+      productId: (json['product_id'] as num).toInt(),
+      variantOptionValues: (json['variant_option_values'] as List<dynamic>?)
+          ?.map((e) => VariantOption.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      imgPathUrls: (json['img_paths_url'] as List<dynamic>?)
               ?.map((e) => e as String)
               .toList() ??
           const <String>[],
-      variantOptionValues: (json['variant_option_values'] as List<dynamic>?)
-              ?.map(
-                  (e) => VariantOptionValue.fromJson(e as Map<String, dynamic>))
-              .toList() ??
-          const <VariantOptionValue>[],
-      product: Product.fromJson(json['product'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$$VariantImplToJson(_$VariantImpl instance) =>
     <String, dynamic>{
-      'id': instance.id,
+      'name': instance.name,
       'price': instance.price,
-      'img_paths_url': instance.img_paths_url,
-      'variant_option_values': instance.variantOptionValues,
-      'product': instance.product,
+      'quantity': instance.quantity,
+      'product_id': instance.productId,
     };

@@ -1,5 +1,5 @@
+import 'package:precious/data_sources/auth_repository.dart';
 import 'package:precious/data_sources/login_repository.dart';
-import 'package:precious/data_sources/user_repository.dart';
 import 'package:precious/models/user/user.dart';
 
 abstract class ProfilePageContract {
@@ -11,15 +11,12 @@ abstract class ProfilePageContract {
 
 class ProfilePresenter {
   final ProfilePageContract _contract;
-  final _repos = UserRepository();
 
   ProfilePresenter(this._contract);
 
   Future<void> getUser() async {
-    await _repos
-        .getUser()
-        .then((user) => _contract.onGetUserDetailSuccess(user))
-        .catchError((e) => _contract.onGetUserFailed(e));
+    final user = AuthRepository.currentUser;
+    if (user != null) _contract.onGetUserDetailSuccess(user);
   }
 
   Future<void> signOut() async {

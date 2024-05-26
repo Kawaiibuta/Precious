@@ -1,13 +1,12 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:precious/data_sources/login_repository.dart';
-import 'package:precious/data_sources/setting_repository.dart';
+import 'package:precious/data_sources/auth_repository.dart';
 import 'package:precious/data_sources/user_repository.dart';
 import 'package:precious/models/cart/cart.dart';
 import 'package:precious/models/cart_item/cart_item.dart';
-import 'package:precious/models/product/product.dart';
 import 'package:precious/models/variant/variant.dart';
 import 'package:precious/resources/endpoints.dart';
 import 'package:precious/resources/utils/dio_utils.dart';
@@ -17,7 +16,7 @@ class CartRepository {
     var response = await dio.request(EndPoint.cart,
         options: Options(method: 'GET', headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer ${UserRepository.idToken}'
+          'Authorization': 'Bearer ${AuthRepository.idToken}'
         }));
     if (response.statusCode == 200) {
       if (response.data != null) {
@@ -42,10 +41,7 @@ class CartRepository {
             {'variant_id': cartItem.variant.id, 'quantity': quantity}
           ]
         },
-        options: Options(method: 'PUT', headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ${UserRepository.idToken}'
-        }));
+        options: Options(method: 'PUT', headers: headers));
     if (response.statusCode == 200) {
       if (response.data != null) {
         return Cart.fromJson(response.data);
@@ -59,6 +55,28 @@ class CartRepository {
       );
     } else {
       throw HttpException("${response.statusCode} ${response.statusMessage}");
+    }
+  }
+
+  Future<void> add(Variant variant) async {
+    var response = await dio.request(EndPoint.cart,
+        options: Options(
+          method: 'PUT',
+          headers: headers,
+        ),
+        data: jsonEncode({
+          "updates": [
+            {
+              "variant_id": variant.id,
+              "quantity": 1,
+            }
+          ]
+        }));
+    if (response.statusCode != 200) {
+      throw DioException.badResponse(
+          statusCode: response.statusCode!,
+          requestOptions: response.requestOptions,
+          response: response);
     }
   }
 }

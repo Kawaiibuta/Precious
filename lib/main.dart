@@ -1,16 +1,20 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:app_links/app_links.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:get/get.dart';
+import 'package:precious/data_sources/auth_repository.dart';
 import 'package:precious/presenters/setting_presenter.dart';
+import 'package:precious/resources/app_export.dart';
 import 'package:precious/resources/routes/routes.dart';
-import 'package:precious/resources/themes/app_theme.dart';
 import 'package:precious/resources/utils/firebase_options.dart';
 import 'package:flutter/services.dart';
 import 'package:precious/resources/widgets/create_order_page.dart';
 import 'package:precious/views/home_page.dart';
+import 'package:precious/views/admin/home_page_admin.dart';
 import 'package:precious/views/login_or_sign_up_page.dart';
+import 'package:precious/views/splashScreen.dart';
 import 'package:precious/views/start_page.dart';
 
 final _appLinks = AppLinks();
@@ -24,9 +28,59 @@ void main() async {
   runApp(MyApp(settings));
 }
 
+class NavigationService {
+  static GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+}
+
+class AuthenticationWrapper extends StatefulWidget {
+  final SettingPresenter _presenter;
+
+  const AuthenticationWrapper(this._presenter, {super.key});
+
+  @override
+  _AuthenticationWrapperState createState() => _AuthenticationWrapperState();
+}
+
+class _AuthenticationWrapperState extends State<AuthenticationWrapper> {
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<User?>(
+        stream: FirebaseAuth.instance.authStateChanges(),
+        builder: (BuildContext context, AsyncSnapshot<User?> snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const SplashScreen();
+          }
+          if (widget._presenter.firstRun) {
+            return const StartPage();
+          }
+          if (snapshot.hasData) {
+            debugPrint(snapshot.data.toString());
+            return FutureBuilder(
+              future: AuthRepository.updateCurrentUser(),
+              builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  // Show a loading indicator if necessary
+                  return const SplashScreen();
+                } else {
+                  debugPrint(AuthRepository.currentUser.toString());
+                  if (AuthRepository.currentUser == null) {
+                    return const LoginOrSignUpPage();
+                  }
+                  if (AuthRepository.currentUser!.userRole == "ADMIN") {
+                    return const HomePageAdmin();
+                  }
+                  return const HomePage();
+                }
+              },
+            );
+          }
+          return const LoginOrSignUpPage();
+        });
+  }
+}
+
 class MyApp extends StatefulWidget {
   final SettingPresenter _settingPresenter;
-
   const MyApp(this._settingPresenter, {super.key});
 
   @override
@@ -51,7 +105,8 @@ class _MyAppState extends State<MyApp> implements AppContract {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
+      navigatorKey: NavigationService.navigatorKey,
       theme: AppTheme.themeLight,
       darkTheme: AppTheme.themeDark,
       themeMode: _themeMode,
@@ -65,19 +120,9 @@ class _MyAppState extends State<MyApp> implements AppContract {
       supportedLocales: const [
         Locale('en'),
       ],
-      initialRoute: _getInitialPage(),
+      home: AuthenticationWrapper(widget._settingPresenter),
       routes: MyRoutes(widget._settingPresenter).routes,
     );
-  }
-
-  _getInitialPage() {
-    if (widget._settingPresenter.firstRun) {
-      return StartPage.name;
-    }
-    if (!widget._settingPresenter.hasLogin) {
-      return LoginOrSignUpPage.name;
-    }
-    return HomePage.name;
   }
 
   @override

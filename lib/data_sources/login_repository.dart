@@ -1,17 +1,15 @@
-import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:precious/data_sources/user_repository.dart';
-import 'package:precious/resources/endpoints.dart';
-import 'package:precious/resources/utils/dio_utils.dart';
 import 'package:precious/models/user/user.dart' as model;
+import 'package:precious/data_sources/auth_repository.dart';
 
 class LoginRepository {
   Future<model.User> login(String email, String password) async {
     var auth = FirebaseAuth.instance;
     var credential =
         await auth.signInWithEmailAndPassword(email: email, password: password);
-    return await UserRepository().getUser();
+    return (await AuthRepository.updateCurrentUser())!;
   }
 
   Future<model.User> loginWithGoogle() async {
@@ -39,7 +37,7 @@ class LoginRepository {
           await FirebaseAuth.instance.signInWithCredential(credential);
 
       // Send id token to the server API
-      return await UserRepository().getUser();
+      return (await AuthRepository.updateCurrentUser())!;
     } else {
       // Throw an exception notify that sign up process was aborted
       throw FirebaseAuthException(code: 'sign-up-abort');

@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
@@ -106,8 +105,8 @@ class _CartPageState extends State<CartPage> implements CartPageContract {
                         padding: EdgeInsets.only(bottom: 5.v),
                         child: CartItem(
                           backgroundImage:
-                              NetworkImage(cartItem.variant.img_paths_url[0]),
-                          name: cartItem.variant.product.name,
+                              NetworkImage(cartItem.variant.imgPathUrls[0]),
+                          name: cartItem.variant.name,
                           quantity: cartItem.quantity.toDouble(),
                           onTap: () => _goToItemDetailPage(cartItem.id),
                           onQuantityChange: (quantity) =>

@@ -3,13 +3,13 @@ import 'package:precious/models/product/product.dart';
 import 'package:precious/models/product_category/product_category.dart';
 import 'package:precious/presenters/category_presenter.dart';
 import 'package:precious/presenters/product_presenter.dart';
-import 'package:precious/presenters/type_presenter.dart';
 import 'package:precious/models/type/type.dart';
+import 'package:precious/resources/app_export.dart';
 import 'package:precious/resources/widgets/custom_search_bar.dart';
 import 'package:precious/resources/widgets/product_card.dart';
 
 List<Product> filterProductList(List<Product> productList, String searchString,
-    List<ProductCategory> selectedCategories, String sortOption) {
+    List<ProductCategory> selectedCategories, SortOption sortOption) {
   List<Product> filteredProductList = [...productList];
 
   if (searchString.isNotEmpty) {
@@ -24,16 +24,16 @@ List<Product> filterProductList(List<Product> productList, String searchString,
   }
 
   switch (sortOption) {
-    case 'price-asc':
+    case SortOption.priceAsc:
       filteredProductList.sort((a, b) => a.price.compareTo(b.price));
       break;
-    case 'price-desc':
+    case SortOption.priceDesc:
       filteredProductList.sort((a, b) => b.price.compareTo(a.price));
       break;
-    case 'name-asc':
+    case SortOption.nameAsc:
       filteredProductList.sort((a, b) => a.name.compareTo(b.name));
       break;
-    case 'name-desc':
+    case SortOption.nameDesc:
       filteredProductList.sort((a, b) => b.name.compareTo(a.name));
       break;
     default:
@@ -44,22 +44,21 @@ List<Product> filterProductList(List<Product> productList, String searchString,
 
 class SearchPage extends StatefulWidget {
   const SearchPage({Key? key});
-  static const name = "search_page";
+  static const name = "/searchPage";
   @override
-  SearchPageState createState() => SearchPageState();
+  _SearchPageState createState() => _SearchPageState();
 }
 
-class SearchPageState extends State<SearchPage> {
+class _SearchPageState extends State<SearchPage> {
   String searchString = "";
   List<ProductCategory> selectedCategories = [];
-  String sortOption = 'none';
+  SortOption sortOption = SortOption.none;
 
   late Future<List<Product>> productListFuture;
   late Future<List<Type>> typeListFuture;
   late Future<List<ProductCategory>> categoryListFuture;
 
   ProductPresenter productPresenter = ProductPresenter();
-  TypePresenter typePresenter = TypePresenter();
   ProductCategoryPresenter categoryPresenter = ProductCategoryPresenter();
 
   final _controller = ScrollController();
@@ -71,7 +70,6 @@ class SearchPageState extends State<SearchPage> {
     super.initState();
     productListFuture = productPresenter.getAll();
     categoryListFuture = categoryPresenter.getAll();
-    typeListFuture = typePresenter.getAll();
 
     WidgetsBinding.instance.addPostFrameCallback((duration) {
       // Setup the listener.
@@ -91,20 +89,13 @@ class SearchPageState extends State<SearchPage> {
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
-        title: Hero(
-          tag: "search_bar",
-          child: CustomSearchBar(
-            onChange: (value) {
-              setState(() {
-                searchString = value;
-              });
-            },
-          ),
+        title: CustomSearchBar(
+          onChange: (value) {
+            setState(() {
+              searchString = value;
+            });
+          },
         ),
-        toolbarHeight: 80, // Add this line to set the height of the AppBar
-        elevation: 0, // Add this line to remove the shadow of the AppBar
-        backgroundColor:
-            Colors.transparent, // Add this line to make the AppBar transparent
       ),
       endDrawer: Drawer(
         child: ListView(
@@ -149,31 +140,28 @@ class SearchPageState extends State<SearchPage> {
                     fontSize: 15,
                     fontWeight: FontWeight.bold,
                     color: Colors.black)),
-            DropdownButton<String>(
-              padding: const EdgeInsets.only(left: 20, right: 20),
+            DropdownButton<SortOption>(
               value: sortOption,
-              style: const TextStyle(
-                  color: Color.fromARGB(255, 43, 43, 43), fontSize: 16),
-              items: const [
+              items: [
                 DropdownMenuItem(
-                  value: 'none',
-                  child: Text('None'),
+                  value: SortOption.none,
+                  child: Text(AppLocalizations.of(context)!.none_option),
                 ),
                 DropdownMenuItem(
-                  value: 'price-asc',
-                  child: Text('Price Low to High'),
+                  value: SortOption.priceAsc,
+                  child: Text(AppLocalizations.of(context)!.price_low_to_high_option),
                 ),
                 DropdownMenuItem(
-                  value: 'price-desc',
-                  child: Text('Price High to Low'),
+                  value: SortOption.priceDesc,
+                  child: Text(AppLocalizations.of(context)!.price_high_to_low_option),
                 ),
                 DropdownMenuItem(
-                  value: 'name-asc',
-                  child: Text('Name A-Z'),
+                  value: SortOption.nameAsc,
+                  child: Text(AppLocalizations.of(context)!.name_a_to_z_option),
                 ),
                 DropdownMenuItem(
-                  value: 'name-desc',
-                  child: Text('Name Z-A'),
+                  value: SortOption.nameDesc,
+                  child: Text(AppLocalizations.of(context)!.name_z_to_a_option),
                 ),
               ],
               onChanged: (value) {
@@ -185,37 +173,45 @@ class SearchPageState extends State<SearchPage> {
           ],
         ),
       ),
-      body: FutureBuilder(
-        future: productListFuture,
-        builder: (context, snapshot) {
-          if (!snapshot.hasData || snapshot.data == null) {
-            return const Center(
-              child: CircularProgressIndicator(
-                color: Colors.black,
-              ),
-            );
-          }
-          List<Product> productList = snapshot.data!;
-
-          return GridView.count(
-            padding: const EdgeInsets.only(bottom: 100),
-            crossAxisSpacing: 5,
-            mainAxisSpacing: 100,
-            shrinkWrap: true,
-            crossAxisCount: 2,
-            children: <Widget>[
-              ...filterProductList(
-                      productList, searchString, selectedCategories, sortOption)
-                  .map((e) => Padding(
-                        padding: const EdgeInsets.only(right: 8.0),
-                        child: ProductCard(
-                          product: e,
-                        ),
-                      ))
-            ],
-          );
-        },
+      body: Container(
+        margin: const EdgeInsets.only(top: 10),
+        child: Expanded(
+          child: FutureBuilder(
+            future: productListFuture,
+            builder: (context, snapshot) {
+              if (!snapshot.hasData || snapshot.data == null) {
+                return const Center(
+                  child: CircularProgressIndicator(
+                    color: Colors.black,
+                  ),
+                );
+              }
+              List<Product> productList = snapshot.data!;
+              return GridView.count(
+                primary: false,
+                crossAxisSpacing: 5,
+                mainAxisSpacing: 100,
+                shrinkWrap: true,
+                crossAxisCount: 2,
+                children: <Widget>[
+                  ...filterProductList(productList, searchString,
+                          selectedCategories, sortOption)
+                      .map((e) => Padding(
+                            padding: const EdgeInsets.only(right: 8.0),
+                            child: ProductCard(
+                              product: e,
+                            ),
+                          ))
+                ],
+              );
+            },
+          ),
+        ),
       ),
     );
   }
+}
+
+enum SortOption {
+  none, priceAsc, priceDesc, nameAsc, nameDesc
 }

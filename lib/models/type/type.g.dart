@@ -7,7 +7,7 @@ part of 'type.dart';
 // **************************************************************************
 
 _$TypeImpl _$$TypeImplFromJson(Map<String, dynamic> json) => _$TypeImpl(
-      id: json['id'] as int? ?? null,
+      id: (json['id'] as num?)?.toInt() ?? null,
       name: json['name'] as String? ?? "",
     );
 

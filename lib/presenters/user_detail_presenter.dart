@@ -1,5 +1,6 @@
-import 'package:precious/data_sources/user_repository.dart';
+import 'package:precious/data_sources/auth_repository.dart';
 import 'package:precious/models/user/user.dart';
+import 'package:precious/data_sources/user_repository.dart';
 
 abstract class UserDetailPageContract {
   void onGetUserDetailSuccess(User user);
@@ -22,9 +23,7 @@ class UserDetailPresenter {
   }
 
   Future<void> getUser() async {
-        await _repos
-        .getUser()
-        .then((user) => _viewContract.onGetUserDetailSuccess(user))
-        .catchError((e) => _viewContract.onGetUserDetailFailed(e));
+    final user = AuthRepository.currentUser;
+    _viewContract.onGetUserDetailSuccess(user!);
   }
 }

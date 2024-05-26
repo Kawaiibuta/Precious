@@ -1,11 +1,11 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart' hide User;
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:precious/models/user/user.dart';
-import 'package:precious/presenters/login_presenter.dart';
 import 'package:precious/presenters/user_detail_presenter.dart';
 import 'package:precious/resources/app_export.dart';
 import 'package:precious/resources/endpoints.dart';
-import 'package:precious/resources/utils/string_utils.dart';
 import 'package:precious/resources/widgets/custom_elevated_button.dart';
 
 class UserDetailPage extends StatefulWidget {
@@ -50,33 +50,41 @@ class _UserDetailPageState extends State<UserDetailPage>
   Widget build(BuildContext context) {
     return SafeArea(
         child: Scaffold(
+            resizeToAvoidBottomInset: false,
             body: loading
                 ? const Center(
                     child: CircularProgressIndicator(color: Colors.black))
                 : Container(
                     padding: EdgeInsets.all(16.h),
                     child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         SizedBox(height: 20.v),
                         Container(
                           foregroundDecoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(8.h),
                           ),
-                          child: Image.network(
-                              EndPoint.baseUrl + _currentUser.avatarImgPath,
-                              width: 48.h,
-                              height: 48.h,
-                              fit: BoxFit.cover),
+                          child: _currentUser.avatarUrl != null &&
+                                  _currentUser.avatarUrl!.endsWith('.svg')
+                              ? SvgPicture.network(_currentUser.avatarUrl!,
+                                  width: 60.h, height: 60.v, fit: BoxFit.cover)
+                              : Image.network(
+                                  _currentUser.avatarUrl ??
+                                      "https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg",
+                                  width: 60.h,
+                                  height: 60.v,
+                                  fit: BoxFit.cover),
                         ),
-                        SizedBox(height: 20.v),
+                        SizedBox(height: 60.v),
                         Row(
+                            crossAxisAlignment: CrossAxisAlignment.end,
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(AppLocalizations.of(context)!
                                   .name_text_field_title),
                               SizedBox(
                                 width: 220.h,
+                                height: 18.v,
                                 child: TextFormField(
                                   controller: _nameController,
                                   focusNode: _nameFocusNode,
@@ -96,12 +104,15 @@ class _UserDetailPageState extends State<UserDetailPage>
                               Text(AppLocalizations.of(context)!
                                   .gender_checkbox_title),
                               SizedBox(
-                                width: 220.v,
+                                width: 240.h,
                                 child: Row(
                                   crossAxisAlignment: CrossAxisAlignment.end,
                                   children: [
                                     // Male radio button
                                     Container(
+                                      margin: EdgeInsets.only(
+                                          left: 8.h, top: 8.v, bottom: 8.v),
+                                      padding: EdgeInsets.only(right: 12.h),
                                       decoration: BoxDecoration(
                                           border: Border.all(
                                               color: _currentGender == 0
@@ -125,6 +136,9 @@ class _UserDetailPageState extends State<UserDetailPage>
                                           Radio(
                                               groupValue: _currentGender,
                                               value: 0,
+                                              activeColor: Theme.of(context)
+                                                  .colorScheme
+                                                  .secondary,
                                               focusNode: _genderFocusNode,
                                               onChanged: _onChangeGender),
                                           Text(
@@ -132,7 +146,7 @@ class _UserDetailPageState extends State<UserDetailPage>
                                                 .male_checkbox_title,
                                             style: Theme.of(context)
                                                 .textTheme
-                                                .labelLarge!
+                                                .labelMedium!
                                                 .copyWith(
                                                     color: _currentGender == 0
                                                         ? Theme.of(context)
@@ -145,9 +159,12 @@ class _UserDetailPageState extends State<UserDetailPage>
                                         ],
                                       ),
                                     ),
-
+                                    SizedBox(width: 16.h),
                                     // Female radio button
                                     Container(
+                                      margin: EdgeInsets.only(
+                                          left: 8.h, top: 8.v, bottom: 8.v),
+                                      padding: EdgeInsets.only(right: 12.h),
                                       decoration: BoxDecoration(
                                           border: Border.all(
                                               color: _currentGender == 1
@@ -171,6 +188,9 @@ class _UserDetailPageState extends State<UserDetailPage>
                                           Radio(
                                               groupValue: _currentGender,
                                               value: 1,
+                                              activeColor: Theme.of(context)
+                                                  .colorScheme
+                                                  .secondary,
                                               focusNode: _genderFocusNode,
                                               onChanged: _onChangeGender),
                                           Text(
@@ -178,7 +198,7 @@ class _UserDetailPageState extends State<UserDetailPage>
                                                   .female_checkbox_title,
                                               style: Theme.of(context)
                                                   .textTheme
-                                                  .labelLarge!
+                                                  .labelMedium!
                                                   .copyWith(
                                                       color: _currentGender == 1
                                                           ? Theme.of(context)
@@ -196,11 +216,13 @@ class _UserDetailPageState extends State<UserDetailPage>
                             ]),
                         Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
                               Text(AppLocalizations.of(context)!
                                   .age_text_field_title),
                               SizedBox(
                                 width: 220.h,
+                                height: 18.v,
                                 child: TextFormField(
                                   controller: _ageController,
                                   focusNode: _ageFocusNode,
@@ -208,8 +230,9 @@ class _UserDetailPageState extends State<UserDetailPage>
                                       .textTheme
                                       .bodyMedium!
                                       .copyWith(
-                                          color:
-                                              Theme.of(context).colorScheme.onPrimaryContainer),
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onPrimaryContainer),
                                   keyboardType: TextInputType.number,
                                 ),
                               )
@@ -228,13 +251,24 @@ class _UserDetailPageState extends State<UserDetailPage>
                                       .textTheme
                                       .bodyMedium!
                                       .copyWith(
-                                          color:
-                                              Theme.of(context).colorScheme.onPrimaryContainer),
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onPrimaryContainer),
                                 ),
                               )
                             ]),
                         SizedBox(height: 150.v),
                         CustomElevatedButton(
+                            buttonStyle: ElevatedButton.styleFrom(
+                                backgroundColor:
+                                    Theme.of(context).colorScheme.primary),
+                            buttonTextStyle: Theme.of(context)
+                                .textTheme
+                                .labelLarge!
+                                .copyWith(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onPrimary),
                             text:
                                 AppLocalizations.of(context)!.save_button_title,
                             onPressed: _save)

@@ -1,6 +1,5 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:precious/models/product/product.dart';
 import 'package:precious/resources/app_export.dart';
@@ -15,9 +14,7 @@ class ProductCard extends StatefulWidget {
 }
 
 class _ProductCardState extends State<ProductCard> {
-  final noSimbolInUSFormat = NumberFormat.currency(locale: "en_US");
-  
-  static final _cacheManager = DefaultCacheManager();
+  final noSymbolInVNFormat = NumberFormat.currency(locale: "vi_VN");
 
   @override
   void initState() {
@@ -28,36 +25,20 @@ class _ProductCardState extends State<ProductCard> {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        InkWell(
-          onTap: () {
-            Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) => ItemDetailPage(id: widget.product.id!),
-            ));
-          },
-          child: SizedBox(
-            width: 165.h,
+        Positioned.fill(
+          child: InkWell(
+            onTap: () {
+              Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => ItemDetailPage(id: widget.product.id!),
+              ));
+            },
             child: Column(
               children: [
-                // Container(
-                //   height: 110.v,
-                //   clipBehavior: Clip.antiAlias,
-                //   decoration: BoxDecoration(
-                //       borderRadius: BorderRadius.circular(10),
-                //       image: DecorationImage(
-                //           image: (Uri.parse(widget.product.img_paths_url[0])
-                //                       .isAbsolute
-                //                   ? CachedNetworkImageProvider(
-                //                       widget.product.img_paths_url[0])
-                //                   : AssetImage(widget.product.img_paths_url[0]))
-                //               as ImageProvider,
-                //           fit: BoxFit.cover)),
-                // ),
-                Image.network(
-                  widget.product.img_paths_url[0],
-                  height: 110.v,
-                  cacheHeight: 110.v.toInt(),
-                  cacheWidth: 165.h.toInt(),
-                  fit: BoxFit.cover),
+                Image.network(widget.product.imgPathUrls[0],
+                    height: 110.v,
+                    cacheHeight: 110.v.toInt(),
+                    cacheWidth: 165.h.toInt(),
+                    fit: BoxFit.cover),
                 Text(
                   widget.product.name,
                   style: const TextStyle(
@@ -66,24 +47,20 @@ class _ProductCardState extends State<ProductCard> {
                       color: Colors.black),
                 ),
                 Text(
-                  widget.product.short_description,
+                  widget.product.shortDescription,
                   style: const TextStyle(
                       fontWeight: FontWeight.normal, fontSize: 10),
                 ),
-                Text(
-                  noSimbolInUSFormat.format(widget.product.price),
-                  style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 10,
-                      color: Colors.black),
-                ),
+                Text(noSymbolInVNFormat.format(widget.product.price),
+                    style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                        color: Theme.of(context).colorScheme.onBackground)),
               ],
             ),
           ),
         ),
         Positioned(
-            right: 7,
-            top: 7,
+            right: 12.h,
+            top: 12.v,
             child: Container(
               width: 25,
               height: 25,

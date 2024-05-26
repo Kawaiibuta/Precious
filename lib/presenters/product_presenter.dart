@@ -1,37 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:precious/models/product/product.dart';
 import 'package:precious/data_sources/product_repository.dart';
-import 'package:precious/presenters/base_presenter.dart';
 
-class ProductPresenter implements BasePresenter {
+class ProductPresenter {
   static Map<int, Product> productList = {};
-  static const quantityForEach = 20;
-  @override
-  Future<List<Product>> getAll({bool more = false}) async {
+  static const quantityForEach = 10;
+
+  Future<List<Product>> getAll({bool more = false, int? categoryId}) async {
     if (productList.values.isNotEmpty && more == false) {
       return productList.values.toList();
     }
     debugPrint("get Product");
     final result = await ProductRepository.getAll(
-            start: productList.length + 1, quantity: quantityForEach)
+            start: productList.length + 1,
+            quantity: quantityForEach,
+            categoryId: categoryId)
         .then((e) {
       for (var element in e) {
         productList.addEntries(<int, Product>{element.id!: element}.entries);
       }
       return e;
-    }).catchError((e) {
-      debugPrint(e.toString());
-      return <Product>[];
     });
 
     return result;
   }
 
-  @override
   Future<Product?> getOne(int id, {detail = false}) async {
     if (productList.keys.contains(id)) {
       var product = productList[id]!;
-      if (product.variants != null) return product;
       if (detail) {
         product = await ProductRepository.getOne(id)
             .then((value) => productList.update(id, (_) => value ?? product));
@@ -47,10 +43,9 @@ class ProductPresenter implements BasePresenter {
     return result;
   }
 
-  @override
-  Future<bool> add({item}) async {
+  Future<bool> add({item, imageList}) async {
     if (item is Product) {
-      return await ProductRepository.add(item)
+      return await ProductRepository.add(item, imageList)
           .then((value) => true)
           .catchError((e) {
         debugPrint(e.toString());
@@ -60,7 +55,6 @@ class ProductPresenter implements BasePresenter {
     return false;
   }
 
-  @override
   Future<bool> delete(List<int> items) async {
     bool item = true;
     items.forEach((element) async {

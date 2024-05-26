@@ -28,7 +28,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-        // Update titles with the current localization
+    // Update titles with the current localization
     routes = [
       {
         "title": AppLocalizations.of(context)!.home_bottom_title,
@@ -40,7 +40,7 @@ class _HomePageState extends State<HomePage> {
       },
       {
         "title": AppLocalizations.of(context)!.cart_bottom_title,
-        "icon": Icons.shopping_cart, 
+        "icon": Icons.shopping_cart,
       },
       {
         "title": AppLocalizations.of(context)!.profile_bottom_title,

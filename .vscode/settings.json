@@ -1,0 +1,13 @@
+{
+    "emeraldwalk.runonsave": {
+        "commands": [
+            {
+                "match": "app_.*\\.arb",
+                "cmd": "flutter pub get"
+            }
+        ]
+    },
+    "cSpell.words": [
+        "Fluttertoast"
+    ]
+}

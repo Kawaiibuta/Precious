@@ -1,4 +1,4 @@
-import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:flutter/material.dart';
 import 'package:precious/models/user/user.dart';
 import 'package:precious/presenters/login_presenter.dart';
@@ -182,7 +182,7 @@ class _LoginPageState extends State<LoginPage> implements LoginPageContract {
   }
 
   @override
-  void onLoginFailed(FirebaseException e) {
+  void onLoginFailed(auth.FirebaseException e) {
     Navigator.of(context).pop();
     debugPrint('${e.message}\n${e.stackTrace}');
     switch (e.code) {
