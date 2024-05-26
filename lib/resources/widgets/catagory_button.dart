@@ -8,7 +8,7 @@ class CategoryButton extends StatefulWidget {
   final bool selected;
   final Function? onClick;
   @override
-  _CategoryButtonState createState() => _CategoryButtonState();
+  State<CategoryButton> createState() => _CategoryButtonState();
 }
 
 class _CategoryButtonState extends State<CategoryButton> {
@@ -22,19 +22,18 @@ class _CategoryButtonState extends State<CategoryButton> {
             border: Border.all(
                 color: widget.selected ? Colors.black : Colors.grey)),
         child: InkWell(
-          onTap: () {
-            if (widget.onClick != null) widget.onClick!();
-          },
-          child: Padding(
-            padding: const EdgeInsets.only(
-                left: 8.0, right: 8.0, top: 5.0, bottom: 5.0),
-            child: Text(
-              widget.title,
-              style: GoogleFonts.openSans(
-                  fontWeight: FontWeight.bold,
-                  color: widget.selected ? Colors.white : Colors.black),
-            ),
-          ),
-        ));
+            onTap: () {
+              if (widget.onClick != null) widget.onClick!();
+            },
+            child: Padding(
+              padding: const EdgeInsets.only(
+                  left: 8.0, right: 8.0, top: 5.0, bottom: 5.0),
+              child: Text(
+                widget.title,
+                style: GoogleFonts.openSans(
+                    fontWeight: FontWeight.bold,
+                    color: widget.selected ? Colors.white : Colors.black),
+              ),
+            )));
   }
 }

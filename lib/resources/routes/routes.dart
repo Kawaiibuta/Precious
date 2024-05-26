@@ -7,6 +7,7 @@ import 'package:precious/views/home_page.dart';
 import 'package:precious/views/landing_page.dart';
 import 'package:precious/views/login_or_sign_up_page.dart';
 import 'package:precious/views/login_page.dart';
+import 'package:precious/views/order_success_page.dart';
 import 'package:precious/views/search_page.dart';
 import 'package:precious/views/setting_page.dart';
 import 'package:precious/views/sign_up_page.dart';
@@ -29,9 +30,11 @@ class MyRoutes {
         SearchPage.name: (_) => const SearchPage(),
         LandingPage.name: (_) => const LandingPage(),
         HomePage.name: (_) => const HomePage(),
+        HomePageAdmin.name: (_) => const HomePageAdmin(),
+        UserDetailPage.name: (_) => const UserDetailPage(),
         InventoryForm.name: (_) => const InventoryForm(),
         OrderForm.name: (_) => const OrderForm(),
         UserDetailPage.name: (_) => const UserDetailPage(),
-        HomePageAdmin.name: (_) => const HomePageAdmin(),
+        OrderSuccessPage.name: (_) => const OrderSuccessPage()
       };
 }

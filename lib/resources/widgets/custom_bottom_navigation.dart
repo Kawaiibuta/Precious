@@ -18,10 +18,17 @@ class _CustomBottomNavigationState extends State<CustomBottomNavigation> {
   var selectedIndex = 0;
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
+    return Container(
       height: 60.v,
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(20.h), topRight: Radius.circular(16.h)),
+          boxShadow: [
+            BoxShadow(color: Theme.of(context).colorScheme.primaryContainer,
+                spreadRadius: 1.h, blurRadius: 2.h, blurStyle: BlurStyle.outer)
+          ]),
       child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: widget.routes
               .asMap()
@@ -29,8 +36,8 @@ class _CustomBottomNavigationState extends State<CustomBottomNavigation> {
                   index,
                   Padding(
                     padding: selectedIndex == index
-                        ? EdgeInsets.only(left: 15.h)
-                        : EdgeInsets.symmetric(horizontal: 15.h),
+                        ? EdgeInsets.only(left: 10.h)
+                        : EdgeInsets.symmetric(horizontal: 10.h),
                     child: BottomNavigationButton(
                       icon: e.icon,
                       title: e.title,

@@ -12,28 +12,24 @@ class ProductRepository {
   static Map<int, Product> list = {};
   static const quantityForEach = 20;
   static Future<List<Product>> getAll(
-      {int start = 0,
+      {int start = 1,
       int quantity = quantityForEach,
       int type = -1,
-      bool reset = false}) async {
-    if (start <= 0) start = list.length + 1;
+      bool reset = false, int? categoryId}) async {
+    if (start < 0) start = 0;
     debugPrint(EndPoint.productWithParam(
-        start: start, quantity: quantity, type: type));
+        start: start, quantity: quantity, type: type, categoryId: categoryId));
     final result = await dio
         .request(
             EndPoint.productWithParam(
-                start: start, quantity: quantity, type: type),
+                start: start, quantity: quantity, type: type, categoryId: categoryId),
             options: Options(
               method: 'GET',
-              headers: headers as Map<String, dynamic>,
+              headers: headers,
             ))
         .then((value) => (value.data as List).map((e) {
               return Product.fromJson(e as Map<String, dynamic>);
-            }).toList())
-        .catchError((e) {
-      debugPrint(e.toString());
-      return <Product>[];
-    });
+            }).toList());
     for (var element in result) {
       list.addEntries(<int, Product>{element.id!: element}.entries);
     }
@@ -41,9 +37,9 @@ class ProductRepository {
   }
 
   static Future<Product?> getOne(int id, {detail = true}) async {
-    if ((list.containsKey(id) && list[id]!.options.isNotEmpty) || !detail) {
-      return list[id];
-    }
+    // if ((list.containsKey(id) && list[id]!.options.isNotEmpty) || !detail) {
+    //   return list[id];
+    // }
 
     final result = await dio
         .request(

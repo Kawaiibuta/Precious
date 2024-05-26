@@ -83,9 +83,9 @@ class _HomePageState extends State<HomePage> {
 
   // Initialized selected page only
   Widget getRoute() => switch (selected) {
-        0 => LandingPage(changePage: _handleChangePage),
-        1 => const SearchPage(),
-        2 => const CartPage(),
-        _ => const ProfilePage()
-      };
+    0 => LandingPage(changePage: _handleChangePage),
+    1 => const SearchPage(),
+    2 => const CartPage(),
+    _ => const ProfilePage()
+  };
 }

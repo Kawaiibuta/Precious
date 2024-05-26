@@ -44,8 +44,8 @@ class _OrderCardAdminState extends State<OrderCardAdmin> {
                     clipBehavior: Clip.antiAlias,
                     decoration: const BoxDecoration(shape: BoxShape.circle),
                     child: widget.order.user != null &&
-                            widget.order.user!.avatar_url != null
-                        ? SvgPicture.network(widget.order.user!.avatar_url!)
+                            widget.order.user!.avatarUrl != null
+                        ? SvgPicture.network(widget.order.user!.avatarUrl!)
                         : const Icon(Icons.person)),
                 DefaultTextStyle(
                   style: GoogleFonts.openSans(color: Colors.black),

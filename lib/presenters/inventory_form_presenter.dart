@@ -3,7 +3,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:precious/data_sources/category_reppsitory.dart';
+import 'package:precious/data_sources/category_repository.dart';
 import 'package:precious/models/option/option.dart';
 import 'package:precious/models/product/product.dart';
 import 'package:precious/models/product_category/product_category.dart';

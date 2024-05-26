@@ -58,7 +58,7 @@ class OrderRepository {
   }
 
   static Future<String> pay(int id, PaymentMethod type) async {
-    var data = json.encode({"redirectURL": "string"});
+    var data = json.encode({"redirectURL": "app://precious/momoComplete"});
     final response = await dio
         .request("${EndPoint.orderDetail(id)}/paid",
             options: Options(headers: headers, method: "POST"), data: data)

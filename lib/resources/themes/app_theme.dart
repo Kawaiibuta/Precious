@@ -35,6 +35,18 @@ class AppTheme {
           onSecondary: Colors.grey.shade700));
 
   static final textTheme = TextTheme(
+    displayLarge: TextStyle(
+        fontSize: 48.fSize,
+        fontWeight: FontWeight.w800,
+        color: Colors.grey.shade700),
+    displayMedium: TextStyle(
+        fontSize: 40.fSize,
+        fontWeight: FontWeight.w800,
+        color: Colors.grey.shade700),
+    displaySmall: TextStyle(
+        fontSize: 32.fSize,
+        fontWeight: FontWeight.w800,
+        color: Colors.grey.shade700),
     headlineLarge: TextStyle(
         fontSize: 32.fSize, fontWeight: FontWeight.bold, color: Colors.black),
     headlineMedium: TextStyle(

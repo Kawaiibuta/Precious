@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class CreateOrderPage extends StatefulWidget {
   static const name = '/createOrder';
 
-  const CreateOrderPage({super.key});
+  const CreateOrderPage.CompletePaymentPage({super.key});
 
   @override
   State<CreateOrderPage> createState() => _CreateOrderPageState();
