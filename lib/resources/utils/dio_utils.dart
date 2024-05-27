@@ -6,6 +6,6 @@ var dio = Dio();
 Map<String, dynamic> headers = {
       'Content-Type': 'application/json',
       'Authorization': AuthRepository.idToken != null
-          ? 'bearer ${AuthRepository.idToken}'
+          ? 'Bearer ${AuthRepository.idToken}'
           : ''
     };

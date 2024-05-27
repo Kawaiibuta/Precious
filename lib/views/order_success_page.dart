@@ -41,7 +41,7 @@ class OrderSuccessPage extends StatelessWidget {
                   backgroundColor: Theme.of(context).colorScheme.primary,
                 ),
                 onPressed: () => Navigator.of(context)
-                    .pushNamedAndRemoveUntil(HomePage.name, (route) => false))
+                    .pushNamedAndRemoveUntil(HomePage.name, (_) => false))
           ]),
         ),
       ),

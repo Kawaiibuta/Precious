@@ -7,6 +7,7 @@ import 'package:precious/resources/widgets/custom_elevated_button.dart';
 import 'package:precious/resources/widgets/round_container_box.dart';
 import 'package:precious/resources/widgets/setting_button.dart';
 import 'package:precious/views/login_page.dart';
+import 'package:precious/views/order_list_page.dart';
 import 'package:precious/views/setting_page.dart';
 import 'package:precious/views/user_detail_page.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -168,7 +169,9 @@ class _ProfilePageState extends State<ProfilePage>
     ));
   }
 
-  void _openMyOrderPage() {}
+  void _openMyOrderPage() {
+    Navigator.of(context).pushNamed(OrderListPage.name);
+  }
 
   void _openMyFavouritePage() {}
 

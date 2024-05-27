@@ -16,16 +16,16 @@ class ProductCardLarge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return RoundContainerBox(
-        padding: EdgeInsets.all(8.h),
+        padding: EdgeInsets.all(16.h),
         hasShadow: true,
         shadowWidth: 1.h,
         child: Row(
           children: [
             SizedBox.square(
-                dimension: 60.h,
+                dimension: 64.h,
                 child:
                     Image.network(variant.imgPathUrls[0], fit: BoxFit.cover)),
-            SizedBox(width: 8.h),
+            SizedBox(width: 16.h),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -34,8 +34,12 @@ class ProductCardLarge extends StatelessWidget {
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
                 Text(
-                  variant.variantOptionValues?.map((e) => e.optionValue).join(", ") ?? "",
-                  style: Theme.of(context).textTheme.bodyMedium,
+                  variant.variantOptionValues
+                          ?.map((e) => e.optionValue)
+                          .join(", ") ??
+                      "",
+                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                      color: Theme.of(context).colorScheme.onPrimaryContainer),
                 ),
                 Text(
                   '${_numberFormat.format(variant.price)}đ',

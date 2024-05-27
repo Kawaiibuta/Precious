@@ -284,6 +284,7 @@ class _ItemDetailPageState extends State<ItemDetailPage>
                                         EdgeInsets.symmetric(vertical: 8.v),
                                     child: Wrap(
                                       spacing: 8.h,
+                                      runSpacing: 8.v,
                                       direction: Axis.horizontal,
                                       children: [
                                         for (var optionValue in option.values)
@@ -423,8 +424,8 @@ class _ItemDetailPageState extends State<ItemDetailPage>
                                           const Text("Total price"),
                                           Text(
                                             product.price > 10 ^ 6
-                                                ? "${(product.price ~/ pow(10, 6))}Tr"
-                                                : "${(product.price ~/ pow(10, 3))}K",
+                                                ? "${(_currentVariant.price ~/ pow(10, 6))}Tr"
+                                                : "${(_currentVariant.price ~/ pow(10, 3))}K",
                                             style: GoogleFonts.openSans(
                                                 fontSize: 20,
                                                 color: Colors.black,
@@ -493,6 +494,9 @@ class _ItemDetailPageState extends State<ItemDetailPage>
     } else if (e is DioException) {
       ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(e.response?.statusMessage ?? 'UNKNOWN')));
+    } else if (e is Error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(e.toString())));
     }
   }
 }
