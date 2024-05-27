@@ -1,6 +1,5 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:precious/presenters/sign_up_presenter.dart';
 import 'package:precious/resources/app_export.dart';
 import 'package:precious/resources/widgets/custom_elevated_button.dart';
@@ -115,7 +114,6 @@ class _SignUpPageState extends State<SignUpPage> implements SignUpPageContract {
                               controller: _usernameController,
                               focusNode: _usernameFocusNode,
                               decoration: InputDecoration(
-                                border: InputBorder.none,
                                 fillColor: Colors.transparent,
                                 suffixIcon: Icon(_usernameError
                                     ? Icons.cancel_rounded
@@ -144,7 +142,6 @@ class _SignUpPageState extends State<SignUpPage> implements SignUpPageContract {
                               controller: _emailController,
                               focusNode: _emailFocusNode,
                               decoration: InputDecoration(
-                                border: InputBorder.none,
                                 fillColor: Colors.transparent,
                                 suffixIcon: Icon(_emailError
                                     ? Icons.cancel_rounded
@@ -173,7 +170,6 @@ class _SignUpPageState extends State<SignUpPage> implements SignUpPageContract {
                               controller: _passwordController,
                               focusNode: _passwordFocusNode,
                               decoration: InputDecoration(
-                                border: InputBorder.none,
                                 fillColor: Colors.transparent,
                                 suffixIcon: IntrinsicWidth(
                                   child: Row(
@@ -217,7 +213,6 @@ class _SignUpPageState extends State<SignUpPage> implements SignUpPageContract {
                               controller: _confirmPasswordController,
                               focusNode: _confirmPasswordFocusNode,
                               decoration: InputDecoration(
-                                border: InputBorder.none,
                                 errorMaxLines: 2,
                                 fillColor: Colors.transparent,
                                 suffixIcon: Icon(_confirmPasswordError

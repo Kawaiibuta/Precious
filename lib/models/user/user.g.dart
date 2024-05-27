@@ -19,6 +19,10 @@ _$UserImpl _$$UserImplFromJson(Map<String, dynamic> json) => _$UserImpl(
               ?.map((e) => e as String)
               .toList() ??
           const [],
+      orders: (json['orders'] as List<dynamic>?)
+              ?.map((e) => Order.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          const [],
       avatarUrl: json['avatar_img_path_url'] as String?,
     );
 
@@ -33,5 +37,6 @@ Map<String, dynamic> _$$UserImplToJson(_$UserImpl instance) =>
       'phone_number': instance.phoneNumber,
       'userRole': instance.userRole,
       'addresses': instance.addresses,
+      'orders': instance.orders,
       'avatar_img_path_url': instance.avatarUrl,
     };

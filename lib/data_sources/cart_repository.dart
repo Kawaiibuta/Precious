@@ -79,4 +79,16 @@ class CartRepository {
           response: response);
     }
   }
+
+  Future<void> delete() async {
+    var response = await dio.request(EndPoint.cart,
+        options: Options(method: 'DELETE', headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${AuthRepository.idToken}',
+        }));
+    if (response.statusCode != 200) {
+      throw DioException(
+          requestOptions: response.requestOptions, response: response);
+    }
+  }
 }

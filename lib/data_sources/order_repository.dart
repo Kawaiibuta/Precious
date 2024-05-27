@@ -6,6 +6,8 @@ import 'package:precious/models/order/order.dart';
 import 'package:precious/presenters/order_detail_presenter.dart';
 import 'package:precious/resources/endpoints.dart';
 import 'package:precious/resources/utils/dio_utils.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 enum PaymentMethod { cash, momo, onDelivery }
 
@@ -67,7 +69,10 @@ class OrderRepository {
       debugPrint(error.response.toString());
       return <String, dynamic>{"deeplink": ""};
     });
-    if (type == PaymentMethod.momo) return response['payUrl'];
+    debugPrint(response.toString());
+    if (type == PaymentMethod.momo) {
+      await launchUrlString(response['deeplink']);
+    }
     if (type == PaymentMethod.cash) return response['qrCodeUrl'];
     return response["deeplink"];
   }

@@ -82,10 +82,14 @@
     "direct_payment_method_title":"Pay after Deliver",
     "total_price_title": "Total price",
     "place_order_button_title":"Place Order",
+    "choose_payment_method_msg":"Please choose one of the payments above",
     
     "order_success_title":"Order Successfully",
     "order_success_body":"Your order has been added to be delivered",
     "continue_shopping_btn_title":"Continue Shopping",
+
+    "status_order_title":"Status: ",
+    "empty_order_available_body":"There are no orders available right now.",
 
     "username_empty_msg":"Username must not be empty",
     "email_empty_msg":"Email must not be empty",
@@ -100,5 +104,6 @@
             "code":{}
         }
     },
-    "network_issue_msg":"There is no Internnet connection. Please try again later"
+    "network_issue_msg":"There is no Internnet connection. Please try again later",
+    "empty_address_msg":"Invalid address."
 }
